@@ -1,0 +1,295 @@
+ 
+/* 한글 글꼴 */
+@font-face {
+  font-family: 'BM-HANNA';
+  src: url('../fonts/BM-HANNA.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
+
+/* 로고 글꼴 */
+@font-face {
+  font-family: 'LilitaOne-Regular';
+  src: url('../fonts/LilitaOne-Regular.ttf') format('truetype');
+}
+
+/* 영어 글꼴 */
+@font-face {
+  font-family: 'TitanOne-Regular';
+  src: url('../fonts/TitanOne-Regular.ttf') format('truetype');
+}
+
+/* 작은 영어 글꼴 */
+@font-face {
+  font-family: 'AlexandriaFLF';
+  src: url('../fonts/AlexandriaFLF.ttf') format('truetype');
+}
+
+/* 세팅 */
+* {
+  font-family: 'BM-HANNA';
+  font-weight: 400;
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  background-color: #FFFBE9;
+  margin: 0;
+  padding: 0;
+}
+
+html, body {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+html {
+  overflow-y: scroll;
+}
+
+main {
+  flex: 1;
+  padding-top: 80px;
+}
+
+/* 상단 탭바 */
+.navbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 1000;
+  background-color: #e3caa5;
+  padding: 10px 40px; /* ← 좌우 여백 더 넓게 */
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid #d0bca0;
+}
+
+.logo {
+  font-family: 'LilitaOne-Regular';
+  font-weight: 400;
+  font-size: 26px;
+  color: #ad8b73;
+  letter-spacing: 1px;
+}
+
+.nav-left {
+  display: flex;
+  align-items: center;
+  gap: 40px; /* ← 로고와 메뉴 사이 간격 */
+}
+
+.login-button {
+  font-family: 'TitanOne-Regular';
+  margin-right: 40px;
+  background-color: #ad8b73;
+  color: #fffbe9;
+  border: none;
+  padding: 6px 15px;
+  border-radius: 5px;
+  font-weight: 400;
+  font-size: 14px;
+  text-shadow: 0 0 1px rgba(0, 0, 0, 0.3);
+  cursor: pointer;
+}
+
+ /* 검색 버튼 세팅 */
+ .btn-group {
+    display: flex;
+    gap: 30px;
+    margin-bottom: 30px;
+    align-self: flex-start;
+    margin-left: 430px;
+}
+
+.btn {
+    font-size: 16px;
+    border-radius: 30px;
+    border: 3px solid #CEAB93;
+    cursor: pointer;
+}
+
+.btn.food {
+    width: 205px;
+    height: 55px;
+    background-color: #FFFFFF;
+    color: #CEAB93;
+    font-size: 14px
+}
+
+.btn.ingredient {
+    width: 200px;
+    height: 50px;
+    background-color: #CEAB93;
+    color: #FFFFFF;
+    border: none;
+    font-size: 14px
+}
+
+/* 입력 화면 세팅 */
+.container {
+    width: 1055px;
+    height: 510px;
+    background-color: #F9F5F0;
+    border: 2px solid #CEAB93;
+    border-radius: 10px;
+    padding: 50px 80px;
+    position: relative;
+    margin: 0 auto;         
+    display: flex;          
+    flex-direction: column; 
+}
+
+.home-link {
+    font-size: 14px;
+    color: #A6856E;
+    position: absolute;
+    top: 30px;
+    left: 40px;
+    font-family: 'Alexandria';
+}
+
+.upload-container {
+  position: relative; 
+}
+
+.home-link:hover {
+  text-decoration: underline;
+}
+
+.form-box {
+    margin-top: 100px;
+}
+
+.form-box label {
+      font-size: 27px;
+      color: #A6856E;
+      display: block;
+      margin-bottom: 20px;
+}
+
+/* 음식으로 탐색하기 */
+.input-wrapper {
+      width: 914px;
+      height: 45px;
+      border: 3px solid #CEAB93;
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      padding: 0 10px;
+      background-color: #fff;
+}
+
+.input-wrapper input {
+    border: none;
+    outline: none;
+    font-size: 16px;
+    flex-grow: 1;
+    background-color: transparent;
+    padding: 0 10px;
+}
+
+.input-wrapper img {
+    width: 18px;
+    height: 18px;
+}
+
+
+/* 사진으로 탐색하기 */
+
+.container2 {
+    width: 1055px;
+    height: 771px;
+    background-color: #F9F5F0;
+    border: 2px solid #CEAB93;
+    border-radius: 10px;
+    padding: 50px 80px;
+    position: relative;
+    margin: 0 auto;         
+    display: flex;          
+    flex-direction: column; 
+}
+
+ .upload-section {
+    width: 914px;
+    height: 413px;
+    border: 3px dashed #CEAB93;
+    background-color: #FFFFFF;
+    border-radius: 10px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+}
+
+.upload-section img {
+    width: 240px;
+    height: 68px;
+}
+
+.upload-section label {
+    font-size: 27px;
+    color: #A6856E;
+    position: absolute;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+.file-select-btn {
+    position: absolute;
+    height: 68px;
+    background: #AD8B73;
+    border-radius: 10px;
+    width: 240px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 15px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 2;
+}
+
+.file-select-btn img {
+    font-family: 'Mulish';
+    width: 20px;
+    height: 20px;
+}
+
+.file-select-btn label {
+    font-weight: 700;
+    font-size: 14px;
+    margin-left: 5px;  
+}
+
+.separator {
+    width: 1px;
+    height: 40px;
+     position: absolute; 
+     left: 170px; 
+
+}
+
+.chevron-down {
+    width: 30px;
+    height: 30px;
+    position: absolute; 
+    left: 190px; 
+    background: url('../images/check-icon.png') no-repeat center;
+    background-size: contain;
+}
+
+/* 하단 풋터 */
+.feedback-footer {
+  background-color: #3f3f3f;
+  color: #ccc;
+  text-align: center;
+  padding: 20px;
+  font-size: 12px;
+}

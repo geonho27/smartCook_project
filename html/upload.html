@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+
+  <!-- 모바일 반응형 세팅 -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>SmartCook</title>
+
+  <!-- 관련 파일 호출 -->
+  <link rel="stylesheet" href="../css/upload.css" />
+  <script src="../js/script.js" defer></script>
+
+</head>
+
+<body>
+  <main>
+  <!-- 상단 탭바 -->
+  <div class="navbar">
+        <div class="nav-left">
+          <div class="logo">SMARTCOOK</div>
+        </div>
+        <button class="login-button">Login</button>
+      </div>
+
+  <div class="btn-group">
+    <button class="btn food" onclick="showSection('food')">음식으로 탐색하기</button>
+    <button class="btn ingredient" onclick="showSection('ingredient')">재료로 탐색하기</button>
+  </div>
+
+  <!-- 음식명 입력 화면 -->
+  <div class="container" id="food-section">
+    <a href="main.html" class="home-link">← Home</a>
+    <div class="form-box">
+      <label for="food-name">음식명을 입력해주세요</label>
+      <div class="input-wrapper">
+        <input type="text" id="food-name" >
+        <img src="../images/search-icon.png" alt="돋보기 아이콘">
+      </div>
+    </div>
+  </div>
+
+  <!-- 재료 업로드 화면 -->
+  <div class="container2" id="ingredient-section" style="display: none;">
+    <a href="main.html" class="home-link">← Home</a>
+    <div class="form-box">
+      <label for="food-name">재료 사진을 업로드하세요</label>
+  <div class="upload-section">
+  <div class="file-select-btn">
+      <div class="file-info" style="display: flex; align-items: center; justify-content: center;">
+        <img src="../images/file-icon.png" alt="파일 아이콘" style="width: 44px; height: 58px;">
+        <label for="file-upload" style="font-size: 14px; color: #FFFBE9; ">파일 선택</label>
+      </div>
+      <div class="separator"></div>
+      <div class="chevron-down" onclick="document.getElementById('file-upload').click();"></div>
+      <input type="file" id="file-upload" style="display: none;" />
+    </div>
+  </div>
+  </div>
+  </main>
+
+  <!-- 하단 풋터 -->
+  <div class="feedback-footer">
+        © SmartCook. All rights reserved.
+  </div> 
+</body>
+</html>
