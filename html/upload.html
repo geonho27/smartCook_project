@@ -25,8 +25,8 @@
       </div>
 
   <div class="btn-group">
-    <button class="btn food" onclick="showSection('food')">음식으로 탐색하기</button>
-    <button class="btn ingredient" onclick="showSection('ingredient')">재료로 탐색하기</button>
+    <button id="food-btn" class="btn active-btn" onclick="showSection('food')">음식으로 탐색하기</button>
+    <button id="ingredient-btn" class="btn" onclick="showSection('ingredient')">재료로 탐색하기</button>
   </div>
 
   <!-- 음식명 입력 화면 -->
@@ -46,18 +46,141 @@
     <a href="main.html" class="home-link">← Home</a>
     <div class="form-box">
       <label for="food-name">재료 사진을 업로드하세요</label>
-  <div class="upload-section">
-  <div class="file-select-btn">
-      <div class="file-info" style="display: flex; align-items: center; justify-content: center;">
-        <img src="../images/file-icon.png" alt="파일 아이콘" style="width: 44px; height: 58px;">
-        <label for="file-upload" style="font-size: 14px; color: #FFFBE9; ">파일 선택</label>
+        <div class="upload-section">
+          <div class="dropdown-btn" id="dropdownToggle">
+            <div class="dropdown-left">
+              <img src="../images/file-icon.png" alt="파일 아이콘" style="width: 44px; height: 58px;">
+              <span>파일 선택</span>
+            </div>
+            <div class="dropdown-divider"></div>
+            <div class="dropdown-right">
+              <img src="../images/check-icon.png" alt="드롭다운 아이콘" style="width: 30px; height: 30px; position: absolute; left: 190px; ">
+            </div>
+            <div class="dropdown-menu" id="dropdownMenu">
+              <div class="dropdown-item selected">기기에서</div>
+              <div class="dropdown-item">갤러리에서</div>
+              <div class="dropdown-item">드롭박스에서</div>
+              <div class="dropdown-item">구글 드라이브에서</div>
+              <div class="dropdown-item"><strong>OneDrive에서</strong></div>
+            </div>
+          </div>
+          <input type="file" id="file-upload" style="display: none;" accept="image/*" />
+          <div class="image-preview-box">
+            <img id="preview-image" style="max-width: 100%; display: none; border-radius: 10px;" />
+          </div>
+        </div>
       </div>
-      <div class="separator"></div>
-      <div class="chevron-down" onclick="document.getElementById('file-upload').click();"></div>
-      <input type="file" id="file-upload" style="display: none;" />
+    </div> 
+  </div>
+
+  <!-- 체크박스 영역 (업로드 후 표시) -->
+  <section class="recognized" id="ingredient-buttons" style="display: none;">
+    <h4 class="recognized-title">인식된 재료</h4>
+
+    <div class="chip-box" id="recognized-list">
+      <!-- 재료 체크박스들이 여기에 들어감 -->
     </div>
-  </div>
-  </div>
+
+    <!-- 버튼을 오른쪽에 정렬하기 위한 wrapper -->
+    <div class="confirm-wrapper">
+      <button class="confirm-btn" id="toCategoryBtn">선택 완료</button>
+    </div>
+  </section>
+
+  <!-- 맞춤형 선호도 조사 -->
+  <section class="category" id="category-section" style="display: none;">
+    <h4 class="category-title">음식 분야 선택</h4>
+    <div class="chip-box">
+      <label class="chip"><input type="checkbox" name="category" class="chip-radio" /> 한식</label>
+      <label class="chip"><input type="checkbox" name="category" class="chip-radio" /> 일식</label>
+      <label class="chip"><input type="checkbox" name="category" class="chip-radio" /> 양식</label>
+      <label class="chip"><input type="checkbox" name="category" class="chip-radio" /> 중식</label>
+      <label class="chip"><input type="checkbox" name="category" class="chip-radio" /> 기타</label>
+    </div>
+    <div class="range-wrap">
+      <label>음식 간 선택</label>
+      <input type="range" min="0" max="100" value="50" id="spicyRange" />
+      <div class="range-labels">
+        <span class="left-label">약하게</span>
+        <span class="right-label">강하게</span>
+      </div>
+    </div>
+    <div class="confirm-wrapper">
+      <button class="confirm-btn" id="toRecipeBtn">선택 완료</button>
+    </div>
+  </section>
+
+  <!-- 레시피 추천 부분 -->
+  <section class="recommend" id="recipe-section" style="display: none;">
+    <p>fluffy님에게 맞춰진 추천 레시피</p>
+
+    <div class="recipe-list">
+      <div class="weather-highlight">
+        <span class="weather-label">오늘 날씨에 어울리는 음식</span>
+        <div class="recipe-card kimchi">
+          <img src="../images/kimchi.png" alt="김치찌개" />
+          <h5>🥢김치찌개 레시피</h5>
+          <ul>
+            <li>소요 시간: 30분</li>
+            <li>재료:</li>
+            <li>• 김치 (300g)</li>
+            <li>• 두부 한 모</li>
+            <li>• 목살 (200g)</li>
+            <li>• 고추가루 2큰술</li>
+          </ul>
+          <button class="btn-category-done">요리하러 가기</button>
+        </div>
+      </div>
+
+      <div class="recipe-card">
+        <img src="../images/roll.png" alt="묵은지 참치말이" />
+        <h5>🥢묵은지 참치말이 레시피</h5>
+        <ul>
+          <li>소요 시간: 15분</li>
+          <li>재료:</li>
+          <li>• 잡곡밥 1.5공기 (300g)</li>
+          <li>• 참치 통조림 (소) 2개</li>
+          <li>• 묵은지 6-8장</li>
+          <li>• 마요네즈 2큰술</li>
+        </ul>
+        <button class="btn-category-done">요리하러 가기</button>
+      </div>
+
+      <div class="recipe-card">
+        <img src="../images/noodle.png" alt="김치말이국수" />
+        <h5>🥢김치말이 국수 레시피</h5>
+        <ul>
+          <li>소요 시간: 10분</li>
+          <li>재료:</li>
+          <li>• 김치(200g)</li>
+          <li>• 소면</li>
+          <li>• 얼음</li>
+          <li>• 식초</li>
+        </ul>
+        <button class="btn-category-done">요리하러 가기</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- 추가재료 선택 -->
+  <section class="extra" id="extra-section" style="display: none;">
+      <div class="extra-header">
+        <h4 class="extra-title">추가 재료 선택</h4>
+        <span class="small-text skip-extra" onclick="location.href='recipe.html'">추가 재료 없음 →</span>
+      </div>
+      <div class="chip-box">
+        <label class="chip"><input type="checkbox" name="extra" class="chip-radio" /> 깻잎</label>
+        <label class="chip"><input type="checkbox" name="extra" class="chip-radio" /> 들기름</label>
+        <label class="chip"><input type="checkbox" name="extra" class="chip-radio" /> 소금</label>
+        <label class="chip"><input type="checkbox" name="extra" class="chip-radio" /> 잡곡밥</label>
+        <label class="chip"><input type="checkbox" name="extra" class="chip-radio" /> 통깨</label>
+        <label class="chip"><input type="checkbox" name="extra" class="chip-radio" /> 후추</label>
+      </div>
+      <div class="cart-wrapper">
+        <button class="cart-btn" onclick="location.href='cart.html'">장바구니로 이동</button>
+      </div>
+    </section>
+
   </main>
 
   <!-- 하단 풋터 -->
