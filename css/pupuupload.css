@@ -1,0 +1,846 @@
+@font-face {
+    font-family: 'BMHANNA';
+    src: url('../fonts/BM-HANNA.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+  }
+
+@font-face {
+    font-family: 'Alexandria-Regular';
+    src: url('../fonts/Alexandria-Regular.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'LilitaOne-Regular';
+    src: url('../fonts/LilitaOne-Regular.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'TitanOne-Regular';
+    src: url('../fonts/TitanOne-Regular.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}
+  
+  
+  body {
+    background-color: #fffbe9;
+    margin: 0;
+    padding: 60px 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 120px;
+    justify-content: center;
+    font-family: 'BMHANNA', sans-serif;
+    padding-top: 150px;
+  }
+
+  /* 모든 입력 요소에 공통 폰트 적용 */
+        input,
+        textarea,
+        select,
+        button,
+        .menu-input,
+        .menu-small-input,
+        .menu-subscribe-box button,
+        .menu-password-change-box {
+        font-family: 'BMHANNA', sans-serif;
+        }
+
+  /* placeholder까지 폰트 통일 (표준 + 브라우저별 대응 포함) */
+input::placeholder,
+textarea::placeholder {
+  font-family: 'BMHANNA', sans-serif;
+  color: #c3a897;
+}
+
+input::-webkit-input-placeholder,
+textarea::-webkit-input-placeholder {
+  font-family: 'BMHANNA', sans-serif;
+}
+
+input:-ms-input-placeholder,
+textarea:-ms-input-placeholder {
+  font-family: 'BMHANNA', sans-serif;
+}
+
+input::-moz-placeholder,
+textarea::-moz-placeholder {
+  font-family: 'BMHANNA', sans-serif;
+  opacity: 1; /* Firefox는 opacity가 낮게 나옴 */
+}
+
+
+/* GLOBAL NAVBAR */
+.navbar {
+    width: 100%;
+    height: 60px;
+    background-color: #e3caa5; 
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 40px;
+    box-sizing: border-box;
+    font-family: 'LilitaOne-Regular', sans-serif;
+    position: fixed; /* 항상 상단 고정 */
+    top: 0;
+    left: 0;
+    z-index: 999;
+  }
+  
+  .navbar-left {
+    font-size: 25px;
+    color: #ad8b73;
+    font-weight: bold;
+    letter-spacing: 2px;
+  }
+  
+  .navbar-logout-btn {
+    background-color: #ad8b73;
+    color: #fffbe9;
+    font-family: 'TitanOne-Regular', sans-serif;
+    font-size: 14px;
+    border: none;
+    border-radius: 6px;
+    padding: 6px 14px;
+    cursor: pointer;
+  }
+  
+  .navbar-logout-btn:hover {
+    background-color: #97795e;
+  }
+  
+
+
+/* cart */
+
+
+.cart-container {
+    position: relative;
+    width: 1055px;
+    height: 699px;
+    margin: 40px auto;
+    background-color: white;
+    border: 1.5px solid #CEAB93;
+    border-radius: 10px;
+    box-sizing: border-box;
+    padding: 60px 120px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+  
+  .cart-back-link {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    font-size: 20px;
+    color: #CEAB93;
+    text-decoration: none;
+    margin-bottom: 40px;
+    display: inline-block;
+  }
+  
+  h2 {
+    font-size: 30px;
+    color: #AD8B73;
+    margin: 10px 0 5px;
+    margin-top: 60px;
+  }
+  
+  hr {
+    border: none;
+    border-top: 3px solid #AD8B73;
+    margin-top: 20px;
+    margin-bottom: 50px;
+  }
+  
+  .cart-item-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    row-gap: 60px;
+    column-gap: 60px;
+  }
+  
+  .cart-item-wrapper {
+    display: flex;
+    align-items: center;
+    width: 350px;
+    height: 65px;
+  }
+  
+  .cart-item {
+    width: 296px;
+    height: 65px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border: 3px solid #CEAB93;
+    border-radius: 10px;
+    padding: 0 10px;
+    box-sizing: border-box;
+    font-size: 30px;
+    color: #76573A;
+  }
+  
+  .cart-item-name {
+    margin-right: 8px;
+  }
+  
+  .cart-btn-group {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+  
+  .cart-btn {
+    font-size: 45px;
+    background: none;
+    border: none;
+    color: #76573A;
+    cursor: pointer;
+    padding: 0;
+    width: 20px;
+  }
+  
+  
+  .cart-count {
+    border: 3px solid #CEAB93;
+    border-radius: 10px;
+    padding: 0px 0;
+    width: 30px;
+    text-align: center;
+    font-size: 30px;
+  }
+  
+  .cart-trash {
+    width: 50px;
+    height: 50px;
+    margin-left: 10px;
+    cursor: pointer;
+  }
+  
+  .cart-go-button-wrapper {
+    display: flex;
+    justify-content: flex-end;
+  }
+  
+  .cart-go-button {
+    background-color: #CEAB93;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    padding: 10px 20px;
+    font-size: 20px;
+    cursor: pointer;
+    box-shadow: 2px 2px 6px rgba(0, 0, 0, 0.2);
+  }
+
+
+
+/* recipe */
+
+
+.recipe-container {
+    width: 1055px;
+    min-height: 1040px;
+    background-color: #fff;
+    border: 1px solid #CEAB93;
+    border-radius: 10px;
+    padding: 30px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 30px;
+  }
+
+  .recipe-content {
+    display: flex;
+    width: 100%;
+    gap: 20px;
+  }
+
+  .recipe-left-box {
+    width: 457px;
+    height: 962px;
+    border: 3px dashed #CEAB93;
+    border-radius: 10px;
+    padding: 20px;
+    overflow-y: auto;
+  }
+
+  .recipe-right-box {
+    width: 457px;
+    height: 734px;
+    border: 3px dashed #CEAB93;
+    border-radius: 10px;
+    padding: 20px;
+    margin-left: 50px;
+  }
+
+  .recipe-left-box h2,
+  .recipe-right-box h2 {
+    font-size: 26px;
+    color: #Ad8b73;
+    margin-bottom: 30px;
+  }
+
+  p {
+    color: #Ad8b73;
+    margin-bottom: 20px;
+  }
+
+  .recipe-subheading {
+    font-size: 18px;
+    margin-bottom: 30px;
+    color: #AD8B73;
+  }
+
+  ul, ol {
+    padding-left: 18px;
+    font-size: 18px;
+    line-height: 1.6;
+    margin-bottom: 30px;
+    color: #AD8B73;
+  }
+
+  ol li {
+    margin-bottom: 6px;
+  }
+
+  .recipe-video-slot {
+    width: 420px;
+    height: 110px;
+    background-color: #f0f0f0;
+    border: 1px solid #ccc;
+    margin-bottom: 40px;
+    border-radius: 4px;
+    box-shadow: 2px 4px 10px rgba(0, 0, 0, 0.2); /* 그림자 추가 */
+  }
+
+  .recipe-bottom-button {
+    margin-top: 30px;
+    text-align: center;
+    width: 1055px; /* 컨테이너와 같은 너비 */
+  }
+
+  .recipe-bottom-button button {
+    background-color: #CEAB93;
+    border: none;
+    color: white;
+    padding: 12px 35px;
+    font-size: 14px;
+    border-radius: 5px;
+    font-family: 'BMHANNA', sans-serif;
+    cursor: pointer;
+    box-shadow: 2px 4px 10px rgba(0, 0, 0, 0.2); /* 그림자 추가 */
+    transition: all 0.3s ease;
+  }
+
+  .recipe-bottom-button button:hover {
+    background-color: #c6a97d;
+  }
+
+
+
+
+/* menu */
+
+
+.menu-box {
+    width: 780px;
+    border: 1px solid #ceba93;
+    border-radius: 8px;
+    background-color: #fef9f5;
+    padding: 33px 100px 80px;
+    box-sizing: border-box;
+  }
+  .menu-breadcrumb-text {
+    font-family: 'Alexandria-Regular', sans-serif;
+    font-size: 12px;
+    color: #AD8B73;
+    margin-bottom: -5px;
+    margin-left: -80px;
+    transform: translateY(-26px);
+  }
+  .menu-breadcrumb-line {
+    display: block;
+    margin-top: -15px;
+    width: 135%;
+    height: 1px;
+    margin-left: -17.5%;
+    background-color: #ceba93;
+    margin-bottom: 40px;
+  }
+  .menu-form-title {
+    font-weight: 600;
+    font-size: 18px;
+    margin-bottom: 20px;
+    margin-top: 20px;
+    margin-left: 20px;
+    color: #76573a;
+  }
+  .menu-form-row {
+    display: flex;
+    align-items: center;
+    margin-bottom: 16px;
+    margin-left: 20px;
+  }
+  .menu-form-row label {
+    width: 80px;
+    margin-right: 70px;
+    color: #AD8B73;
+    font-weight: 500;
+    letter-spacing: -0.5px;
+  }
+
+  .menu-input {
+    flex: 1;
+    padding: 4px 8px;
+    background-color: #fef9f5;
+    border: 2px solid #ad8b73;
+    line-height: 1.2;
+    border-radius: 6px;
+    font-size: 12px;
+    color: #5f4436;
+    outline: none;
+  }
+
+  .menu-small-input {
+    width: 100px;
+    flex: none;
+    margin-left: 10px;
+    background-color: #fef9f5;
+    color: #5f4436;
+    border: 1px solid #D4B69F;
+    border-radius: 6px;
+    padding: 4px 8px;
+    font-size: 12px;
+    cursor: text;
+  }
+
+  .menu-subscribe-box {
+    position: relative;
+    padding: 40px 35px 50px;
+  }
+  .menu-subscribe-box button {
+    position: absolute;
+    top: 90px;
+    right: 30px;
+    padding: 3px 24px;
+    background-color: #ad8b73;
+    color: #fffbe9;
+    font-weight: bold;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+  }
+  .menu-subscribe-box p {
+    font-size: 13px;
+    color: #ad8b73;
+    line-height: 1.6;
+    margin-top: 20px;
+    margin-bottom: 10px;
+  }
+  
+  .menu-highlight {
+    color: #AD8B73;
+    font-weight: bold;
+  }
+
+  .menu-arrow-icon {
+    width: 10px;           /* 아이콘 너비 */
+    height: 10px;          /* 아이콘 높이 */
+    vertical-align: middle;
+    margin-right: 1px;   
+  }
+
+
+  .menu-password-change-box {
+    border: 2px solid #ad8b73;
+    border-radius: 6px;
+    background-color: #fef9f5;
+    padding: 0 8px;               /* ← 위아래 padding 제거 */
+    font-size: 12px;
+    color: #ad8b73;
+    margin-left: 10px;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    height: 25px;                 /* ✅ input 높이랑 완전 일치 */
+    line-height: 1;               /* ✅ 텍스트 중앙 정렬 */
+    box-sizing: border-box;
+  }
+
+
+
+/* menu2 */
+
+
+.menu2-container {
+    background-color: #fef9f5;
+    border: 1px solid #d4b69f;
+    border-radius: 8px;
+    width: 640px;
+    padding: 40px 60px 60px;
+    box-sizing: border-box;
+  }
+
+  .menu2-breadcrumb {
+    font-family: 'Alexandria-Regular', sans-serif;
+    margin-top: 0px;
+    font-size: 12px;
+    color: #AD8B73;
+    margin-bottom: 40px;
+  }
+
+  .menu2-info-row {
+display: flex;
+align-items: baseline;
+margin-bottom: 10px;
+}
+
+.menu2-info-label {
+width: 80px;
+color: #AD8B73;
+text-align: left;
+}
+
+.menu2-info-value {
+color: #ceab93;  /* 원하는 색상으로 */
+font-weight: bold;
+text-align: left;
+margin-left: 80px;
+}
+
+  .menu2-info-value.underline {
+    text-decoration: underline;
+  }
+
+  .menu2-divider {
+height: 2px;
+width: 100%;
+background-image: repeating-linear-gradient(to right, #AD8B73, #AD8B73 5px, transparent 5px, transparent 10px);
+margin: 50px 0 40px;
+border: none;
+}
+
+
+  .menu2-section-title {
+    text-align: center;
+    font-size: 18px;
+    font-weight: bold;
+    color: #ad8b73;
+    margin-bottom: 30px;
+  }
+
+  .menu2-form-row {
+    display: flex;
+    align-items: center;
+    margin-bottom: 15px;
+    font-size: 14px;
+    color: #5f4436;
+  }
+
+  .menu2-form-row label {
+    width: 100px;
+    color: #AD8B73;
+  }
+
+  .menu2-form-row input[type="text"] {
+    flex: 1;
+    padding: 4px 8px;
+    font-size: 12px;
+    border: 2px solid #ad8b73;
+    border-radius: 6px;
+    background-color: #fef9f5;
+    color: #5f4436;
+    outline: none;
+  }
+
+
+  .menu2-input[type="radio"] {
+appearance: none;
+-webkit-appearance: none;
+width: 16px;
+height: 16px;
+background-color: #FFFBE9;
+background-image: radial-gradient(circle, rgba(206, 171, 147, 0.3) 100%);
+border-radius: 50%;
+display: flex;
+align-items: center;
+justify-content: center;
+cursor: pointer;
+position: relative;
+border: 2px solid transparent;
+transition: border 0.3s ease;
+}
+
+/* 선택된 상태에서만 테두리 추가 */
+.menu2-input[type="radio"]:checked {
+border: 2px solid #AD8B73;
+}
+
+/* 내부 점 */
+.menu2-input[type="radio"]::before {
+content: "";
+width: 8px;
+height: 8px;
+border-radius: 50%;
+background-color: transparent;
+transition: background-color 0.3s ease;
+}
+
+/* 선택된 경우만 내부 점 색칠 */
+.menu2-input[type="radio"]:checked::before {
+background-color: #AD8B73;
+}
+
+
+
+
+
+
+
+
+  .menu2-radio-group {
+    display: flex;
+    gap: 5px;
+    align-items: center;
+  }
+
+  .menu2-radio-group label {
+    font-size: 12px;
+    color: #ceab93;
+    display: flex;
+    align-items: center;
+    gap: 3px;
+  }
+
+  .menu2-tag-buttons {
+    display: flex;
+    gap: 6px;
+    margin-left: 100px;
+    margin-bottom: 20px;
+  }
+
+  .menu2-tag-button {
+    font-size: 12px;
+    padding: 3px 8px;
+    background-color: #fef9f5;
+    border: 2px solid #ad8b73;
+    border-radius: 6px;
+    color: #5f4436;
+    cursor: pointer;
+  }
+
+
+/* signup */
+
+
+.signup-container {
+    position: relative;
+    max-width: 800px;
+    margin: auto;
+    width: 1055px;
+    height: 771px;
+    background-color: #fef9f5;
+    border: 1px solid #CEAB93;
+    border-radius: 10px;
+    padding: 40px 60px;
+    box-sizing: border-box;
+  }
+
+  
+  .signup-home-link {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+  }
+
+  .signup-home-link a {
+    font-size: 14px;
+    color: #CEAB93;
+    text-decoration: none;
+    font-family: 'Alexandria', sans-serif;
+  }
+
+  .signup-form-group {
+    display: flex;
+    align-items: center;
+    margin-bottom: 22px;
+  }
+
+  .signup-form-group label {
+    flex: 0 0 120px;
+    font-weight: 400;
+    color: #AD8B73;
+    font-size: 16px;
+  }
+
+  .signup-form-group label .signup-star {
+    color: #E95353;
+    margin-left: 3px;
+  }
+
+  .signup-form-group .signup-input[type="text"],
+  .signup-form-group .signup-input[type="password"] {
+    flex: 1;
+    padding: 10px 14px;
+    border: 1.5px solid #ad8b73;
+    border-radius: 8px;
+    font-size: 15px;
+    box-sizing: border-box;
+    outline: none;
+    background-color: #fef9f5;
+  }
+
+  .signup-form-group .signup-check-btn {
+    margin-left: 10px;
+    width: 154px;
+    height: 40px;
+    background-color: #fef9f5;
+    border: 2px solid #8A6952;
+    border-radius: 8px;
+    color: #8A6952;
+    font-size: 16px;
+    font-family: 'BMHANNA', sans-serif;
+    font-weight: 400;
+    cursor: pointer;
+  }
+
+  .signup-submit-btn {
+    margin-top: 40px;
+    width: 100%;
+    padding: 16px 0;
+    background-color: #AD8B73;
+    color: #FFFBE9;
+    border: none;
+    border-radius: 8px;
+    font-size: 18px;
+    font-family: 'BMHANNA', sans-serif;
+    cursor: pointer;
+  }
+
+  .signup-submit-btn:hover {
+    background-color: #a37865;
+  }
+
+
+
+  /* login */
+
+
+
+.login-container {
+    width: 1055px;
+    height: 771px;
+    background-color: #fef9f5;
+    border: 1px solid #CEAB93;
+    border-radius: 10px;
+    padding: 40px 60px;
+    position: relative;
+  }
+
+  .login-home-link {
+    font-size: 14px;
+    color: #CEAB93;
+    position: absolute;
+    top: 40px;
+    left: 60px;
+    font-family: 'Alexandria-Regular', sans-serif;
+  }
+
+  .login-form-box {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    margin-top: 180px;
+  }
+
+  .login-input-box {
+    width: 500px;
+    height: 44px;
+    display: flex;
+    align-items: center;
+    border: 2px solid #ad8b73;
+    border-radius: 6px;
+    padding: 10px 12px;
+    margin-bottom: 18px;
+    background-color: #fef9f5;
+    color: #ad8b73;
+  }
+
+  .login-input-box img {
+    width: 20px;
+    height: 20px;
+    margin-right: 10px;
+  }
+
+  .login-input-box input {
+    border: none;
+    outline: none;
+    font-size: 16px;
+    background: transparent;
+    width: 100%;
+  }
+
+  .login-login-btn {
+    width: 500px;
+    height: 50px;
+    background-color: #ad8b73;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-size: 18px;
+    margin-bottom: 15px;
+    font-family: 'BMHANNA', sans-serif;
+  }
+
+  .login-options {
+    width: 500px;
+    display: flex;
+    justify-content: space-between;
+    font-size: 14px;
+    color: #ad8b73;
+    margin-bottom: 40px;
+  }
+
+  .login-social-login {
+    text-align: center;
+    color: #ad8b73;
+  }
+
+  .login-social-login p {
+    margin-bottom: 20px;
+    font-weight: 400;
+    font-family: 'Tilt Warp', sans-serif;
+  }
+
+  .login-icons {
+    display: flex;
+    justify-content: center;
+    gap: 30px;
+  }
+
+  .login-icon {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    background-color: #ddd;
+    background-size: cover;
+    background-position: center;
+  }
+
+  .login-icon.fb { background-image: url('../images/login/facebook.png'); }
+  .login-icon.ig { background-image: url('../images/login/instar.png'); }
+  .login-icon.kt { background-image: url('../images/login/kakao.png'); }
+
