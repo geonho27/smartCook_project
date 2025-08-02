@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>구독 서비스 페이지</title>
+  <link rel="stylesheet" href="../css/upload.css">
+</head>
+<body>
+  <div class="navbar">
+    <div class="navbar-left">SMARTCOOK</div>
+    <button class="navbar-logout-btn">Logout</button>
+  </div>
+
+  
+  <div class="menu2-container">
+    <div class="menu2-breadcrumb">← Home</div>
+
+    <!-- 회원정보 -->
+    <div class="menu2-info-row">
+      <div class="menu2-info-label">이름</div>
+      <div class="menu2-info-value">fluffy</div>
+    </div>
+    <div class="menu2-info-row">
+      <div class="menu2-info-label">아이디</div>
+      <div class="menu2-info-value">fluffy1234</div>
+    </div>
+    <div class="menu2-info-row">
+      <div class="menu2-info-label">전화번호</div>
+      <div class="menu2-info-value">010-1234-1234</div>
+    </div>
+    <div class="menu2-info-row">
+      <div class="menu2-info-label">이메일</div>
+      <div class="menu2-info-value underline">fluffy1234@naver.com</div>
+    </div>
+
+    <hr class="menu2-divider">
+
+    <!-- 구독서비스 -->
+    <div class="menu2-section-title">구독서비스</div>
+
+    <div class="menu2-form-row">
+      <label>영양정보</label>
+      <div class="menu2-radio-group">
+        <label><input type="radio" class ="menu2-input" name="nutri"> 당뇨</label>
+        <label><input type="radio" class ="menu2-input" name="nutri"> 고혈압</label>
+        <label><input type="radio" class ="menu2-input" name="nutri"> 저염식</label>
+        <label><input type="radio" class ="menu2-input" name="nutri"> 다이어트 식단</label>
+      </div>
+    </div>
+
+    <!-- 선호 재료 -->
+<div class="menu2-form-row">
+  <label>선호하는 재료</label>
+  <input type="text" class="menu2-input" id="prefer-input" placeholder="입력 후 엔터">
+</div>
+<div class="menu2-tag-buttons" id="prefer-tags"></div>
+
+<!-- 비선호 재료 -->
+<div class="menu2-form-row">
+  <label>비선호하는 재료</label>
+  <input type="text" class="menu2-input" id="nonprefer-input" placeholder="입력 후 엔터">
+</div>
+<div class="menu2-tag-buttons" id="nonprefer-tags"></div>
+
+  </div>
+  <script src="../js/script.js"></script>
+</body>
+</html>

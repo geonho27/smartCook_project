@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>회원가입</title>
+  <link rel="stylesheet" href="../css/upload.css">
+</head>
+<body>
+  <div class="navbar">
+    <div class="navbar-left">SMARTCOOK</div>
+    <button class="navbar-logout-btn">Logout</button>
+  </div>
+  
+
+  <div class="signup-container">
+    <div class="signup-home-link">
+      <a href="#">&larr; Home</a>
+    </div>
+
+    <form>
+      <div class="signup-form-group">
+        <label>아이디<span class="signup-star">*</span></label>
+        <input type="text" class="signup-input" name="userid">
+        <button type="button" class="signup-check-btn">중복확인</button>
+      </div>
+
+      <div class="signup-form-group">
+        <label>비밀번호<span class="signup-star">*</span></label>
+        <input type="password" class="signup-input" name="password">
+      </div>
+
+      <div class="signup-form-group">
+        <label>비밀번호 확인<span class="signup-star">*</span></label>
+        <input type="password" class="signup-input" name="password_confirm">
+      </div>
+
+      <div class="signup-form-group">
+        <label>이름<span class="signup-star">*</span></label>
+        <input type="text" class="signup-input" name="username">
+      </div>
+
+      <div class="signup-form-group">
+        <label>이메일<span class="signup-star">*</span></label>
+        <input type="text" class="signup-input" name="email">
+        <button type="button" class="signup-check-btn">중복확인</button>
+      </div>
+
+      <button type="submit" class="signup-submit-btn">회원가입하기</button>
+    </form>
+  </div>
+<script src="../js/script.js"></script>
+</body>
+</html>
