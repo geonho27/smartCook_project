@@ -29,14 +29,10 @@
 
 @font-face {
     font-family: 'TiltWarp-Regular-VariableFont_XROT,YROT';
-    src: url('fonts/TiltWarp-Regular-VariableFont_XROT,YROT.ttf') format('truetype');
+    src: url('../fonts/TiltWarp-Regular-VariableFont_XROT,YROT.ttf') format('truetype');
   }
   
-  @font-face {
-    font-family: 'TitanOne-Regular';
-    src: url('fonts/TitanOne-Regular.ttf') format('truetype');
-  }
-  
+
   body.mainpage {
     background-color: #fffbe9;
     margin: 0;
@@ -94,48 +90,89 @@ textarea::-moz-placeholder {
 }
 
 
-/* global navbar */
-
-
-/* GLOBAL NAVBAR */
+/* login, signup navbar */
 .navbar {
-    width: 100%;
-    height: 60px;
-    background-color: #e3caa5; 
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 0 40px;
-    box-sizing: border-box;
-    font-family: 'LilitaOne-Regular', sans-serif;
-    position: fixed; /* 항상 상단 고정 */
-    top: 0;
-    left: 0;
-    z-index: 999;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 1000;
+  background-color: #e3caa5;
+  padding: 10px 40px; /* ← 좌우 여백 더 넓게 */
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid #d0bca0;
+}
+
+.logo {
+  font-family: 'LilitaOne-Regular';
+  font-weight: 400;
+  font-size: 26px;
+  color: #ad8b73;
+  letter-spacing: 1px;
+  
+}
+
+.nav-left {
+  display: flex;
+  align-items: center;
+  gap: 40px; /* ← 로고와 메뉴 사이 간격 */
+}
+
+.login-button {
+  font-family: 'TitanOne-Regular';
+  margin-right: 100px;
+  background-color: #ad8b73;
+  color: #fffbe9;
+  border: none;
+  padding: 6px 15px;
+  border-radius: 5px;
+  font-weight: 400;
+  font-size: 14px;
+  text-shadow: 0 0 1px rgba(0, 0, 0, 0.3);
+  cursor: pointer;
+  
+}
+
+
+/* mainpage navbar */
+.main-navbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 1000;
+  background-color: #e3caa5;
+  padding: 10px 40px; /* ← 좌우 여백 더 넓게 */
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid #d0bca0;
   }
   
-  .navbar-left {
+  .main-navbar-left {
     font-size: 25px;
     color: #ad8b73;
     font-weight: bold;
     letter-spacing: 2px;
+    font-family: 'TiltWarp-Regular-VariableFont_XROT,YROT';
   }
   
-  .navbar-logout-btn {
+  .main-navbar-logout-btn {
+    font-family: 'TitanOne-Regular';
+    margin-right: 40px;
     background-color: #ad8b73;
     color: #fffbe9;
-    font-family: 'TitanOne-Regular', sans-serif;
-    font-size: 14px;
     border: none;
-    border-radius: 6px;
-    padding: 6px 14px;
+    padding: 6px 15px;
+    border-radius: 5px;
+    font-weight: 400;
+    font-size: 14px;
+    text-shadow: 0 0 1px rgba(0, 0, 0, 0.3);
     cursor: pointer;
-  }
+    }
   
-  .navbar-logout-btn:hover {
-    background-color: #97795e;
-  }
-
 
 /* mainpage */
 

@@ -813,44 +813,7 @@ textarea::-moz-placeholder {
 }
 
 
-/* GLOBAL NAVBAR */
-.navbar {
-    width: 100%;
-    height: 60px;
-    background-color: #e3caa5; 
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 0 40px;
-    box-sizing: border-box;
-    font-family: 'LilitaOne-Regular', sans-serif;
-    position: fixed; /* 항상 상단 고정 */
-    top: 0;
-    left: 0;
-    z-index: 999;
-  }
-  
-  .navbar-left {
-    font-size: 25px;
-    color: #ad8b73;
-    font-weight: bold;
-    letter-spacing: 2px;
-  }
-  
-  .navbar-logout-btn {
-    background-color: #ad8b73;
-    color: #fffbe9;
-    font-family: 'TitanOne-Regular', sans-serif;
-    font-size: 14px;
-    border: none;
-    border-radius: 6px;
-    padding: 6px 14px;
-    cursor: pointer;
-  }
-  
-  .navbar-logout-btn:hover {
-    background-color: #97795e;
-  }
+
   
 
 
@@ -1098,6 +1061,7 @@ textarea::-moz-placeholder {
     background-color: #fef9f5;
     padding: 33px 100px 80px;
     box-sizing: border-box;
+    position: relative;
   }
   .menu-breadcrumb-text {
     font-family: 'Alexandria', sans-serif;
@@ -1108,14 +1072,15 @@ textarea::-moz-placeholder {
     transform: translateY(-26px);
   }
   .menu-breadcrumb-line {
-    display: block;
-    margin-top: -15px;
-    width: 135%;
+    position: absolute;
+    left: 0;
+    right: 0;
     height: 1px;
-    margin-left: -17.5%;
-    background-color: #ceba93;
-    margin-bottom: 40px;
+    background-color: #ceab93;;
   }
+  
+  
+  
   .menu-form-title {
     font-weight: 600;
     font-size: 18px;
