@@ -1,45 +1,43 @@
 import requests
-from bs4 import BeautifulSoup
-import time
 import json
+import time
 
-def get_recipe_ids_from_page(page):
-    url = f"https://www.10000recipe.com/recipe/list.html?order=reco&page={page}"
-    res = requests.get(url, headers={"User-Agent": "Mozilla/5.0"})
-    soup = BeautifulSoup(res.text, "html.parser")
-    links = soup.select("ul.common_sp_list_ul.ea4 li a.common_sp_link")
-    return [link["href"].split("/")[-1] for link in links if "/recipe/" in link["href"]]
+API_KEY = "975d010697cf4f5a9e7e"
+all_recipes = []
 
-def crawl_recipe_detail(recipe_id):
-    url = f"https://www.10000recipe.com/recipe/{recipe_id}"
-    res = requests.get(url, headers={"User-Agent": "Mozilla/5.0"})
-    soup = BeautifulSoup(res.text, "html.parser")
+# 전체 개수 자동 추출
+url = f"http://openapi.foodsafetykorea.go.kr/api/{API_KEY}/COOKRCP01/json/1/1"
+res = requests.get(url)
+total_count = int(res.json()["COOKRCP01"]["total_count"])
+print(f"총 레시피 수: {total_count}")
 
-    try:
-        return {
-            "id": recipe_id,
-            "title": soup.select_one('.view2_summary h3').text.strip(),
-            "ingredients": [i.text.strip() for i in soup.select('.ready_ingre3 ul li')],
-            "steps": [s.text.strip() for s in soup.select('.view_step_cont')],
-            "image": soup.select_one('.centeredcrop img')['src']
-        }
-    except Exception as e:
-        print(f" {recipe_id} 실패:", e)
-        return None
+# 100개 단위로 반복
+for start in range(1, total_count+1, 100):
+    end = min(start + 99, total_count)
+    url = f"http://openapi.foodsafetykorea.go.kr/api/{API_KEY}/COOKRCP01/json/{start}/{end}"
+    res = requests.get(url)
 
-all_ids = set()
-for page in range(1, 51):
-    all_ids.update(get_recipe_ids_from_page(page))
-    time.sleep(1)
+    if res.status_code == 200:
+        rows = res.json().get("COOKRCP01", {}).get("row", [])
+        for r in rows:
+            recipe = {
+                "id": r.get("RCP_SEQ"),
+                "title": r.get("RCP_NM"),
+                "ingredients": r.get("RCP_PARTS_DTLS", "").replace('\n', '').split(", "),
+                "steps": [
+                    r.get(f"MANUAL{i:02d}", "").strip()
+                    for i in range(1, 21)
+                    if r.get(f"MANUAL{i:02d}", "").strip()
+                ],
+                "image": r.get("ATT_FILE_NO_MAIN", "")
+            }
+            all_recipes.append(recipe)
+    else:
+        print(f"{start}~{end} 실패")
 
-recipes = []
-for i, rid in enumerate(list(all_ids)[:100], 1):
-    print(f" ({i}) {rid}")
-    result = crawl_recipe_detail(rid)
-    if result: recipes.append(result)
-    time.sleep(1)
+    time.sleep(0.7)   # API 서버에 부담 주지 않게 살짝 대기
 
-with open("recipes/data/popular_recipes.json", "w", encoding="utf-8") as f:
-    json.dump(recipes, f, ensure_ascii=False, indent=2)
+with open("recipes/data/cookrcp01.json", "w", encoding="utf-8") as f:
+    json.dump(all_recipes, f, ensure_ascii=False, indent=2)
 
-print(f" 총 {len(recipes)}개 저장 완료")
+print(f"{len(all_recipes)}개 레시피 저장 완료")
