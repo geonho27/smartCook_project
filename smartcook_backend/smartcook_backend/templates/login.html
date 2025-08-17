@@ -5,39 +5,47 @@
   <title>로그인 페이지</title>
   {% load static %}
   <link rel="stylesheet" href="{% static 'css/main.css' %}">
-
-  
 </head>
 <body class="authpage">
+
   <div class="navbar">
     <div class="nav-left">
       <div class="logo">SMARTCOOK</div>
     </div>
-    <button class="login-button">Login</button>
   </div>
 
-  
   <div class="login-container">
-    <div class="login-home-link">← Home</div>
+    <div class="login-home-link"><a href="{% url 'mainpage' %}">← Home</a></div>
 
     <div class="login-form-box">
-      <div class="login-input-box">
-        <img src="{% static 'images/login/people.png' %}" alt="user-icon" />
-        <input type="text" id="username" class="login-input" placeholder="ID">
-      </div>
-      <div class="login-input-box">
-        <img src="{% static 'images/login/lock.png' %}" alt="lock-icon" />
-        <input type="password" id="password" class="login-input" placeholder="Password">
-      </div>
-      
-      <button class="login-login-btn" onclick="handleLogin()">로그인하기</button>
-      
-    
-      
+
+      <form method="POST" action="{% url 'login' %}">
+        {% csrf_token %}
+
+        {% if messages %}
+          <div class="login-error">
+            {% for message in messages %}
+              <p>{{ message }}</p>
+            {% endfor %}
+          </div>
+        {% endif %}
+
+        <div class="login-input-box">
+          <img src="{% static 'images/login/people.png' %}" alt="user-icon" />
+          <input type="text" name="userid" class="login-input" placeholder="ID" required>
+        </div>
+
+        <div class="login-input-box">
+          <img src="{% static 'images/login/lock.png' %}" alt="lock-icon" />
+          <input type="password" name="password" class="login-input" placeholder="Password" required>
+        </div>
+
+        <button type="submit" class="login-login-btn">로그인하기</button>
+      </form>
 
       <div class="login-options">
         <label><input type="checkbox" class="login-input"> 아이디 저장</label>
-        <div>회원가입</div>
+        <div><a href="{% url 'signup' %}">회원가입</a></div>
       </div>
 
       <div class="login-social-login">
@@ -53,11 +61,9 @@
             <div class="login-icon kt"></div>
           </a>
         </div>
-        
       </div>
     </div>
   </div>
-  <script src="{% static 'js/main.js' %}"></script>
-
+  <script src="{% static 'js/script.js' %}"></script>
 </body>
 </html>

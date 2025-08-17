@@ -797,7 +797,8 @@ form.signup{
   }
 
   .signup-form-group .signup-input[type="text"],
-  .signup-form-group .signup-input[type="password"] {
+  .signup-form-group .signup-input[type="password"],
+  .signup-form-group .signup-input[type="email"] {
     flex: 1;
     padding: 10px 14px;
     border: 1.5px solid #ad8b73;
@@ -954,4 +955,20 @@ form.signup{
   .login-icon.fb { background-image: url('/static/images/login/facebook.png'); }
   .login-icon.ig { background-image: url('/static/images/login/instar.png'); }
   .login-icon.kt { background-image: url('/static/images/login/kakao.png'); }
+
+
+  .login-home-link a,
+.login-options a {
+  color: #ad8b73;
+  text-decoration: none;
+  font-weight: bold;
+}
+
+.login-home-link a:hover,
+.login-options a:hover {
+  color: #8a6d5c;
+  text-decoration: underline;
+}
+
+  
 

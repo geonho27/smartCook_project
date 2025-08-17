@@ -19,7 +19,10 @@
             <a href="#feedback">Feedback</a>
           </div>
         </div>
-        <button class="main-login-button">Login</button>
+        <form method="POST" action="/login/" style="display:inline;">
+          {% csrf_token %}
+          <button type="submit" class="main-login-button">Login</button>
+        </form>
       </div>
 
       <section id="home">
