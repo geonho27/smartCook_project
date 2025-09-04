@@ -1,0 +1,116 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SmartCook</title>
+
+  <!-- 스타일 & 스크립트 -->
+  <link rel="stylesheet" href="{% static 'css/upload.css' %}" />
+  <script src="{% static 'js/script.js' %}" defer></script>
+</head>
+<body>
+  <!-- CSRF (fetch용) -->
+  <form id="csrf-form" style="display:none;">{% csrf_token %}</form>
+
+  <main>
+    <!-- 상단 네비 -->
+    <div class="navbar">
+      <div class="nav-left"><div class="logo">SMARTCOOK</div></div>
+      <button class="login-button">Login</button>
+    </div>
+
+    <!-- 탭 버튼 -->
+    <div class="btn-group">
+      <button id="food-btn" class="btn" onclick="showSection('food')">음식으로 탐색하기</button>
+      <button id="ingredient-btn" class="btn active-btn" onclick="showSection('ingredient')">재료로 탐색하기</button>
+    </div>
+
+    <!-- 음식 검색(패스 섹션) -->
+    <div class="container" id="food-section" style="display:none;">
+      <a href="mainpage.html" class="home-link">← Home</a>
+      <div class="form-box">
+        <label for="food-name">음식명을 입력해주세요</label>
+        <div class="input-wrapper">
+          <input type="text" id="food-name" placeholder="예: 김치찌개, 감자샐러드, 어묵볶음" />
+          <img id="food-search" src="{% static 'images/search-icon.png' %}" alt="검색" />
+        </div>
+      </div>
+    </div>
+
+    <!-- 재료 업로드 -->
+    <div class="container2" id="ingredient-section">
+      <a href="mainpage.html" class="home-link">← Home</a>
+      <div class="form-box">
+        <label for="file-upload">재료 사진을 업로드하세요</label>
+
+        <div class="upload-section">
+          <!-- ✅ 브라우저 기본 동작만 사용: for="file-upload" -->
+          <label class="dropdown-btn" id="dropdownToggle" for="file-upload">
+            <div class="dropdown-left">
+              <img src="{% static 'images/file-icon.png' %}" alt="파일" style="width:44px;height:58px;" />
+              <span>파일 선택</span>
+            </div>
+            <div class="dropdown-right">
+              <img src="{% static 'images/check-icon.png' %}" alt="V"
+                   style="width:30px;height:30px;position:absolute;left:190px;" />
+            </div>
+          </label>
+
+          <!-- 파일 input: 한 개만 -->
+          <input type="file" id="file-upload" accept="image/*" style="display:none;" />
+
+          <!-- 업로드 미리보기 -->
+          <div class="image-preview-box">
+            <img id="preview-image" style="max-width:100%;display:none;border-radius:10px;" alt="업로드 미리보기" />
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 인식된 재료 -->
+    <section class="recognized" id="ingredient-buttons" style="display:none;">
+      <h4 class="recognized-title">인식된 재료</h4>
+      <div class="chip-box" id="recognized-list"></div>
+      <div class="confirm-wrapper">
+        <button class="confirm-btn" id="toCategoryBtn">선택 완료</button>
+      </div>
+    </section>
+
+    <!-- 선호도(옵션) -->
+    <section class="category" id="category-section" style="display:none;">
+      <h4 class="category-title">음식 분야 선택</h4>
+      <div class="chip-box">
+        <label class="chip"><input type="checkbox" name="category" class="chip-radio" /> 한식</label>
+        <label class="chip"><input type="checkbox" name="category" class="chip-radio" /> 일식</label>
+        <label class="chip"><input type="checkbox" name="category" class="chip-radio" /> 양식</label>
+        <label class="chip"><input type="checkbox" name="category" class="chip-radio" /> 중식</label>
+        <label class="chip"><input type="checkbox" name="category" class="chip-radio" /> 기타</label>
+      </div>
+      <div class="range-wrap">
+        <label>음식 간 선택</label>
+        <input type="range" min="0" max="100" value="50" id="spicyRange" />
+        <div class="range-labels">
+          <span class="left-label">약하게</span>
+          <span class="right-label">강하게</span>
+        </div>
+      </div>
+      <div class="confirm-wrapper">
+        <button class="confirm-btn" id="toRecipeBtn">선택 완료</button>
+      </div>
+    </section>
+
+    <!-- 추천 레시피 -->
+    <section class="recommend" id="recipe-section">
+      <h4 class="category-title" style="margin-left:24px;">추천 레시피</h4>
+      <div class="recipe-list" id="recipe-list"></div>
+      <div class="more-wrap">
+        <button id="loadMoreBtn" class="btn-more" style="display:none;">더보기</button>
+      </div>
+    </section>
+  </main>
+
+  <div class="feedback-footer">© SmartCook. All rights reserved.</div>
+</body>
+</html>
