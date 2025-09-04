@@ -3,7 +3,7 @@
 <html lang="ko">
 <head>
   <meta charset="UTF-8">
-  <title>묵은지 참치마요 레시피</title>
+  <title>{{ recipe.title }} 레시피</title>
   <link rel="stylesheet" href="{% static 'css/upload.css' %}">
 </head>
 <body class="upload">
@@ -14,51 +14,51 @@
     <button class="login-button">Login</button>
   </div>
 
-  <div class="btn-group">
-    <button id="food-btn" class="btn active-btn" onclick="showSection('food')">음식으로 탐색하기</button>
-    <button id="ingredient-btn" class="btn" onclick="showSection('ingredient')">재료로 탐색하기</button>
-  </div>
+
 
   <div class="recipe-container">
     <div class="recipe-content">
+      <!-- 왼쪽 박스 -->
       <div class="recipe-left-box">
         <h2>상세 레시피</h2>
-        <div class="recipe-subheading"><strong>🥢 묵은지 참치말이 레시피 (2인분)</strong></div>
+        <div class="recipe-subheading"><strong>🥢 {{ recipe.title }} 레시피</strong></div>
+
         <p><strong>재료</strong></p>
-        <ul><strong>
-          <li>잡곡밥 1.5공기 (300g)</li>
-          <li>참치 통조림 (소) 2개</li>
-          <li>묵은지 6~8장</li>
-          <li>마요네즈 2큰술</li>
-          <li>후추 약간</li>
-          <li>깻잎 10장 내외</li>
-          <li>들기름 약간</li>
-          <li>통깨 약간</li>
-          <li>소금 약간</li>
-        </strong></ul>
-        <p><strong>만드는 법:</strong></p>
-        <ol><strong>
-          <li>묵은지는 물에 깨끗하게 씻은 후 체에 받쳐 물기를 제거해 주세요.</li>
-          <li>참치 통조림은 기름을 쫙 따라낸 후, 마요네즈와 후추를 약간 넣고 골고루 섞어줍니다.</li>
-          <li>따뜻한 잡곡밥에 소금과 들기름을 약간 넣고 골고루 비벼줍니다.</li>
-          <li>김밥 위에 묵은지를 겹쳐서 넓게 펼칩니다.</li>
-          <li>묵은지 위에 밥을 고르게 펴고, 깻잎을 올린 후 마요네즈에 버무린 참치를 올려 돌돌 말아주세요.</li>
-          <li>묵은지 말이 겉면에 들기름을 살짝 바른 후 먹기 좋은 크기로 썰어줍니다.</li>
-          <li>접시에 예쁘게 담고 통깨를 솔솔 뿌려주면 완성!</li>
-        </strong></ol>
+        <ul>
+          {% for ing in recipe.ingredients %}
+            <li>{{ ing }}</li>
+          {% endfor %}
+        </ul>
+
+        <p><strong>만드는 법</strong></p>
+        <ol>
+          {% for step in recipe.steps %}
+            <li>{{ step }}</li>
+          {% endfor %}
+        </ol>
       </div>
+
+      <!-- 오른쪽 박스 -->
       <div class="recipe-right-box">
         <h2>유튜브 영상 보러가기</h2>
-        <img class="recipe-video-slot" src="{% static 'images/recipe/muk.png' %}" alt="영상 1">
-        <img class="recipe-video-slot" src="{% static 'images/recipe/muk2.png' %}" alt="영상 2">
-        <img class="recipe-video-slot" src="{% static 'images/recipe/muk3.png' %}" alt="영상 3">
-        <img class="recipe-video-slot" src="{% static 'images/recipe/muk4.png' %}" alt="영상 4">
+        <div class="youtube-videos">
+          {% for video in videos %}
+            <div class="video-card">
+              <a href="{{ video.url }}" target="_blank">
+                <img src="{{ video.thumbnail }}" alt="{{ video.title }}">
+                <p>{{ video.title }}</p>
+              </a>
+            </div>
+          {% endfor %}
+        </div>
       </div>
     </div>
   </div>
 
+  <!-- 버튼 -->
   <div class="recipe-bottom-button">
-    <button style="margin-bottom: 130px;">다른 레시피 보러가기</button>
+    <button onclick="location.href='{% url 'food_upload' %}'">다른 레시피 보러가기</button>
+    <button onclick="location.href='{% url 'cart' recipe.id %}'">장바구니</button>
   </div>
 
   <script src="{% static 'js/recipe.js' %}"></script>

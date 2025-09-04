@@ -38,6 +38,7 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "core",
+    "recipes",
 
 ]
 
@@ -133,3 +134,8 @@ STATICFILES_DIRS = [
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+import os
+YOUTUBE_API_KEY = os.getenv("YOUTUBE_API_KEY", "AIzaSyDlgcQEu21PW9JBjyGUi3ThkIZW4WM5XyA")
+
+
+model_path = BASE_DIR / "best.pt"

@@ -1,0 +1,108 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <title>SmartCook</title>
+  <link rel="stylesheet" href="{% static 'css/upload.css' %}" />
+</head>
+<body>
+  <main>
+    <!-- 상단 네비 -->
+    <div class="navbar">
+      <div class="nav-left">
+        <div class="logo">SMARTCOOK</div>
+      </div>
+      <button class="logout-button">Logout</button>
+    </div>
+
+    <!-- 음식명 검색 -->
+    <div class="btn-group">
+      <button id="food-btn" class="btn active-btn">음식으로 탐색하기</button>
+      <a href="{% url 'upload' %}" class="btn" id="ingredient-btn">재료로 탐색하기</a>
+    </div>
+
+    <div class="container" id="food-section">
+      <a href="{% url 'mainpage' %}" class="home-link">← Home</a>
+      <form action="{% url 'food_upload' %}" method="POST">
+        {% csrf_token %}
+        <div class="form-box">
+          <label for="food-name">음식명을 입력해주세요</label>
+          <div class="input-wrapper">
+            <input type="text" id="food-name" name="food_name" required />
+            <button type="submit">
+              <img src="{% static 'images/search-icon.png' %}" alt="돋보기 아이콘" />
+            </button>
+          </div>
+        </div>
+      </form>
+    </div>
+
+    <!-- 검색 결과 -->
+    {% if query %}
+    <section class="recommend" id="recipe-section" style="display:block;">
+      {% if recipes %}
+        <p>{{ query }}에 대한 추천 레시피 ({{ recipes|length }}개)</p>
+        <div class="recipe-list" id="recipe-list">
+            {% for recipe in recipes %}
+            <div class="recipe-card" style="{% if forloop.counter > 3 %}display:none;{% endif %}">
+              <img src="{{ recipe.image }}" alt="{{ recipe.title }}">
+              <h5>{{ recipe.title }}</h5>
+          
+              <h6>재료</h6>
+              <ul>
+                {% for ing in recipe.ingredients %}
+                <li>{{ ing }}</li>
+                {% endfor %}
+              </ul>
+          
+              
+              {% with "ingredients-"|add:recipe.id as script_id %}
+                {{ recipe.ingredients|json_script:script_id }}
+              {% endwith %}
+          
+              <a href="javascript:void(0)"
+                 class="btn-category-done show-extra-btn"
+                 data-recipe-id="{{ recipe.id }}">
+                 요리하러 가기
+              </a>
+            </div>
+          {% endfor %}
+        </div>
+
+        {% if recipes|length > 3 %}
+        <div style="text-align:center; margin-top:20px;">
+          <button id="loadMoreBtn" class="confirm-btn">더보기</button>
+        </div>
+        {% endif %}
+      {% else %}
+        <p>‘{{ query }}’에 해당하는 레시피를 찾을 수 없습니다.</p>
+      {% endif %}
+    </section>
+    {% endif %}
+
+    <!-- 추가재료 섹션 -->
+    <section class="extra" id="extra-section" style="display:none;">
+      <div class="extra-header">
+        <h4 class="extra-title">추가 재료 선택</h4>
+        <span class="small-text skip-extra" id="skip-extra-btn">
+          추가 재료 없음 →
+        </span>
+      </div>
+
+      <div class="chip-box" id="extra-ingredients"></div>
+
+      <div class="cart-wrapper">
+        <button class="cart-btns" id="go-cart-btn">장바구니로 이동</button>
+        <button class="cart-btns" id="go-detail-btn">레시피 상세보기</button>
+      </div>
+    </section>
+  </main>
+
+  <div class="feedback-footer">
+    © SmartCook. All rights reserved.
+  </div>
+
+  <script src="{% static 'js/script.js' %}"></script>
+</body>
+</html>

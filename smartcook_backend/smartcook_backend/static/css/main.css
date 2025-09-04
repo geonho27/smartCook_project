@@ -171,7 +171,16 @@ textarea::-moz-placeholder {
     font-size: 14px;
     text-shadow: 0 0 1px rgba(0, 0, 0, 0.3);
     cursor: pointer;
-    }
+    display: inline-block;
+
+    /* ✅ 밑줄 제거 */
+    text-decoration: none;
+}
+
+.main-navbar-logout-btn:hover {
+    text-decoration: none;  /* hover 시에도 밑줄 방지 */
+}
+
   
 
     .main-menu2-button {
@@ -283,8 +292,15 @@ textarea::-moz-placeholder {
     font-size: 14px;
     text-shadow: 0 0 1px rgba(0, 0, 0, 0.3);
     cursor: pointer;
+    text-decoration: none !important;
     }
-    
+     
+    a.main-login-button {
+      text-decoration: none !important; /* 밑줄을 확실히 제거 */
+      display: flex; /* 버튼처럼 보이게 하기 위해 추가 */
+      align-items: center;
+      justify-content: center;
+    }
     
     /* home */
     
@@ -975,6 +991,7 @@ form.signup{
   color: #ad8b73;
   text-decoration: none;
   font-weight: bold;
+  text-decoration: none;
 }
 
 .login-home-link a:hover,
@@ -984,4 +1001,8 @@ form.signup{
 }
 
   
-
+/* 로그인/로그아웃 버튼의 밑줄을 확실히 제거 */
+.main-nav-right a.main-login-button,
+.main-nav-right .main-navbar-logout-btn {
+  text-decoration: none !important;
+}

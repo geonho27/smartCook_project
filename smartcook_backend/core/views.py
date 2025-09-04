@@ -74,7 +74,13 @@ def menu2_view(request):
 # mainpage
 
 # core/views.py
+def main_page(request):
+    return render(request, "mainpage.html")
+
+# core/views.py
 from django.shortcuts import render
 
-def main_page(request):
-    return render(request, 'mainpage.html')
+def upload_page(request):
+    return render(request, "upload.html")
+
+
