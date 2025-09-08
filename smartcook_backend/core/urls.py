@@ -11,4 +11,5 @@ urlpatterns = [
     path('menu2/', views.menu2_view, name='menu2'),
     path('logout/', LogoutView.as_view(), name='logout'),
     path("upload/", views.upload_page, name="upload"),
+    path('mypage/', views.mypage_view, name='mypage'),
 ]

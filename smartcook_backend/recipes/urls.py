@@ -2,20 +2,21 @@ from django.urls import path
 from . import views
 
 urlpatterns = [
-    path('food/', views.food_upload_view, name='food_upload'),
-    path('search/', views.search_recipe, name='search_recipe'),
-    path('recipes/<str:pk>/', views.recipe_detail_view, name='recipe_detail'),
-    path('cart/<str:pk>/', views.cart_view, name='cart'),
-    path('add-to-cart/<str:pk>/', views.add_to_cart, name='add_to_cart'),
-    path('api/detect/', views.detect_ingredients, name='detect_ingredients'),
+    # 음식 업로드 / 검색
+    path("food_upload/", views.food_upload_view, name="food_upload"),
+    path("search_recipe/", views.search_recipe, name="search_recipe"),
+
+    # 레시피 상세
+    path("recipes/<int:pk>/", views.recipe_detail_view, name="recipe_detail"),
+
+    # 장바구니
+    path("cart/<int:pk>/", views.cart_view, name="cart"),
+    path("cart/add/<int:pk>/", views.add_to_cart, name="add_to_cart"),
+
+    # YOLO 업로드/인식
+    path("upload_preview/", views.upload_preview, name="upload_preview"),
+    path("api/detect/", views.detect_ingredients, name="detect_ingredients"),
+
+    # GPT 재랭킹 API
+    path("api/rerank/", views.rerank_view, name="rerank"),
 ]
-
-from django.contrib import admin
-from django.urls import path
-from django.conf import settings
-from django.conf.urls.static import static
-from . import views
-
-# 개발 서버에서 media 서빙
-if settings.DEBUG:
-    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

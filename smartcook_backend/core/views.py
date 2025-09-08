@@ -84,3 +84,16 @@ def upload_page(request):
     return render(request, "upload.html")
 
 
+from django.shortcuts import render
+
+def mypage_view(request):
+    return render(request, "menu2.html")
+
+from django.contrib.auth import logout
+from django.shortcuts import redirect
+
+def logout_view(request):
+    if request.method == "POST":
+        logout(request)
+        return redirect("mainpage")  # 로그아웃 후 메인페이지로 이동
+    return redirect("mainpage")

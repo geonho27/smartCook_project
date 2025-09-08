@@ -128,6 +128,7 @@ STATIC_URL = "static/"
 
 STATICFILES_DIRS = [
     BASE_DIR / 'smartcook_backend'/ 'static',
+    BASE_DIR / "recipes" / "data",
 ]
 
 # Default primary key field type

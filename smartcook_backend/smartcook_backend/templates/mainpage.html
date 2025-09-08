@@ -19,9 +19,12 @@
             <a href="#feedback">Feedback</a>
           </div>
         </div>
-         <div class="main-nav-right">
+        <div class="main-nav-right">
           {% if user.is_authenticated %}
-            
+            <!-- Mypage 버튼 -->
+            <a href="{% url 'mypage' %}" class="main-navbar-logout-btn">Mypage</a>
+        
+            <!-- Logout 버튼 -->
             <form method="POST" action="{% url 'logout' %}" style="display:inline;">
               {% csrf_token %}
               <button type="submit" class="main-navbar-logout-btn">Logout</button>
@@ -30,6 +33,7 @@
             <a href="{% url 'login' %}" class="main-login-button">Login</a>
           {% endif %}
         </div>
+        
       </div>
 
       <section id="home">

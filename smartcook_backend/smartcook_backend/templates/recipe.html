@@ -8,10 +8,11 @@
 </head>
 <body class="upload">
   <div class="navbar">
-    <div class="nav-left">
-      <div class="logo">SMARTCOOK</div>
-    </div>
-    <button class="login-button">Login</button>
+    <div class="nav-left"><div class="logo">SMARTCOOK</div></div>
+    <form method="POST" action="{% url 'logout' %}" style="display:inline;">
+      {% csrf_token %}
+      <button type="submit" class="logout-button">Logout</button>
+    </form>
   </div>
 
 
@@ -58,7 +59,6 @@
   <!-- 버튼 -->
   <div class="recipe-bottom-button">
     <button onclick="location.href='{% url 'food_upload' %}'">다른 레시피 보러가기</button>
-    <button onclick="location.href='{% url 'cart' recipe.id %}'">장바구니</button>
   </div>
 
   <script src="{% static 'js/recipe.js' %}"></script>
