@@ -111,7 +111,8 @@ textarea::-moz-placeholder {
   font-size: 26px;
   color: #ad8b73;
   letter-spacing: 1px;
-  
+  text-decoration: none;
+
 }
 
 .nav-left {
@@ -254,6 +255,7 @@ textarea::-moz-placeholder {
       font-size: 26px;
       color: #ad8b73;
       letter-spacing: 1px;
+      text-decoration: none;
     }
     
     .main-nav-left {

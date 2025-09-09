@@ -10,7 +10,7 @@
 <body class="mainpage" data-is-authenticated="{{ user.is_authenticated|yesno:'true,false' }}">
     <div class="main-navbar">
         <div class="main-nav-left">
-          <div class="main-logo">SMARTCOOK</div>
+          <a href="{% url 'mainpage' %}" class="main-logo">SMARTCOOK</a>
           <div class="main-nav-links">
             <a href="#home" class="main-active">Home</a>
             <a href="#features">Features</a>

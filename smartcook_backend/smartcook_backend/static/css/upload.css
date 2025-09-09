@@ -78,6 +78,7 @@ main {
   font-size: 26px;
   color: #ad8b73;
   letter-spacing: 1px;
+  text-decoration: none;
 }
 
 .nav-left {
