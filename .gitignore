@@ -207,6 +207,14 @@ marimo/_lsp/
 __marimo__/
 
 
+# 사용자 업로드 및 YOLO 결과물 제외
+/media/
+/smartcook_backend/media/
+/smartcook_backend/media/uploads/
+/smartcook_backend/media/annotated/
+
+
+
 *.sqlite3
 *.bak
 *.bak.sqlite3
