@@ -314,16 +314,15 @@ a.btn {
 }
 
 #preview-image {
-  position: static;   /* absolute 빼고 일반 흐름에 맞게 */
-  transform: none;    /* 가운데 강제 이동 제거 */
-  max-width: 80%;     /* 화면에 맞게 크게 */
-  height: auto;
-  object-fit: contain;
-  display: none;      /* 업로드하면 JS에서 보이게 */
-  border-radius: 10px;
-  border: 2px dashed #ceab93;
-  padding: 10px;
-  background: #fffefc;
+  position: absolute;
+  top: 50%;   /* 세로 가운데 */
+  left: 50%;  /* 가로 가운데 */
+  transform: translate(-50%, -50%); /* 정확히 가운데 정렬 */
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;  /* 비율 유지하면서 맞추기 */
+  z-index: 3;
+  display: none;
 }
 
 /* 기본 세팅 */
@@ -1550,17 +1549,3 @@ background-color: #AD8B73;
 }
 
 
-.show-extra-btn {
-  display: inline-block;
-  text-decoration: none;
-  color: #fff;                /* 글자색 */
-  background-color: #CEAB93;  /* 배경색 */
-  padding: 8px 16px;
-  border-radius: 6px;
-  font-weight: bold;
-  transition: 0.2s;
-}
-
-.show-extra-btn:hover {
-  background-color: #AD8B73;
-}

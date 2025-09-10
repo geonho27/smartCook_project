@@ -60,26 +60,38 @@ def food_upload_view(request):
     query = ""
 
     if request.method == "POST":
-        query = request.POST.get("food_name")
-        data = get_recipes_data()   # ✅ 캐싱된 데이터 사용
+        query = request.POST.get("food_name", "").strip()
+        data = get_recipes_data()   # JSON 캐싱된 데이터 불러오기
 
-        query_ingredients = [q.strip() for q in query.split(",") if q.strip()]
+        if query:
+            query_ingredients = [q.strip() for q in query.split(",") if q.strip()]
+            results = []
 
-        for recipe in data:
-            short_ingredients = clean_ingredients(recipe.get("ingredients", []))
-            match_count = sum(1 for q in query_ingredients if q in short_ingredients)
+            for recipe in data:
+                short_ingredients = clean_ingredients(recipe.get("ingredients", []))
+                match_count = 0
 
-            if match_count > 0:
-                recipe["match_count"] = match_count
-                recipes.append(recipe)
+                # 1) 음식명(title) 매칭
+                if query in recipe.get("title", ""):
+                    match_count += 2   # 음식명 매칭은 가중치 2
 
-        recipes.sort(key=lambda r: r.get("match_count", 0), reverse=True)
+                # 2) 재료명 매칭
+                ing_match_count = sum(1 for q in query_ingredients if q in short_ingredients)
+                match_count += ing_match_count
+
+                if match_count > 0:
+                    recipe["match_count"] = match_count
+                    results.append(recipe)
+
+            # match_count 기준 내림차순 정렬
+            recipes = sorted(results, key=lambda r: r.get("match_count", 0), reverse=True)
 
     return render(request, "food_upload.html", {
         "recipes": recipes if recipes else None,
         "query": query,
         "hasRecipes": bool(recipes),
     })
+
 
 
 def search_recipe(request):
@@ -223,6 +235,9 @@ KO_MAP = {
     "sesame_oil": "참기름",
     "soy_sauce": "간장",
     "sugar": "설탕",
+    "carrots": "당근",
+    "tomato": "토마토",
+    "broccoli": "브로콜리",
 }
 
 
@@ -257,14 +272,20 @@ def detect_ingredients(request):
 
     items = {}
     for b in res.boxes:
-        name_en = res.names[int(b.cls)]
+        name_en = res.names[int(b.cls)]   # YOLO 클래스 이름 (영어)
         conf = float(b.conf)
         items[name_en] = max(items.get(name_en, 0.0), conf)
 
-    items_list = [
-        {"name_en": k, "name_ko": KO_MAP.get(k, k), "score": round(v, 3)}
-        for k, v in items.items()
-    ]
+    # 한국어 변환 후 name 키로 반환
+    items_list = []
+    for k, v in items.items():
+        name_ko = KO_MAP.get(k.lower(), None)  # 소문자 통일
+        if not name_ko:
+            name_ko = "알 수 없음"  # 기본값
+        items_list.append({
+            "name": name_ko,
+            "score": round(v, 3)
+        })
 
     ann_dir = settings.MEDIA_ROOT / "annotated"
     ann_dir.mkdir(parents=True, exist_ok=True)
@@ -274,6 +295,7 @@ def detect_ingredients(request):
     ann_url = settings.MEDIA_URL + f"annotated/{filename}"
 
     return JsonResponse({"ok": True, "items": items_list, "annotated_url": ann_url})
+
 
 
 # =========================
