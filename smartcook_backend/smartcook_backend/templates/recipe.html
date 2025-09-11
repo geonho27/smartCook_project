@@ -15,8 +15,6 @@
     </form>
   </div>
 
-
-
   <div class="recipe-container">
     <div class="recipe-content">
       <!-- 왼쪽 박스 -->
@@ -57,9 +55,13 @@
   </div>
 
   <!-- 버튼 -->
-  <div class="recipe-bottom-button">
-    <button onclick="location.href='{% url 'food_upload' %}'">다른 레시피 보러가기</button>
-  </div>
+ <!-- 버튼 -->
+<div class="recipe-bottom-button">
+  <button onclick="location.href='{% url 'food_upload' %}?q={{ query }}'">
+    다른 레시피 보러가기
+  </button>
+</div>
+
 
   <script src="{% static 'js/recipe.js' %}"></script>
 </body>

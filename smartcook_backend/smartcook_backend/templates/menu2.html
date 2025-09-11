@@ -16,65 +16,80 @@
   </div>
 
   <div class="menu2-container">
-  <div class="menu2-breadcrumb">← <a href="{% url 'mainpage' %}">Home</a></div>
+    <div class="menu2-breadcrumb">← <a href="{% url 'mainpage' %}">Home</a></div>
 
-  <!-- 회원정보 -->
-  <div class="menu2-info-row">
-    <div class="menu2-info-label">이름</div>
-    <div class="menu2-info-value">{{ user.username }}</div>
-  </div>
-  <div class="menu2-info-row">
-    <div class="menu2-info-label">아이디</div>
-    <div class="menu2-info-value">{{ user.userid }}</div>
-  </div>
-  <div class="menu2-info-row">
-    <div class="menu2-info-label">비밀번호</div>
-    <div class="menu2-info-value">변경하기</div>
-  </div>
-  <div class="menu2-info-row">
-    <div class="menu2-info-label">이메일</div>
-    <div class="menu2-info-value">{{ user.email }}</div>
-  </div>
+    <!-- 회원정보 -->
+    <div class="menu2-info-row">
+      <div class="menu2-info-label">이름</div>
+      <div class="menu2-info-value">{{ user.username }}</div>
+    </div>
+    <div class="menu2-info-row">
+      <div class="menu2-info-label">아이디</div>
+      <div class="menu2-info-value">{{ user.userid }}</div>
+    </div>
+    <div class="menu2-info-row">
+      <div class="menu2-info-label">비밀번호</div>
+      <div class="menu2-info-value">변경하기</div>
+    </div>
+    <div class="menu2-info-row">
+      <div class="menu2-info-label">이메일</div>
+      <div class="menu2-info-value">{{ user.email }}</div>
+    </div>
 
-  <hr class="menu2-divider">
+    <hr class="menu2-divider">
 
-  <!-- 추가 정보 -->
-  <div class="menu2-section-title">추가 정보</div>
+    <!-- 추가 정보 -->
+    <div class="menu2-section-title">추가 정보</div>
 
-  <div class="menu2-form-row">
-    <label>영양 정보</label>
-    <div class="menu2-radio-group">
-      <label><input type="radio" class="menu2-input" name="nutri"> 당뇨</label>
-      <label><input type="radio" class="menu2-input" name="nutri"> 고혈압</label>
-      <label><input type="radio" class="menu2-input" name="nutri"> 저염식</label>
-      <label><input type="radio" class="menu2-input" name="nutri"> 다이어트 식단</label>
+    <!-- 영양 정보 -->
+    <div class="menu2-form-row">
+      <label>영양 정보</label>
+      <div class="menu2-radio-group">
+        <label><input type="radio" class="menu2-input" name="nutri"> 당뇨</label>
+        <label><input type="radio" class="menu2-input" name="nutri"> 고혈압</label>
+        <label><input type="radio" class="menu2-input" name="nutri"> 저염식</label>
+        <label><input type="radio" class="menu2-input" name="nutri"> 다이어트 식단</label>
+      </div>
+    </div>
+
+    <!-- ✅ 비건 여부 -->
+    <div class="menu2-form-row">
+      <label>비건 여부</label>
+      <input type="checkbox" class="menu2-input" name="is_vegan" {% if user.is_vegan %}checked{% endif %}>
+      <span style="margin-left:8px; color:#AD8B73;">저는 비건입니다</span>
+    </div>
+
+    <!-- ✅ 알레르기 -->
+    <div class="menu2-form-row">
+      <label>알레르기</label>
+      <input type="text" class="menu2-input" name="allergies" placeholder="예: 땅콩, 갑각류" value="{{ user.allergies }}">
+    </div>
+
+    <!-- 선호 재료 -->
+    <div class="menu2-form-row">
+      <label>선호하는 재료</label>
+      <input type="text" class="menu2-input" id="prefer-input" placeholder="입력 후 엔터">
+    </div>
+    <div class="menu2-tag-buttons" id="prefer-tags">
+      {% for item in preferred|default:''|split:"," %}
+        {% if item %}
+          <span class="tag">{{ item }}<button class="del-btn">X</button></span>
+        {% endif %}
+      {% endfor %}
+    </div>
+
+    <!-- 비선호 재료 -->
+    <div class="menu2-form-row">
+      <label>비선호하는 재료</label>
+      <input type="text" class="menu2-input" id="nonprefer-input" placeholder="입력 후 엔터">
+    </div>
+    <div class="menu2-tag-buttons" id="nonprefer-tags">
+      {% for item in disliked|default:''|split:"," %}
+        {% if item %}
+          <span class="tag">{{ item }}<button class="del-btn">X</button></span>
+        {% endif %}
+      {% endfor %}
     </div>
   </div>
-
-<!-- 선호 재료 -->
-<div class="menu2-form-row">
-  <label>선호하는 재료</label>
-  <input type="text" class="menu2-input" id="prefer-input" placeholder="입력 후 엔터">
-</div>
-<div class="menu2-tag-buttons" id="prefer-tags">
-  {% for item in preferred|default:''|split:"," %}
-    {% if item %}
-      <span class="tag">{{ item }}<button class="del-btn">X</button></span>
-    {% endif %}
-  {% endfor %}
-</div>
-
-<!-- 비선호 재료 -->
-<div class="menu2-form-row">
-  <label>비선호하는 재료</label>
-  <input type="text" class="menu2-input" id="nonprefer-input" placeholder="입력 후 엔터">
-</div>
-<div class="menu2-tag-buttons" id="nonprefer-tags">
-  {% for item in disliked|default:''|split:"," %}
-    {% if item %}
-      <span class="tag">{{ item }}<button class="del-btn">X</button></span>
-    {% endif %}
-  {% endfor %}
-</div>
 </body>
 </html>

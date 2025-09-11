@@ -31,9 +31,13 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
 
     objects = CustomUserManager()
 
+    # 기존 필드
     preferred_ingredients = models.TextField(blank=True)
     disliked_ingredients = models.TextField(blank=True)
 
+    # ✅ 새로 추가된 필드
+    is_vegan = models.BooleanField(default=False, help_text="비건 여부")
+    allergies = models.TextField(blank=True, help_text="쉼표(,)로 구분된 알레르기 재료")
 
     USERNAME_FIELD = "userid"
     REQUIRED_FIELDS = ["username", "email"]

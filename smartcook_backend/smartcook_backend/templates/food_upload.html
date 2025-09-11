@@ -22,17 +22,17 @@
       <button class="btn active-btn">음식으로 탐색하기</button>
       <a href="{% url 'upload' %}" class="btn">재료로 탐색하기</a>
       <a href="{% url 'live_page' %}" class="btn">실시간으로 탐색하기</a>
-
     </div>
 
     <div class="container" id="food-section">
       <a href="{% url 'mainpage' %}" class="home-link">← Home</a>
-      <form action="{% url 'food_upload' %}" method="POST">
-        {% csrf_token %}
+      <!-- ✅ POST → GET 으로 변경 -->
+      <form action="{% url 'food_upload' %}" method="GET">
         <div class="form-box">
           <label for="food-name">음식명을 입력해주세요</label>
           <div class="input-wrapper">
-            <input type="text" id="food-name" name="food_name" required />
+            <!-- ✅ 검색 후에도 입력값 유지 -->
+            <input type="text" id="food-name" name="q" value="{{ query }}" required />
             <button type="submit">
               <img src="{% static 'images/search-icon.png' %}" alt="돋보기 아이콘" />
             </button>
@@ -55,7 +55,7 @@
             <h6 style="text-align: center;">재료</h6>
             <ul style="list-style-type: none; padding-left: 0;">
               {% for ing in recipe.ingredients %}
-              <li>{{ ing.split.0 }}</li> <!-- ✅ 첫 단어만 표시 -->
+              <li>{{ ing.split.0 }}</li>
               {% endfor %}
             </ul>
 

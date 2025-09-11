@@ -2,6 +2,8 @@
 from django.shortcuts import render, redirect
 from django.contrib import messages
 from .models import CustomUser
+from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.decorators import login_required
 
 # signup
 def signup(request):
@@ -22,22 +24,15 @@ def signup(request):
             email=email,
             password=password
         )
-        return redirect("mainpage")  # 회원가입 성공 후 로그인 페이지로
+        return redirect("mainpage")  # 회원가입 성공 후 메인페이지로 이동
 
     return render(request, "signup.html")
 
 
-
-
-
-
-from django.contrib.auth import authenticate, login
-
 # login
-
 def login_view(request):
     if request.method == "POST":
-        userid = request.POST.get("userid")  # HTML에서는 userid지만
+        userid = request.POST.get("userid")  # HTML form에서는 userid
         password = request.POST.get("password")
         
         # userid를 username 자리에 넣어줌
@@ -53,45 +48,47 @@ def login_view(request):
     return render(request, "login.html")
 
 
-# mypage 가기
-from django.shortcuts import render
-from django.contrib.auth.decorators import login_required
-
+# mypage
 @login_required
 def menu2_view(request):
     user = request.user  # 로그인한 사용자
+
+    if request.method == "POST":
+        # POST 데이터 업데이트
+        user.preferred_ingredients = request.POST.get("preferred", "")
+        user.disliked_ingredients = request.POST.get("disliked", "")
+        user.is_vegan = True if request.POST.get("is_vegan") == "on" else False
+        user.allergies = request.POST.get("allergies", "")
+        user.save()
+        messages.success(request, "마이페이지 정보가 업데이트되었습니다.")
+        return redirect("menu2")  # 저장 후 다시 마이페이지로 이동
+
     preferred = user.preferred_ingredients  # 예: "감자,당근"
     disliked = user.disliked_ingredients    # 예: "양파,버섯"
 
     return render(request, 'menu2.html', {
         'preferred': preferred,
         'disliked': disliked,
+        'user': user
     })
 
 
-
-
 # mainpage
-
-# core/views.py
 def main_page(request):
     return render(request, "mainpage.html")
 
-# core/views.py
-from django.shortcuts import render
 
+# upload page
 def upload_page(request):
     return render(request, "upload.html")
 
 
-from django.shortcuts import render
-
+# 단순히 menu2.html 보여주기 (혹시 따로 쓸 경우)
 def mypage_view(request):
     return render(request, "menu2.html")
 
-from django.contrib.auth import logout
-from django.shortcuts import redirect
 
+# logout
 def logout_view(request):
     if request.method == "POST":
         logout(request)
