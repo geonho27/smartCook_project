@@ -218,3 +218,9 @@ __marimo__/
 *.sqlite3
 *.bak
 *.bak.sqlite3
+
+# Model weights
+smartcook_backend/best.pt
+*.pt
+*.pth
+*.onnx
