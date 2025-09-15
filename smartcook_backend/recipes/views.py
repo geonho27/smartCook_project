@@ -314,7 +314,6 @@ def detect_ingredients(request):
     if img is None:
         return JsonResponse({"ok": False, "error": "이미지 해석 실패"}, status=400)
 
-    model = _get_yolo()
     res = model.predict(img, conf=0.25, imgsz=800)[0]
 
     items = {}
