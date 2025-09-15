@@ -26,12 +26,10 @@
 
     <div class="container" id="food-section">
       <a href="{% url 'mainpage' %}" class="home-link">← Home</a>
-      <!-- ✅ POST → GET 으로 변경 -->
       <form action="{% url 'food_upload' %}" method="GET">
         <div class="form-box">
           <label for="food-name">음식명을 입력해주세요</label>
           <div class="input-wrapper">
-            <!-- ✅ 검색 후에도 입력값 유지 -->
             <input type="text" id="food-name" name="q" value="{{ query }}" required />
             <button type="submit">
               <img src="{% static 'images/search-icon.png' %}" alt="돋보기 아이콘" />
@@ -45,10 +43,22 @@
     {% if query %}
     <section class="recommend" id="recipe-section" style="display:block;">
       {% if recipes %}
-        <p>{{ query }}에 대한 추천 레시피 ({{ recipes|length }}개)</p>
+        <div class="result-header">
+          <!-- 왼쪽: 검색 결과 문구 -->
+          <p>{{ query }}에 대한 추천 레시피 ({{ recipes|length }}개)</p>
+
+          <!-- 오른쪽: 정렬 옵션 -->
+          <div class="sort-options">
+            <a href="?q={{ query }}&sort=match"
+               class="sort-link {% if sort == 'match' %}active{% endif %}">관련도 순</a>
+            <a href="?q={{ query }}&sort=ingredients"
+               class="sort-link {% if sort == 'ingredients' %}active{% endif %}">재료 적은 순</a>
+          </div>
+        </div>
+
         <div class="recipe-list" id="recipe-list">
           {% for recipe in recipes %}
-          <div class="recipe-card" style="{% if forloop.counter > 3 %}display:none;{% endif %}">
+          <div class="recipe-card">
             <img src="{{ recipe.image }}" alt="{{ recipe.title }}">
             <h5>{{ recipe.title }}</h5>
 
@@ -72,7 +82,8 @@
           {% endfor %}
         </div>
 
-        {% if recipes|length > 3 %}
+        {# ✅ 관련도 순일 때만 더보기 버튼 보이기 #}
+        {% if recipes|length > 3 and sort != "ingredients" %}
         <div style="text-align:center; margin-top:20px;">
           <button id="loadMoreBtn" class="confirm-btn">더보기</button>
         </div>
@@ -100,8 +111,6 @@
       </div>
     </section>
   </main>
-
-
 
   <div class="feedback-footer">
     © SmartCook. All rights reserved.

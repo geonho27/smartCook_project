@@ -7,14 +7,13 @@ import numpy as np
 from ultralytics import YOLO
 from PIL import Image
 from django.conf import settings
-from django.http import JsonResponse, Http404
+from django.http import JsonResponse, Http404, HttpResponse
 from django.shortcuts import render, redirect, get_object_or_404
 from django.views.decorators.http import require_POST
 from django.views.decorators.csrf import csrf_exempt
 from .models import Recipe
-from django.http import HttpResponse
-model = YOLO('best.pt')
 
+model = YOLO('best.pt')
 
 # 카메라 초기화 (0: 기본 웹캠)
 cap = cv2.VideoCapture(0)
@@ -28,27 +27,26 @@ def detect_frame(request):
         
         results = model(img)[0]
 
-        # 50% 이상 confidence인 박스만 필터링
+        # 80% 이상 confidence인 박스만 필터링
         filtered_boxes = []
         for box in results.boxes:
             conf = float(box.conf[0])
             if conf >= 0.8:
                 filtered_boxes.append(box)
 
-        results.boxes = filtered_boxes  # 필터링된 박스 리스트로 대체
+        results.boxes = filtered_boxes  
         
         annotated_img = results.plot()
-        
         _, buffer = cv2.imencode('.jpg', annotated_img)
-        response = HttpResponse(buffer.tobytes(), content_type="image/jpeg")
-        return response
+        return HttpResponse(buffer.tobytes(), content_type="image/jpeg")
     
     return JsonResponse({"error": "No frame uploaded"}, status=400)
 
 
-# 전역 캐시: recipe_data.json
+# =========================
+# 전역 캐시 및 세션
+# =========================
 _recipe_cache = None
-# [SESSION] 세션 키 상수
 SESSION_QUERY_KEY = "sc.query"
 SESSION_RESULT_IDS_KEY = "sc.result_ids"
 SESSION_MODE_KEY = "sc.mode"
@@ -78,33 +76,42 @@ def _load_session_search(request):
         "result_ids": request.session.get(SESSION_RESULT_IDS_KEY, []),
     }
 
-
+# =========================
+# 재료 클리너
+# =========================
 EXCLUDE_KEYWORDS = ["주재료", "도마", "조리용", "전자레인지", "용기", "그릇", "위생장갑", "구매"]
 
 def clean_ingredients(ingredients):
     cleaned = []
     for ing in ingredients:
-        if not ing.strip():
+        if not ing:
             continue
-        if any(bad in ing for bad in EXCLUDE_KEYWORDS):
+        text = ing.strip()
+        if not text:
             continue
-        name = ing.split()[0]
+        # 개행/공백 정리
+        text = text.replace("\n", " ").replace("\r", " ")
+        text = " ".join(text.split())
+        # 불필요 단어 제외
+        if any(bad in text for bad in EXCLUDE_KEYWORDS):
+            continue
+        # 재료명만 추출 (첫 단어)
+        name = text.split()[0]
         cleaned.append(name)
     return cleaned
 
 
 # =========================
-# 업로드 / 검색 (음식명으로 탐색하기)
+# 음식명 검색
 # =========================
 def food_upload_view(request):
     recipes = []
-    query = request.GET.get("q", "").strip()  # ✅ 오직 GET만 사용
+    query = request.GET.get("q", "").strip()
+    sort_option = request.GET.get("sort", "match")
 
     data = get_recipes_data()
-    by_id = _index_by_id(data)
 
     if query:
-        # 새 검색 로직
         query_ingredients = [q.strip() for q in query.split(",") if q.strip()]
         results = []
 
@@ -120,9 +127,15 @@ def food_upload_view(request):
             if match_count > 0:
                 r = dict(recipe)
                 r["match_count"] = match_count
+                r["ingredient_count"] = len(short_ingredients)
                 results.append(r)
 
-        recipes = sorted(results, key=lambda r: r.get("match_count", 0), reverse=True)
+        if sort_option == "ingredients":
+            # ✅ 재료 적은 순 → 전체 한 번에 내려줌 (더보기 없음)
+            recipes = sorted(results, key=lambda r: r.get("ingredient_count", 0))
+        else:
+            # ✅ 관련도 순 → 더보기 유지
+            recipes = sorted(results, key=lambda r: r.get("match_count", 0), reverse=True)
 
         _save_session_search(
             request,
@@ -130,30 +143,28 @@ def food_upload_view(request):
             mode="food",
             result_ids=[r.get("id") for r in recipes if r.get("id") is not None],
         )
-    else:
-        # ✅ 검색어가 아예 없으면 세션 무시하고 초기화
-        query = ""
-        recipes = []
 
     return render(request, "food_upload.html", {
         "recipes": recipes if recipes else None,
         "query": query,
+        "sort": sort_option,
         "hasRecipes": bool(recipes),
     })
 
 
 # =========================
-# 업로드 / 검색 (재료로 탐색하기)
+# 재료 검색
 # =========================
 def search_recipe(request):
     recipes = []
     query = request.GET.get("q", "").strip()
+    sort_option = request.GET.get("sort", "match")
 
     data = get_recipes_data()
-    by_id = _index_by_id(data)
 
     if query:
         query_ingredients = [q.strip() for q in query.split(",") if q.strip()]
+        results = []
 
         for recipe in data:
             short_ingredients = clean_ingredients(recipe.get("ingredients", []))
@@ -162,9 +173,15 @@ def search_recipe(request):
             if match_count > 0:
                 r = dict(recipe)
                 r["match_count"] = match_count
-                recipes.append(r)
+                r["ingredient_count"] = len(short_ingredients)
+                results.append(r)
 
-        recipes.sort(key=lambda r: r.get("match_count", 0), reverse=True)
+        if sort_option == "ingredients":
+            # ✅ 재료 적은 순 → 전체 한 번에 내려줌 (더보기 없음)
+            recipes = sorted(results, key=lambda r: r.get("ingredient_count", 0))
+        else:
+            # ✅ 관련도 순 → 더보기 유지
+            recipes = sorted(results, key=lambda r: r.get("match_count", 0), reverse=True)
 
         _save_session_search(
             request,
@@ -172,20 +189,17 @@ def search_recipe(request):
             mode="ingredient",
             result_ids=[r.get("id") for r in recipes if r.get("id") is not None],
         )
-    else:
-        # ✅ 여기서도 세션 무시하고 초기화
-        query = ""
-        recipes = []
 
     return render(request, "upload.html", {
         "recipes": recipes if recipes else None,
         "query": query,
+        "sort": sort_option,
         "hasRecipes": bool(recipes),
     })
 
 
 # =========================
-# 레시피 상세 + 유튜브 영상
+# 레시피 상세 + 유튜브
 # =========================
 def recipe_detail_view(request, pk):
     data = get_recipes_data()
@@ -268,6 +282,9 @@ def cart_view(request, pk):
     })
 
 
+# =========================
+# YOLO ingredient detection
+# =========================
 KO_MAP = {
     "cucumber": "오이",
     "carrot": "당근",

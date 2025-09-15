@@ -26,7 +26,6 @@
       <a href="{% url 'food_upload' %}" class="btn">음식으로 탐색하기</a>
       <button class="btn active-btn">재료로 탐색하기</button>
       <a href="{% url 'live_page' %}" class="btn">실시간으로 탐색하기</a>
-
     </div>
 
     <!-- 재료 업로드 -->
@@ -53,7 +52,6 @@
             <!-- YOLO 결과 이미지를 띄울 자리 -->
             <img id="preview-image" style="max-width:100%;display:none;border-radius:10px;" alt="업로드 미리보기" />
           </div>
-          
         </div>
       </div>
     </div>
@@ -103,7 +101,15 @@
     {% if query %}
     <section class="recommend" id="recipe-section" style="display:block;">
       {% if recipes %}
-        <p>{{ query }}에 대한 추천 레시피 ({{ recipes|length }}개)</p>
+        <div class="result-header">
+          <p>{{ query }}에 대한 추천 레시피 ({{ recipes|length }}개)</p>
+          <!-- ✅ 정렬 옵션 -->
+          <div class="sort-options">
+            <a href="?q={{ query }}&sort=match" class="{% if sort == 'match' %}active{% endif %}">관련도 순</a> |
+            <a href="?q={{ query }}&sort=ingredients" class="{% if sort == 'ingredients' %}active{% endif %}">재료 적은 순</a>
+          </div>
+        </div>
+
         <div class="recipe-list" id="recipe-list">
           {% for recipe in recipes %}
           <div class="recipe-card" style="{% if forloop.counter > 3 %}display:none;{% endif %}">

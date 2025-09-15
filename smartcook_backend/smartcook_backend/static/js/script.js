@@ -131,8 +131,6 @@ document.addEventListener("DOMContentLoaded", function () {
     <span>${name}</span>
   </label>
 `;
-
-
           });
         }
       });
@@ -140,17 +138,16 @@ document.addEventListener("DOMContentLoaded", function () {
   
     
     // 추가 재료 없음 →
-const skipBtn = document.getElementById("skip-extra-btn");
-if (skipBtn) {
-  skipBtn.addEventListener("click", () => {
-    if (currentRecipeId) {
-      window.location.href = `/recipes/${currentRecipeId}/`;
-    } else {
-      alert("먼저 요리할 레시피를 선택해주세요!");
+    const skipBtn = document.getElementById("skip-extra-btn");
+    if (skipBtn) {
+      skipBtn.addEventListener("click", () => {
+        if (currentRecipeId) {
+          window.location.href = `/recipes/${currentRecipeId}/`;
+        } else {
+          alert("먼저 요리할 레시피를 선택해주세요!");
+        }
+      });
     }
-  });
-}
-
   
     // 레시피 상세보기
     const detailBtn = document.getElementById("go-detail-btn");
@@ -175,52 +172,55 @@ if (skipBtn) {
       });
     }
   
-    // 더보기 버튼 (3개씩 보이기)
+    // ✅ 더보기 버튼 (정렬 유지 + 처음 3개만 보이도록 수정)
     const loadMoreBtn = document.getElementById("loadMoreBtn");
     if (loadMoreBtn) {
-      loadMoreBtn.addEventListener("click", () => {
-        const hiddenCards = document.querySelectorAll(".recipe-card[style*='display:none']");
-        for (let i = 0; i < 3 && i < hiddenCards.length; i++) {
-          hiddenCards[i].style.display = "block";
+      const cards = document.querySelectorAll(".recipe-card");
+      let visibleCount = 3; // 처음에 3개만 보이게
+
+      // 처음 3개 이외는 숨김
+      cards.forEach((card, idx) => {
+        if (idx >= visibleCount) {
+          card.style.display = "none";
         }
-        if (document.querySelectorAll(".recipe-card[style*='display:none']").length === 0) {
-          loadMoreBtn.style.display = "none";
+      });
+
+      loadMoreBtn.addEventListener("click", () => {
+        let newVisible = visibleCount + 3;
+        for (let i = visibleCount; i < newVisible && i < cards.length; i++) {
+          cards[i].style.display = "block";
+        }
+        visibleCount = newVisible;
+
+        if (visibleCount >= cards.length) {
+          loadMoreBtn.style.display = "none"; // 끝까지 다 나오면 버튼 숨김
         }
       });
     }
   });
-  
-  
-  
-  
-  
-  
-  
 
 
 // mainpage
-
 document.addEventListener('DOMContentLoaded', function() {
   const startCookingButton = document.querySelector('.home-start');
   if (startCookingButton) {
-    const uploadUrl = startCookingButton.dataset.uploadUrl; // data-upload-url 속성 값 가져오기
-    const loginUrl = startCookingButton.dataset.loginUrl; // data-login-url 속성 값 가져오기
+    const uploadUrl = startCookingButton.dataset.uploadUrl;
+    const loginUrl = startCookingButton.dataset.loginUrl;
     const isAuthenticated = JSON.parse(document.body.dataset.isAuthenticated);
 
     startCookingButton.addEventListener('click', function(event) {
         if (!isAuthenticated) {
             event.preventDefault();
             alert('로그인 후 이용해 주세요.');
-            window.location.href = loginUrl; // HTML에서 가져온 로그인 URL로 이동
+            window.location.href = loginUrl;
         } else {
-            window.location.href = uploadUrl; // HTML에서 가져온 URL로 이동
+            window.location.href = uploadUrl;
         }
     });
   }
 });
 
 // cart
-
 document.addEventListener("DOMContentLoaded", () => {
   // + 버튼
   document.querySelectorAll(".plus-btn").forEach(btn => {
@@ -267,13 +267,9 @@ document.addEventListener("DOMContentLoaded", function () {
   const recipeId = params.get("recipe");
 
   if (from === "extra" && recipeId) {
-    // extra-section 바로 열기
     const btn = document.querySelector(`.show-extra-btn[data-recipe-id="${recipeId}"]`);
     if (btn) {
-      btn.click(); // 강제로 버튼 클릭 이벤트 실행
+      btn.click();
     }
   }
 });
-
-
-

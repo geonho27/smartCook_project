@@ -473,14 +473,6 @@ a.btn {
   padding-top: 20px;
 }
 
-.recommend > p {
-  margin-left: 20px;
-  margin-bottom: 46px;
-  font-size: 27px;
-  color: #A6856E;
-  margin-top: 35px;
-}
-
 .image-box img {
   width: auto;
   height: 100%;
@@ -1549,3 +1541,45 @@ background-color: #AD8B73;
 }
 
 
+/* 정렬 */
+/* 검색 결과 헤더 */
+.result-header {
+  display: flex;
+  justify-content: space-between;  /* 왼쪽은 p, 오른쪽은 sort-options */
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+/* 왼쪽 문구 */
+.result-header p {
+  font-size: 27px;
+  font-weight: bold;
+  color: #A6856E;
+  margin: 0;
+}
+
+/* 오른쪽 정렬 옵션 */
+.sort-options {
+  margin-left: auto;     /* 오른쪽 끝으로 밀기 */
+  display: flex;
+  gap: 20px;             /* 링크 간격 */
+}
+
+.sort-options a {
+  font-size: 18px;
+  font-weight: bold;
+  color: #A6856E !important;
+  text-decoration: none !important;
+  transition: color 0.2s ease;
+  cursor: pointer;
+}
+
+.sort-options a:hover {
+  color: #CEAB93 !important;
+}
+
+.sort-options a.active {
+  color: #AD8B73 !important;
+  border-bottom: 2px solid #AD8B73;
+  padding-bottom: 2px;
+}
