@@ -44,10 +44,8 @@
     <section class="recommend" id="recipe-section" style="display:block;">
       {% if recipes %}
         <div class="result-header">
-          <!-- 왼쪽: 검색 결과 문구 -->
           <p>{{ query }}에 대한 추천 레시피 ({{ recipes|length }}개)</p>
 
-          <!-- 오른쪽: 정렬 옵션 -->
           <div class="sort-options">
             <a href="?q={{ query }}&sort=match"
                class="sort-link {% if sort == 'match' %}active{% endif %}">관련도 순</a>
@@ -58,31 +56,32 @@
 
         <div class="recipe-list" id="recipe-list">
           {% for recipe in recipes %}
-          <div class="recipe-card">
-            <img src="{{ recipe.image }}" alt="{{ recipe.title }}">
-            <h5>{{ recipe.title }}</h5>
+            {% if recipe.ingredients %}
+              <div class="recipe-card">
+                <img src="{{ recipe.image }}" alt="{{ recipe.title }}">
+                <h5>{{ recipe.title }}</h5>
 
-            <h6 style="text-align: center;">재료</h6>
-            <ul style="list-style-type: none; padding-left: 0;">
-              {% for ing in recipe.ingredients %}
-              <li>{{ ing.split.0 }}</li>
-              {% endfor %}
-            </ul>
+                <h6 style="text-align: center;">재료</h6>
+                <ul style="list-style-type: none; padding-left: 0;">
+                  {% for ing in recipe.ingredients %}
+                  <li>{{ ing.split.0 }}</li>
+                  {% endfor %}
+                </ul>
 
-            {% with "ingredients-"|add:recipe.id as script_id %}
-              {{ recipe.ingredients|json_script:script_id }}
-            {% endwith %}
+                {% with "ingredients-"|add:recipe.id as script_id %}
+                  {{ recipe.ingredients|json_script:script_id }}
+                {% endwith %}
 
-            <a href="javascript:void(0)"
-               class="btn-category-done show-extra-btn"
-               data-recipe-id="{{ recipe.id }}">
-               요리하러 가기
-            </a>
-          </div>
+                <a href="javascript:void(0)"
+                   class="btn-category-done show-extra-btn"
+                   data-recipe-id="{{ recipe.id }}">
+                   요리하러 가기
+                </a>
+              </div>
+            {% endif %}
           {% endfor %}
         </div>
 
-        {# ✅ 관련도 순일 때만 더보기 버튼 보이기 #}
         {% if recipes|length > 3 and sort != "ingredients" %}
         <div style="text-align:center; margin-top:20px;">
           <button id="loadMoreBtn" class="confirm-btn">더보기</button>
