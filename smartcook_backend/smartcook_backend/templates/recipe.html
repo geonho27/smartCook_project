@@ -55,13 +55,17 @@
   </div>
 
   <!-- 버튼 -->
- <!-- 버튼 -->
-<div class="recipe-bottom-button">
-  <button onclick="location.href='{% url 'food_upload' %}?q={{ query }}'">
-    다른 레시피 보러가기
-  </button>
-</div>
-
+  <div class="recipe-bottom-button">
+    {% if mode == "detected" %}
+      <button onclick="location.href='{% url 'search_recipes_by_detected' %}?sort=match'">
+        다른 레시피 보러가기
+      </button>
+    {% else %}
+      <button onclick="location.href='{% url 'food_upload' %}?q={{ query }}'">
+        다른 레시피 보러가기
+      </button>
+    {% endif %}
+  </div>
 
   
 </html>

@@ -1013,3 +1013,181 @@ form.signup{
 .main-nav-right .main-navbar-logout-btn {
   text-decoration: none !important;
 }
+
+/* ------------------- 공통 애니메이션 ------------------- */
+html {
+  scroll-behavior: smooth;
+}
+
+
+
+/* 기본 설정 */
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: 'BMHANNA', sans-serif; }
+
+    /* 헤더 네비게이션 */
+    .main-navbar {
+      position: fixed;
+      top: 0;
+      width: 100%;
+      z-index: 1000;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 20px 60px;
+      background: rgba(0,0,0,0.3); /* 투명한 블랙 배경 */
+    }
+
+    .main-logo {
+      font-size: 24px;
+      font-weight: bold;
+      color: #fff;
+      text-decoration: none;
+    }
+
+    .main-nav-links a {
+      color: #fff;
+      margin: 0 15px;
+      text-decoration: none;
+      font-size: 16px;
+    }
+
+    .main-nav-right a,
+    .main-nav-right button {
+      margin-left: 15px;
+      color: #fff;
+      background: transparent;
+      border: 1px solid #fff;
+      padding: 5px 12px;
+      border-radius: 5px;
+      text-decoration: none;
+      cursor: pointer;
+    }
+
+/* 히어로 섹션 */
+.hero {
+  height: 100vh; /* 화면 전체 높이 */
+  background: url('/static/images/pic.jpg') no-repeat center center/cover;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  color: white;
+  text-align: center;
+  position: relative;
+  overflow: hidden; /* 오버레이 잘리도록 */
+}
+
+/* 오버레이 (투명도 조절) */
+.hero::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.4); /* 검은색 반투명 (투명도 40%) */
+  z-index: 1;
+}
+
+/* 텍스트와 버튼을 오버레이 위로 올림 */
+.hero h1,
+.hero .scroll-down {
+  position: relative;
+  z-index: 2;
+}
+
+.hero h1 {
+  font-size: 80px;
+  letter-spacing: 10px;
+  font-weight: bold;
+}
+
+.scroll-down {
+  position: absolute;
+  bottom: 0px;
+  font-size: 16px;
+  color: white;
+  text-decoration: none;
+  animation: bounce 1.5s infinite;
+}
+
+@keyframes bounce {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(8px); }
+}
+
+/* 콘텐츠 섹션 */
+.content {
+  background: #fff;
+  padding: 100px 20px;
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.content h2 {
+  font-size: 28px;
+  margin-bottom: 20px;
+  color: #333;
+}
+
+.content p {
+  font-size: 16px;
+  line-height: 1.6;
+  color: #555;
+}
+
+.about-btn-box {
+  margin-top: 30px;
+  text-align: center;
+}
+
+.about-btn {
+  display: inline-block;
+  padding: 14px 28px;
+  font-size: 18px;
+  font-weight: bold;
+  background-color: #76b5c5;
+  color: #fff;
+  text-decoration: none;
+  border-radius: 8px;
+  transition: all 0.3s ease;
+}
+
+.about-btn:hover {
+  background-color: #fff; 
+  border: 2px solid #76b5c5;
+  color: #76b5c5;
+}
+
+
+/* 두번째 컬럭 블록 섹션 */
+.promo-section {
+  background-color: #76b5c5; 
+  padding: 100px 20px;
+  text-align: center;
+  color: #fff;
+}
+
+.promo-section h2 {
+  font-size: 32px;
+  margin-bottom: 20px;
+  font-weight: bold;
+}
+
+.promo-section p {
+  font-size: 18px;
+  margin-bottom: 40px;
+}
+
+.video-box {
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.video-box video {
+  width: 100%;
+  height: auto;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+}

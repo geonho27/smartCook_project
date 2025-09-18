@@ -9,11 +9,19 @@
 <body class="upload cart-page">
   {% load static %}
 
-
-
   <div class="cart-container">
     <div>
-      <a class="cart-back-link" href="{% url 'food_upload' %}?q={{query}}">
+
+      <!-- ✅ 세션 모드에 따라 돌아가기 분기 -->
+      <a class="cart-back-link"
+         href="{% if search_mode == 'food' %}
+                  {% url 'food_upload' %}?q={{ search_query }}&sort={{ search_sort }}
+                {% elif search_mode == 'detected' %}
+                  {% url 'search_recipes_by_detected' %}?sort={{ search_sort }}
+                {% else %}
+                  {% url 'food_upload' %}
+                {% endif %}">
+
         ← 레시피로 돌아가기
       </a>
       
@@ -39,7 +47,6 @@
 
     <div class="cart-go-button-wrapper">
       <button class="cart-go-button" id="go-coupang" type="button">쿠팡으로 가기</button>
-
     </div>
   </div>
 

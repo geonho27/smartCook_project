@@ -10,7 +10,9 @@
   <main>
     <!-- 상단 네비 -->
     <div class="navbar">
-      <div class="nav-left"><a href="{% url 'mainpage' %}" class="logo">SMARTCOOK</a></div>
+      <div class="nav-left">
+        <a href="{% url 'mainpage' %}" class="logo">SMARTCOOK</a>
+      </div>
       <form method="POST" action="{% url 'logout' %}" style="display:inline;">
         {% csrf_token %}
         <button type="submit" class="logout-button">Logout</button>
@@ -44,7 +46,7 @@
     <section class="recommend" id="recipe-section" style="display:block;">
       {% if recipes %}
         <div class="result-header">
-          <p>{{ query }}에 대한 추천 레시피 ({{ recipes|length }}개)</p>
+          <p>{{ query }}에 대한 추천 레시피 ({{ recipes.paginator.count }}개)</p>
 
           <div class="sort-options">
             <a href="?q={{ query }}&sort=match"
@@ -64,10 +66,11 @@
                 <h6 style="text-align: center;">재료</h6>
                 <ul style="list-style-type: none; padding-left: 0;">
                   {% for ing in recipe.ingredients %}
-                  <li>{{ ing.split.0 }}</li>
+                    <li>{{ ing.split.0 }}</li>
                   {% endfor %}
                 </ul>
 
+                {# ✅ 음식명 검색은 "추가 재료 선택 → 장바구니" 플로우 사용 #}
                 {% with "ingredients-"|add:recipe.id as script_id %}
                   {{ recipe.ingredients|json_script:script_id }}
                 {% endwith %}
@@ -82,10 +85,29 @@
           {% endfor %}
         </div>
 
-        {% if recipes|length > 3 and sort != "ingredients" %}
-        <div style="text-align:center; margin-top:20px;">
-          <button id="loadMoreBtn" class="confirm-btn">더보기</button>
-        </div>
+        <!-- 페이지네이션 (10개 단위 그룹) -->
+        {% if recipes.has_other_pages %}
+          <div class="pagination">
+            {% if recipes.has_previous %}
+              <a href="?q={{ query }}&sort={{ sort }}&page={{ recipes.previous_page_number }}" class="page-btn">&lt;</a>
+            {% else %}
+              <span class="page-btn disabled">&lt;</span>
+            {% endif %}
+
+            {% for num in page_range %}
+              {% if recipes.number == num %}
+                <span class="page-btn active">{{ num }}</span>
+              {% else %}
+                <a href="?q={{ query }}&sort={{ sort }}&page={{ num }}" class="page-btn">{{ num }}</a>
+              {% endif %}
+            {% endfor %}
+
+            {% if recipes.has_next %}
+              <a href="?q={{ query }}&sort={{ sort }}&page={{ recipes.next_page_number }}" class="page-btn">&gt;</a>
+            {% else %}
+              <span class="page-btn disabled">&gt;</span>
+            {% endif %}
+          </div>
         {% endif %}
       {% else %}
         <p>‘{{ query }}’에 해당하는 레시피를 찾을 수 없습니다.</p>
@@ -93,11 +115,11 @@
     </section>
     {% endif %}
 
-    <!-- 추가재료 섹션 -->
+    <!-- ✅ 추가재료 섹션 (hover/active 효과 적용됨) -->
     <section class="extra" id="extra-section" style="display:none;">
       <div class="extra-header">
         <h4 class="extra-title">추가 재료 선택</h4>
-        <span class="small-text skip-extra" id="skip-extra-btn">
+        <span class="skip-extra" id="skip-extra-btn">
           추가 재료 없음 →
         </span>
       </div>

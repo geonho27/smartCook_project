@@ -49,7 +49,6 @@
           </div>
           <input type="file" id="file-upload" accept="image/*" style="display:none;" />
           <div class="image-preview-box">
-            <!-- YOLO 결과 이미지를 띄울 자리 -->
             <img id="preview-image" style="max-width:100%;display:none;border-radius:10px;" alt="업로드 미리보기" />
           </div>
         </div>
@@ -59,10 +58,23 @@
     <!-- 인식된 재료 -->
     <section class="recognized" id="ingredient-buttons" style="display:none;">
       <h4 class="recognized-title">인식된 재료</h4>
-      <div class="chip-box" id="recognized-list"></div>
-      <div class="confirm-wrapper">
-        <button class="confirm-btn" id="toCategoryBtn">선택 완료</button>
-      </div>
+
+      <!-- ✅ 선택된 재료 form (바로 결과 페이지로 이동) -->
+      <form method="get" action="{% url 'search_recipes_by_detected' %}">
+        <div class="chip-box" id="recognized-list">
+          {% if query_list %}
+            {% for ing in query_list %}
+              <label class="chip">
+                <input type="checkbox" name="q" value="{{ ing }}" checked>
+                {{ ing }}
+              </label>
+            {% endfor %}
+          {% endif %}
+        </div>
+        <div class="confirm-wrapper">
+          <button type="submit" class="confirm-btn">선택 완료</button>
+        </div>
+      </form>
     </section>
 
     <!-- 음식 분야 선택 -->
@@ -71,75 +83,75 @@
       <div class="chip-box">
         <label class="chip"><input type="checkbox" name="category" class="chip-radio" value="한식" /> 한식</label>
         <label class="chip"><input type="checkbox" name="category" class="chip-radio" value="일식" /> 일식</label>
-        <label class="chip"><input type="checkbox" name="category" class="chip-radio" value="양식" /> 양식</label>
         <label class="chip"><input type="checkbox" name="category" class="chip-radio" value="중식" /> 중식</label>
         <label class="chip"><input type="checkbox" name="category" class="chip-radio" value="기타" /> 기타</label>
       </div>
-      <div class="range-wrap">
-        <label>음식 간 선택</label>
-        <input type="range" min="0" max="100" value="50" id="spicyRange" />
-        <div class="range-labels">
-          <span class="left-label">약하게</span>
-          <span class="right-label">강하게</span>
-        </div>
-      </div>
       <div class="confirm-wrapper">
-        <button class="confirm-btn" id="toRecipeBtn">선택 완료</button>
+        <button class="confirm-btn" id="toCategoryBtn">선택 완료</button>
       </div>
     </section>
 
-    <!-- ✅ 숨은 form: 서버 POST용 -->
-    <form id="recipeForm" action="{% url 'search_recipe' %}" method="POST" style="display:none;">
-      {% csrf_token %}
-      <input type="hidden" name="food_name" id="food-hidden-input">
-      <input type="hidden" name="categories" id="categories-hidden-input">
-      <input type="hidden" name="spicy" id="spicy-hidden-input">
-      <button type="submit" style="display:none;">제출</button>
-    </form>
-
-    <!-- 추천 레시피 -->
-    {% if query %}
-    <section class="recommend" id="recipe-section" style="display:block;">
-      {% if recipes %}
-        <div class="result-header">
-          <p>{{ query }}에 대한 추천 레시피 ({{ recipes|length }}개)</p>
-          <!-- ✅ 정렬 옵션 -->
-          <div class="sort-options">
-            <a href="?q={{ query }}&sort=match" class="{% if sort == 'match' %}active{% endif %}">관련도 순</a> |
-            <a href="?q={{ query }}&sort=ingredients" class="{% if sort == 'ingredients' %}active{% endif %}">재료 적은 순</a>
-          </div>
-        </div>
-
-        <div class="recipe-list" id="recipe-list">
-          {% for recipe in recipes %}
-          <div class="recipe-card" style="{% if forloop.counter > 3 %}display:none;{% endif %}">
-            <img src="{{ recipe.image }}" alt="{{ recipe.title }}">
-            <h5>{{ recipe.title }}</h5>
-            <h6 style="text-align:center;">재료</h6>
-            <ul style="list-style-type:none;padding-left:0;">
-              {% for ing in recipe.ingredients %}
-              <li>{{ ing.split.0 }}</li>
-              {% endfor %}
-            </ul>
-            {% with "ingredients-"|add:recipe.id as script_id %}
-              {{ recipe.ingredients|json_script:script_id }}
-            {% endwith %}
-            <a href="javascript:void(0)" class="btn-category-done show-extra-btn" data-recipe-id="{{ recipe.id }}">
-              요리하러 가기
-            </a>
-          </div>
-          {% endfor %}
-        </div>
-        {% if recipes|length > 3 %}
-        <div style="text-align:center;margin-top:20px;">
-          <button id="loadMoreBtn" class="confirm-btn">더보기</button>
+    <!-- ✅ 결과 들어갈 자리 -->
+    <section class="recommend" id="recipe-section" {% if not hasRecipes %}style="display:none;"{% endif %}>
+      <div class="result-header">
+        <p id="recipe-title">
+          {% if hasRecipes %}
+            "{{ query }}"에 대한 추천 레시피 ({{ recipes.paginator.count }}개)
+          {% else %}
+            레시피를 찾을 수 없습니다.
+          {% endif %}
+        </p>
+        {% if hasRecipes %}
+        <div class="sort-options">
+          <a href="?q={{ query }}&sort=match" class="{% if sort == 'match' %}active{% endif %}">관련도 순</a> |
+          <a href="?q={{ query }}&sort=ingredients" class="{% if sort == 'ingredients' %}active{% endif %}">재료 적은 순</a>
         </div>
         {% endif %}
-      {% else %}
-        <p>‘{{ query }}’에 해당하는 레시피를 찾을 수 없습니다.</p>
+      </div>
+
+      <div class="recipe-list" id="recipe-list">
+        {% if hasRecipes %}
+          {% for r in recipes %}
+            <div class="recipe-card">
+              <img src="{{ r.image }}" alt="{{ r.title }}">
+              <h5>{{ r.title }}</h5>
+              <h6 style="text-align:center;">재료</h6>
+              <ul style="list-style-type:none;padding-left:0;">
+                {% for i in r.ingredients %}
+                  <li>{{ i }}</li>
+                {% endfor %}
+              </ul>
+              <a href="{% url 'recipe_detail' r.id %}" class="btn-category-done">요리하러 가기</a>
+            </div>
+          {% endfor %}
+        {% endif %}
+      </div>
+
+      <!-- ✅ 페이지네이션 -->
+      {% if hasRecipes and recipes.has_other_pages %}
+        <div class="pagination">
+          {% if recipes.has_previous %}
+            <a href="?q={{ query }}&sort={{ sort }}&page={{ recipes.previous_page_number }}" class="page-btn">&lt;</a>
+          {% else %}
+            <span class="page-btn disabled">&lt;</span>
+          {% endif %}
+
+          {% for num in page_range %}
+            {% if recipes.number == num %}
+              <span class="page-btn active">{{ num }}</span>
+            {% else %}
+              <a href="?q={{ query }}&sort={{ sort }}&page={{ num }}" class="page-btn">{{ num }}</a>
+            {% endif %}
+          {% endfor %}
+
+          {% if recipes.has_next %}
+            <a href="?q={{ query }}&sort={{ sort }}&page={{ recipes.next_page_number }}" class="page-btn">&gt;</a>
+          {% else %}
+            <span class="page-btn disabled">&gt;</span>
+          {% endif %}
+        </div>
       {% endif %}
     </section>
-    {% endif %}
 
     <!-- 추가재료 -->
     <section class="extra" id="extra-section" style="display:none;">

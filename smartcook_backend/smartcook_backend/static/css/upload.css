@@ -1589,6 +1589,7 @@ background-color: #000000;
 }
 
 .sort-options a.active {
+
   color: #5e6e7d !important; /* 포인트 색상 */
   font-weight: bolder;
   transform: scale(1.05);

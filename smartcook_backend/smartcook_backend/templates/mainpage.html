@@ -1,217 +1,86 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ko">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-    {% load static %}
-    <link rel="stylesheet" href="{% static 'css/main.css' %}">
+  <meta charset="UTF-8">
+  <title>로그인 페이지</title>
+  {% load static %}
+  <link rel="stylesheet" href="{% static 'css/main.css' %}">
 </head>
-<body class="mainpage" data-is-authenticated="{{ user.is_authenticated|yesno:'true,false' }}">
-    <div class="main-navbar">
-        <div class="main-nav-left">
-          <a href="{% url 'mainpage' %}" class="main-logo">SMARTCOOK</a>
-          <div class="main-nav-links">
-            <a href="#home" class="main-active">Home</a>
-            <a href="#features">Features</a>
-            <a href="#impact">Impact</a>
-            <a href="#premium">Premium</a>
-            <a href="#feedback">Feedback</a>
-          </div>
-        </div>
-        <div class="main-nav-right">
-          {% if user.is_authenticated %}
-            <!-- Mypage 버튼 -->
-            <a href="{% url 'mypage' %}" class="main-navbar-logout-btn">Mypage</a>
-        
-            <!-- Logout 버튼 -->
-            <form method="POST" action="{% url 'logout' %}" style="display:inline;">
-              {% csrf_token %}
-              <button type="submit" class="main-navbar-logout-btn">Logout</button>
-            </form>
-          {% else %}
-            <a href="{% url 'login' %}" class="main-login-button">Login</a>
-          {% endif %}
-        </div>
-        
+<body>
+ <!-- 네비게이션 -->
+  <div class="main-navbar">
+    <div class="main-nav-left">
+      <a href="{% url 'mainpage' %}" class="main-logo" style="color: #76b5c5;">SMARTCOOK</a>
+      <div class="main-nav-links">
+        <a href="{% url 'food_upload' %}" class="main-active">Recipe</a>
+        <a href="{% url 'upload' %}">Picture</a>
+        <a href="{% url 'live_page' %}">Realtime</a>
+        <a href="{% url 'mainpage' %}">Mypage</a>
+
       </div>
+    </div>
+    <div class="main-nav-right">
+      {% if user.is_authenticated %}
+        <a href="{% url 'mypage' %}" class="main-navbar-logout-btn">Mypage</a>
+        <form method="POST" action="{% url 'logout' %}" style="display:inline;">
+          {% csrf_token %}
+          <button type="submit" class="main-navbar-logout-btn">Logout</button>
+        </form>
+      {% else %}
+        <a href="{% url 'login' %}" class="main-login-button">Login</a>
+      {% endif %}
+    </div>
+  </div>
 
-      <section id="home">
-        <div class="home-container">
-          <div class="home-left">
-            <h1>
-              쉽고 똑똑한 요리,<br />
-              이제 스마트하게 시작하세요.
-            </h1>
-            <p>
-              SMARTCOOK은 개인 맞춤형 요리 도우미입니다. 재료 사진을 찍고 업로드하면 AI가<br />
-              레시피를 추천해 줍니다. 안내된 레시피를 따라 요리 초보자도 단계에 맞춰 훌륭한<br />
-              요리를 완성할 수 있습니다. 정해진 시간을 재고 AI가 들어간 재료들을 확인할 수도<br />
-              있습니다. 구독 서비스를 활용하면 사용자의 건강 상태나 음식 선호도 등을 반영하여 더욱<br />
-              정교해진 SMARTCOOK을 만나볼 수 있습니다. 자신에게 맞는 나만의 요리사가 되어보세요!
-            </p>
-            <button class="home-start" data-upload-url="{% url 'food_upload' %}" data-login-url="{% url 'login' %}">요리하러 가기</button>
+  <!-- Hero -->
+  <section class="hero">
+    <h1>SMARTCOOK</h1>
+    <a href="#about" class="scroll-down">↓ scroll down</a>
+  </section>
 
-          </div>
-          <div class="home-right">
-            <div class="home-desktop-box">
-              <div class="home-desktop-top">
-                <div class="home-desktop-dot"></div>
-                <div class="home-desktop-dot"></div>
-                <div class="home-desktop-dot"></div>
-              </div>
-              <div class="home-desktop-screen"></div>
-            </div>
-          </div>
-        </div>
-      </section>
-      
-      
+  <!-- Content -->
+  <section id="about" class="content">
+    <h2 style="color: #76b5c5;">SMARTCOOK</h2>
+  <p>
+    SMARTCOOK은 비싼 스마트 냉장고가 없어도 사용할 수 있는 개인 맞춤형 요리 도우미입니다. 
+    기존에 쓰던 일반 냉장고 속 재료를 꺼내 사진으로 찍어 업로드하기만 하면, 
+    AI가 자동으로 재료를 분석하고 지금 바로 만들 수 있는 레시피를 추천합니다. 
+    초보자도 단계별 가이드를 따라 손쉽게 요리를 완성할 수 있습니다.<br/>
+  <br/>
+  </p>
+  <p>
+    SMARTCOOK은 단순히 레시피를 제안하는 것에 그치지 않고, 
+    사용자의 건강 상태(예: 당뇨, 고혈압), 선호·비선호 재료까지 반영해 
+    더 정교한 맞춤형 추천을 제공합니다. 
+    또한, 실시간 카메라 인식을 통해 냉장고 속 재료를 자동으로 인식할 수 있어 
+    사용자가 직접 하나하나 입력하지 않아도 편리하게 요리를 준비할 수 있습니다.<br/>
+  <br/>
+  </p>
+  <p>
+    나만의 요리사가 되어주는 SMARTCOOK은 식사를 준비하는 시간을 즐거운 경험으로 바꿔줍니다. 
+    바쁜 일상 속에서도 균형 잡힌 영양과 새로운 요리 경험을 얻을 수 있으며, 
+    집에 있는 재료만으로도 새로운 요리를 즐길 수 있습니다. 
+    지금 바로 SMARTCOOK과 함께, 평범한 냉장고를 스마트한 요리 파트너로 바꿔보세요!
+  <br/>
+  </p>
+    <div class="about-btn-box">
+    <a href="{% url 'food_upload' %}" target="_blank" class="about-btn">요리하러 바로가기</a>
+    </div>
+  </section>
+  <!-- 두 번째 컬러 블록 섹션 -->
+  <section id="promo" class="promo-section">
+    <div class="promo-content">
+      <h2>SMARTCOOK 사용법</h2>
+      <p>영상으로 쉽게 확인하세요</p>
 
-
-    <section id="features"> 
-        <div class="features-wrapper">
-          <img src="{% static 'images/mainpage/ice_cube.png' %}" alt="뒤집개 이미지" class="features-spatula">
-        <h2 class="features-title">SmartCook이 제공하는 기능들</h2>
-      
-        <div class="features-feature-box">
-          
-
-          <!-- 상단 브라우저 헤더 -->
-          <div class="features-window-header">
-            <div class="features-window-dots">
-              <div class="features-dot"></div>
-              <div class="features-dot"></div>
-              <div class="features-dot"></div>
-            </div>
-            <div class="features-divider-line"></div>
-          </div>
-      
-          <!-- 기능들 -->
-          <div class="features-features">
-            <div class="features-feature-item">
-              <img src="{% static 'images/mainpage/cart.png' %}" alt="재료 쇼핑 연동">
-              <div class="features-feature-title">재료 쇼핑 연동</div>
-              <div class="features-feature-desc">없는 재료는 근처 마트에서<br>바로 장바구니에 담을 수 있어요.</div>
-            </div>
-      
-            <div class="features-feature-item">
-              <img src="{% static 'images/mainpage/good.png' %}" alt="AI 레시피 자동 추천">
-              <div class="features-feature-title">AI 레시피 자동 추천</div>
-              <div class="features-feature-desc">지금 가지고 있는 재료만으로<br>AI가 새로운 요리를 제안해줘요.</div>
-            </div>
-      
-            <div class="features-feature-item">
-              <img src="{% static 'images/mainpage/video.png' %}" alt="레시피 영상 제공">
-              <div class="features-feature-title">레시피 영상 제공</div>
-              <div class="features-feature-desc">레시피를 영상으로 보고 직접<br>따라할 수 있어요.</div>
-            </div>
-      
-            <div class="features-feature-item">
-              <img src="{% static 'images/mainpage/image.png' %}" alt="이미지 인식 기능">
-              <div class="features-feature-title">이미지 인식 기능</div>
-              <div class="features-feature-desc">재료를 찍기만 하면<br>어떤 재료들이 있는지 자동으로 인식해요.</div>
-            </div>
-      
-            <div class="features-feature-item">
-              <img src="{% static 'images/mainpage/text.png' %}" alt="텍스트 기반 요리 추천">
-              <div class="features-feature-title">텍스트 기반 요리 추천</div>
-              <div class="features-feature-desc">텍스트로 입력만 하면<br>간편하게 레시피를 알려줘요.</div>
-            </div>
-      
-            <div class="features-feature-item">
-              <img src="{% static 'images/mainpage/save.png' %}" alt="레시피 저장">
-              <div class="features-feature-title">레시피 저장</div>
-              <div class="features-feature-desc">레시피를 저장하고<br>나중에 확인할 수 있어요.</div>
-            </div>
-          </div>
-        </div> 
+      <!-- mp4 영상 -->
+      <div class="video-box">
+        <video controls autoplay muted loop>
+          <source src="{% static 'videos/demo.mp4' %}" type="video/mp4">
+          브라우저가 영상을 지원하지 않습니다.
+        </video>
       </div>
-      </section>
-
-
-    <section id="impact"> 
-        
-
-        <div class="impact-content-wrapper">
-            <img src="{% static 'images/mainpage/cook.png' %}" alt="숟가락 아이콘" class="impact-spoon" />
-          <div class="impact-left-content">
-            <div class="impact-title">SmartCook이 만들어낼 요리 변화</div>
-            <div class="impact-subtitle">“냉장고를 여는 순간, 식사의 미래가 달라집니다”<br />SmartCook이 그 변화를 만들어갑니다</div><br><br>
-            
-          </div>
-
-          <img src="{% static 'images/mainpage/graph.png' %}" alt="거미줄 그래프" class="impact-spider" />
-        </div>
-    </section>
-
-
-    <section id="premium">
-      
-      <div class="premium-container">
-        <!-- 칼 이미지 -->
-        <img src="{% static 'images/mainpage/fride.png' %}" alt="칼 이미지" class="premium-knife-image">
-      
-        <!-- 케이크 프레임 -->
-        <div class="premium-left">
-          <div class="premium-browser-dots">
-            <span></span><span></span><span></span>
-          </div>
-          <img src="{% static 'images/mainpage/cake.png' %}" alt="케이크" class="premium-main-image">
-      
-          <div class="premium-overlay-content">
-            <div class="premium-text-box">
-              <strong>SMARTCOOK</strong>의 맞춤형 서비스는 날씨 기반 음식 추천,<br>
-              사용자의 선호도 반영, 건강 필터 기능 등을 제공합니다.<br>
-              <strong>추가 정보 기입</strong>으로 더욱 차별화된 <strong>SMARTCOOK</strong>을 경험해 보세요!
-            </div>
-            <a href="#" class="premium-button">추가 정보 기입하기</a>
-          </div>
-        </div>
-      
-        <!-- 기능 설명 -->
-        <div class="premium-right">
-          <div class="premium-feature">
-            <img src="{% static 'images/mainpage/light.png' %}" alt="날씨">
-            <h4>날씨 기반 추천</h4>
-            <h5>그날의 날씨에 맞는<br>요리를 제안합니다.</h5>
-          </div>
-      
-          <div class="premium-feature">
-            <img src="{% static 'images/mainpage/people.png' %}" alt="건강">
-            <h4>개인 건강 맞춤</h4>
-            <h5>개인의 건강 상태에 따라<br>추천되는 요리가 달라집니다.</h5>
-          </div>
-      
-          <div class="premium-feature">
-            <img src="{% static 'images/mainpage/phone.png' %}" alt="선호도">
-            <h4>선호도 반영</h4>
-            <h5>사용자의 음식 선호도를 반영해<br>요리를 제안합니다.</h5>
-          </div>
-      
-          <div class="premium-feature">
-            <img src="{% static 'images/mainpage/cube.png' %}" alt="영양">
-            <h4>영양소 균형 레벨 표시</h4>
-            <h5>추천된 요리마다 단백질:탄수화물:지방의<br>균형 상태가 표시됩니다.</h5>
-          </div>
-        </div>
-      </div>
-    </section>
-
-      
-
-    <section id="feedback"> 
-      
-      <div class="feedback-section">
-        <h2>지금 바로 재료를 요리로 바꿔보세요.</h2>
-        <p>사진 한 장이면 충분합니다.</p>
-        <p>사진 한 장으로 요리사가 되는 순간을 경험해보세요.</p>
-        <button class="feedback-cta-button">지금 시작하기</button>
-      </div>
-    
-      <div class="feedback-footer">
-        © SmartCook. All rights reserved.
-      </div> </section> 
-      <script src="{% static 'js/script.js' %}"></script>
+    </div>
+  </section>
 </body>
 </html>
