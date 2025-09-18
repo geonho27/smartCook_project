@@ -7,8 +7,10 @@ urlpatterns = [
     path("signup/", signup, name="signup"),
     path("login/", views.login_view, name="login"),
     path("", views.main_page, name="mainpage"),
-    
+
+    path("menu2/", views.menu2_view, name="menu2"),
+
     path("logout/", LogoutView.as_view(), name="logout"),
     path("upload/", views.upload_page, name="upload"),
-    path("mypage/", views.mypage_view, name="mypage"),  # 혹시 단순 랜더링용 별도 필요할 경우
+    path("mypage/", views.mypage_view, name="mypage"),
 ]

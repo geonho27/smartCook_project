@@ -1060,6 +1060,16 @@ ol li {
     margin-bottom: 40px;
   }
 
+  .menu2-breadcrumb a {
+    color: #76b5c5;         /* 원하는 민트색 */
+    text-decoration: none;  /* 밑줄 제거 */
+    font-weight: 500;       /* 살짝 진하게 (선택사항) */
+  }
+  
+  /*.menu2-breadcrumb a:hover {
+    text-decoration: underline; /* 호버 시 밑줄 (선택사항) */
+  
+  
   .menu2-info-row {
 display: flex;
 align-items: baseline;

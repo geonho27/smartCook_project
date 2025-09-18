@@ -65,52 +65,42 @@
     <section class="recognized" id="ingredient-buttons" style="display:none;">
       <h4 class="recognized-title">인식된 재료</h4>
 
-      <!-- ✅ 선택된 재료 form (바로 결과 페이지로 이동) -->
+      <!-- 복수 선택 form -->
       <form method="get" action="{% url 'search_recipes_by_detected' %}">
         <div class="chip-box" id="recognized-list">
           {% if query_list %}
             {% for ing in query_list %}
               <label class="chip">
-                <input type="checkbox" name="q" value="{{ ing }}" checked>
+                <input type="checkbox" name="q" value="{{ ing }}">
                 {{ ing }}
               </label>
             {% endfor %}
+          {% else %}
+            <p>아직 인식된 재료가 없습니다.</p>
           {% endif %}
         </div>
         <div class="confirm-wrapper">
-          <button type="submit" class="confirm-btn">선택 완료</button>
+          <button type="button" id="toRecipeBtn" class="confirm-btn">선택 완료</button>
         </div>
       </form>
     </section>
 
-    <!-- 음식 분야 선택 -->
-    <section class="category" id="category-section" style="display:none;">
-      <h4 class="category-title">음식 분야 선택</h4>
-      <div class="chip-box">
-        <label class="chip"><input type="checkbox" name="category" class="chip-radio" value="한식" /> 한식</label>
-        <label class="chip"><input type="checkbox" name="category" class="chip-radio" value="일식" /> 일식</label>
-        <label class="chip"><input type="checkbox" name="category" class="chip-radio" value="중식" /> 중식</label>
-        <label class="chip"><input type="checkbox" name="category" class="chip-radio" value="기타" /> 기타</label>
-      </div>
-      <div class="confirm-wrapper">
-        <button class="confirm-btn" id="toCategoryBtn">선택 완료</button>
-      </div>
-    </section>
-
-    <!-- ✅ 결과 들어갈 자리 -->
-    <section class="recommend" id="recipe-section" {% if not hasRecipes %}style="display:none;"{% endif %}>
+    <!-- 결과 들어갈 자리 -->
+    {% if query or query_list %}
+    <section class="recommend" id="recipe-section">
       <div class="result-header">
         <p id="recipe-title">
           {% if hasRecipes %}
-            "{{ query }}"에 대한 추천 레시피 ({{ recipes.paginator.count }}개)
+            "{% if selected_ingredients %}{{ selected_ingredients|join:", " }}{% else %}{{ query }}{% endif %}"에 대한 추천 레시피 ({{ recipes.paginator.count }}개)
           {% else %}
             레시피를 찾을 수 없습니다.
           {% endif %}
         </p>
+
         {% if hasRecipes %}
         <div class="sort-options">
-          <a href="?q={{ query }}&sort=match" class="{% if sort == 'match' %}active{% endif %}">관련도 순</a> |
-          <a href="?q={{ query }}&sort=ingredients" class="{% if sort == 'ingredients' %}active{% endif %}">재료 적은 순</a>
+          <a href="?{% for q in selected_ingredients %}q={{ q }}&{% endfor %}sort=match" class="{% if sort == 'match' %}active{% endif %}">관련도 순</a> |
+          <a href="?{% for q in selected_ingredients %}q={{ q }}&{% endfor %}sort=ingredients" class="{% if sort == 'ingredients' %}active{% endif %}">재료 적은 순</a>
         </div>
         {% endif %}
       </div>
@@ -130,14 +120,19 @@
               <a href="{% url 'recipe_detail' r.id %}" class="btn-category-done">요리하러 가기</a>
             </div>
           {% endfor %}
+        {% elif query or query_list %}
+          <!-- 검색은 했지만 결과 없음 -->
+          <div class="no-result">
+            조건에 맞는 레시피가 없습니다.
+          </div>
         {% endif %}
       </div>
 
-      <!-- ✅ 페이지네이션 -->
+      <!-- 페이지네이션 -->
       {% if hasRecipes and recipes.has_other_pages %}
         <div class="pagination">
           {% if recipes.has_previous %}
-            <a href="?q={{ query }}&sort={{ sort }}&page={{ recipes.previous_page_number }}" class="page-btn">&lt;</a>
+            <a href="?{% for q in query_list %}q={{ q }}&{% endfor %}sort={{ sort }}&page={{ recipes.previous_page_number }}" class="page-btn">&lt;</a>
           {% else %}
             <span class="page-btn disabled">&lt;</span>
           {% endif %}
@@ -146,18 +141,19 @@
             {% if recipes.number == num %}
               <span class="page-btn active">{{ num }}</span>
             {% else %}
-              <a href="?q={{ query }}&sort={{ sort }}&page={{ num }}" class="page-btn">{{ num }}</a>
+              <a href="?{% for q in query_list %}q={{ q }}&{% endfor %}sort={{ sort }}&page={{ num }}" class="page-btn">{{ num }}</a>
             {% endif %}
           {% endfor %}
 
           {% if recipes.has_next %}
-            <a href="?q={{ query }}&sort={{ sort }}&page={{ recipes.next_page_number }}" class="page-btn">&gt;</a>
+            <a href="?{% for q in query_list %}q={{ q }}&{% endfor %}sort={{ sort }}&page={{ recipes.next_page_number }}" class="page-btn">&gt;</a>
           {% else %}
             <span class="page-btn disabled">&gt;</span>
           {% endif %}
         </div>
       {% endif %}
     </section>
+    {% endif %}
 
     <!-- 추가재료 -->
     <section class="extra" id="extra-section" style="display:none;">

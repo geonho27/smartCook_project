@@ -149,7 +149,8 @@ def food_upload_view(request):
             if match_count > 0:
                 r = dict(recipe)
                 r["match_count"] = match_count
-                r["ingredient_count"] = len(recipe.get("ingredients", []))
+                r["ingredient_count"] = len(short_ingredients)
+                r["ingredients"] = short_ingredients
                 results.append(r)
 
         if sort_option == "ingredients":
@@ -157,6 +158,7 @@ def food_upload_view(request):
         else:
             recipes = sorted(results, key=lambda r: r.get("match_count", 0), reverse=True)
 
+        # 세션 저장
         _save_session_search(
             request,
             query=query,
@@ -164,75 +166,40 @@ def food_upload_view(request):
             result_ids=[r.get("id") for r in recipes if r.get("id") is not None],
         )
 
-    # ✅ 페이지네이션 적용 (빈자리 없음)
-    recipes_page, paginator, page_range, total_pages = paginate_queryset(request, recipes, 6)
+    # ✅ 재료 없는 레시피는 제외
+    valid_recipes = [r for r in recipes if r.get("ingredients")]
+
+    # 페이지네이션 적용
+    recipes_page, paginator, page_range, total_pages = paginate_queryset(request, valid_recipes, 6)
 
     return render(request, "food_upload.html", {
         "recipes": recipes_page,
         "query": query,
         "sort": sort_option,
-        "hasRecipes": bool(recipes),
+        "hasRecipes": bool(valid_recipes),
         "paginator": paginator,
         "page_range": page_range,
         "total_pages": total_pages,
     })
 
 
-# =========================
-# 재료 검색 (텍스트 입력)
-# =========================
-def search_recipe(request):
-    recipes = []
-    query = request.GET.get("q", "").strip()
-    sort_option = request.GET.get("sort", "match")
-
-    data = get_recipes_data()
-
-    if query:
-        query_ingredients = [q.strip() for q in query.split(",") if q.strip()]
-        results = []
-
-        for recipe in data:
-            short_ingredients = clean_ingredients(recipe.get("ingredients", []))
-            match_count = sum(1 for q in query_ingredients if q in short_ingredients)
-
-            if match_count > 0:
-                r = dict(recipe)
-                r["match_count"] = match_count
-                r["ingredient_count"] = len(recipe.get("ingredients", []))
-                results.append(r)
-
-        if sort_option == "ingredients":
-            recipes = sorted(results, key=lambda r: r.get("ingredient_count", 0))
-        else:
-            recipes = sorted(results, key=lambda r: r.get("match_count", 0), reverse=True)
-
-        _save_session_search(
-            request,
-            query=query,
-            mode="ingredient",
-            result_ids=[r.get("id") for r in recipes if r.get("id") is not None],
-        )
-
-    recipes_page, paginator, page_range, total_pages = paginate_queryset(request, recipes, 6)
-
-    return render(request, "upload.html", {
-        "recipes": recipes_page,
-        "query": query,
-        "query_list": query.split(",") if query else [],  # ✅ 리스트 추가
-        "sort": sort_option,
-        "hasRecipes": bool(recipes),
-        "paginator": paginator,
-        "page_range": page_range,
-        "total_pages": total_pages,
-    })
 
 
-# =========================
-# YOLO 인식 기반 검색
-# =========================
+
+
+
+
+# 업로드 이미지 인식
 def search_recipes_by_detected(request):
-    detected_ingredients = request.session.get(SESSION_DETECTED_KEY, [])
+    # 체크박스로 선택된 재료 가져오기
+    selected_ingredients = request.GET.getlist("q")
+
+    # 선택 없으면 세션에서 불러오기
+    if selected_ingredients:
+        detected_ingredients = selected_ingredients
+    else:
+        detected_ingredients = request.session.get(SESSION_DETECTED_KEY, [])
+
     sort_option = request.GET.get("sort", "match")
 
     # "알 수 없음" 제거
@@ -248,19 +215,27 @@ def search_recipes_by_detected(request):
 
             if match_count > 0:
                 r = dict(recipe)
-                r["ingredient_count"] = len(recipe.get("ingredients", []))
+                r["ingredient_count"] = len(recipe_ingredients)
                 r["match_count"] = match_count
+                r["ingredients"] = recipe_ingredients
                 results.append(r)
 
+        # 정렬 로직
         if sort_option == "ingredients":
-            results = sorted(results, key=lambda r: r.get("ingredient_count", 0))
-        else:
+            # ✅ 재료 적은 순 → ingredient_count 오름차순만 고려
             results = sorted(
                 results,
-                key=lambda r: (r.get("match_count", 0), -r.get("ingredient_count", 0)),
+                key=lambda r: r.get("ingredient_count", 0)
+            )
+        else:
+            # ✅ 관련도 순 → match_count 내림차순만 고려
+            results = sorted(
+                results,
+                key=lambda r: r.get("match_count", 0),
                 reverse=True
             )
 
+        # 세션 저장
         _save_session_search(
             request,
             query=",".join(detected_ingredients),
@@ -268,17 +243,20 @@ def search_recipes_by_detected(request):
             result_ids=[r.get("id") for r in results if r.get("id") is not None],
         )
 
-    results_page, paginator, page_range, total_pages = paginate_queryset(request, results, 6)
+    valid_results = [r for r in results if r.get("ingredients")]
+
+    results_page, paginator, page_range, total_pages = paginate_queryset(request, valid_results, 6)
 
     return render(request, "upload.html", {
         "recipes": results_page,
-        "query": ",".join(detected_ingredients) if detected_ingredients else "",
-        "query_list": detected_ingredients,  # ✅ 리스트 그대로 넘김
+        "query": ", ".join(selected_ingredients) if selected_ingredients else ", ".join(detected_ingredients),
+        "query_list": selected_ingredients if selected_ingredients else detected_ingredients,  # 핵심 수정
         "sort": sort_option,
-        "hasRecipes": bool(results),
+        "hasRecipes": bool(valid_results),
         "paginator": paginator,
         "page_range": page_range,
         "total_pages": total_pages,
+        "selected_ingredients": selected_ingredients, 
     })
 
 
@@ -504,14 +482,3 @@ def rerank_view(request):
         return JsonResponse({"recommendations": ranked})
     except Exception as e:
         return JsonResponse({"error": str(e)}, status=500)
-
-
-SESSION_DETECTED_KEY = "sc.detected"
-
-@require_POST
-def update_selected_ingredients(request):
-    """프론트에서 선택한 재료만 세션에 저장"""
-    selected = request.POST.getlist("ingredients")  # 체크된 재료만 가져오기
-    request.session[SESSION_DETECTED_KEY] = selected
-    request.session.modified = True
-    return redirect("search_recipes_by_detected")  # 갱신 후 검색 페이지로 이동
