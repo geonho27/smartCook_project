@@ -1,6 +1,6 @@
 @font-face {
     font-family: 'BMHANNA';
-    src: url('/static/fonts/BM-HANNAAir_ttf.ttf') format('truetype');
+    src: url('/static/fonts/BMHANNAAir_ttf.ttf') format('truetype');
     font-weight: normal;
     font-style: normal;
   }
@@ -70,7 +70,7 @@
 input::placeholder,
 textarea::placeholder {
   font-family: 'BMHANNA', sans-serif;
-  color: #c3a897;
+  color: #76b5c5;
 }
 
 input::-webkit-input-placeholder,
@@ -198,6 +198,8 @@ textarea::-moz-placeholder {
     text-shadow: 0 0 1px rgba(0, 0, 0, 0.3);
     cursor: pointer;
     }
+
+    
 /* mainpage */
 
 
@@ -786,7 +788,7 @@ form.signup{
     width: 1055px;
     height: 771px;
     background-color: #ffffff;
-    border: 2px solid #000000;
+    border: 2px solid #76b5c5;
     border-radius: 10px;
     padding: 50px 80px;
     position: relative;
@@ -833,7 +835,7 @@ form.signup{
   .signup-form-group .signup-input[type="email"] {
     flex: 1;
     padding: 10px 14px;
-    border: 1.5px solid #000000;
+    border: 1.5px solid #76b5c5;
     border-radius: 8px;
     font-size: 15px;
     box-sizing: border-box;
@@ -846,7 +848,7 @@ form.signup{
     width: 154px;
     height: 40px;
     background-color: #ffffff;
-    border: 2px solid #000000;
+    border: 2px solid #76b5c5;
     border-radius: 8px;
     color: #000000;
     font-size: 16px;
@@ -882,7 +884,7 @@ form.signup{
      width: 900px;
     height: auto;
     background-color: #ffffff;
-    border: 2px solid #000000;
+    border: 2px solid #76b5c5;
     border-radius: 10px;
     padding: 50px 80px;
     position: relative;
@@ -920,7 +922,7 @@ form.signup{
     padding: 10px 12px;
     margin-bottom: 18px;
     background-color: #ffffff;
-    color: #76b5c5;
+    color: #76b5c5 !important;
   }
 
   .login-input-box img {
@@ -947,6 +949,8 @@ form.signup{
     font-size: 18px;
     margin-bottom: 15px;
     font-family: 'BMHANNA', sans-serif;
+    display: block;
+    margin: 10px auto 10px auto;
   }
 
   .login-options {

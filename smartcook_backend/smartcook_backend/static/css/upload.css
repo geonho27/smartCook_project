@@ -2,7 +2,7 @@
 /* 한글 글꼴 */
 @font-face {
   font-family: 'BM-HANNA';
-  src: url('/static/fonts/BM-HANNA.ttf') format('truetype');
+  src: url('/static/fonts/BMHANNAAir_ttf.ttf') format('truetype');
   font-weight: normal;
   font-style: normal;
 }
@@ -217,9 +217,15 @@ a.btn {
   height: 18px;
 }
 
+label[for="food-name"] {
+  font-weight: bold;
+}
 
 /* 재료로 탐색하기 */
 
+label[for="file-upload"] {
+  font-weight: bold;
+}
 .container2 {
   width: 1055px;
   height: 771px;
@@ -360,10 +366,10 @@ a.btn {
 
 .btn-category-done {
   font-size: 14px;
-  padding: 3px 12px;
-  border-radius: 10px;
-  width: fit-content;
+  padding: 0 12px;              
   height: 28px;
+  line-height: 28px;             
+  border-radius: 10px;
   background-color: #76b5c5;
   color: white;
   border: none;
@@ -374,7 +380,11 @@ a.btn {
   cursor: pointer;
   font-family: inherit;
   transition: 0.2s ease;
+  text-decoration: none !important;
+  display: inline-block;         
+  text-align: center;
 }
+
 
 .recognized,
 .category,
@@ -653,6 +663,9 @@ a.btn {
   box-shadow: 0 4px 4px #000000;
 }
 
+.recipe-card:hover {
+  transform: scale(1.02);
+}
 
 
 /* 추가 재료 부분 */
@@ -667,7 +680,7 @@ a.btn {
 .small-text {
   font-family: Arial, sans-serif;
   font-size: 16px;
-  color: #000000;
+  color: #76b5c5;
   position: absolute;
   top: -17px;
   right: 40px;
@@ -693,7 +706,7 @@ a.btn {
     gap: 120px;
     justify-content: center;
     font-family: 'BM-HANNA', sans-serif;
-    padding-top: 150px;
+    padding-top: 100px;
   }
 
   /* 모든 입력 요소에 공통 폰트 적용 */
@@ -712,7 +725,7 @@ a.btn {
 input::placeholder,
 textarea::placeholder {
   font-family: 'BM-HANNA', sans-serif;
-  color: #c3a897;
+  color: #000000;
 }
 
 input::-webkit-input-placeholder,
@@ -738,6 +751,9 @@ textarea::-moz-placeholder {
 
 /* cart */
 
+body.upload.cart-page {
+  padding-top: 60px;   /* navbar 높이만큼만 */
+}
 
 .cart-container {
     position: relative;
@@ -772,6 +788,7 @@ textarea::-moz-placeholder {
     color: #000000;
     margin: 10px 0 5px;
     margin-top: 60px;
+    font-weight: bold;
   }
   
   hr {
@@ -874,7 +891,7 @@ textarea::-moz-placeholder {
   border: 2px solid #000000;
   border-radius: 10px;
   padding: 30px;
-  margin-top: 100px;
+  margin-top: 10000px;
 
   display: flex;          /* block → flex */
   flex-direction: column; /* 세로 정렬 */
@@ -977,10 +994,17 @@ ol li {
   display: block;
 }
 
+.video-card a {
+  text-decoration: none;
+  color: inherit;
+  display: block;
+}
+
 .video-card p {
   margin: 10px;
   font-size: 14px;
-  color: #AD8B73;
+  color: #000000;
+  text-decoration: none;
 }
 
 /* 버튼 */
@@ -997,7 +1021,7 @@ ol li {
   padding: 12px 35px;
   font-size: 14px;
   border-radius: 5px;
-  font-family: 'BMHANNA', sans-serif;
+  font-family: 'BM-HANNA', sans-serif;
   cursor: pointer;
   box-shadow: 2px 4px 10px rgba(0, 0, 0, 0.2);
   transition: all 0.3s ease;
@@ -1565,7 +1589,16 @@ background-color: #000000;
 }
 
 .sort-options a.active {
-  color: #76b5c5 !important;
-  border-bottom: 2px solid #9e9a93;
-  padding-bottom: 2px;
+  color: #5e6e7d !important; /* 포인트 색상 */
+  font-weight: bolder;
+  transform: scale(1.05);
+  transition: 0.2s;
+}
+
+
+/* 인식된 재료 / 음식 분야 / 음식 간 선택 제목 굵게 */
+.recognized-title,
+.category-title,
+.range-wrap label {
+  font-weight: bold;
 }

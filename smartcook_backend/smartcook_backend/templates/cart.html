@@ -6,14 +6,14 @@
   <title>장바구니</title>
   <link rel="stylesheet" href="{% static 'css/upload.css' %}">
 </head>
-<body class="upload">
+<body class="upload cart-page">
   {% load static %}
 
 
 
   <div class="cart-container">
     <div>
-      <a class="cart-back-link" href="{% url 'food_upload' %}?from=extra&recipe={{ recipe.id }}">
+      <a class="cart-back-link" href="{% url 'food_upload' %}?q={{query}}">
         ← 레시피로 돌아가기
       </a>
       
