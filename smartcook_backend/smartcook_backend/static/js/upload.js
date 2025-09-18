@@ -110,7 +110,10 @@
       (ings || []).forEach(name => {
         const label = document.createElement("label");
         label.className = "chip";
-        label.innerHTML = `<input type="checkbox" class="chip-radio" checked /> ${escapeHtml(name)}`;
+        label.innerHTML = `
+          <input type="checkbox" class="chip-radio" name="q" value="${escapeHtml(name)}" checked>
+          ${escapeHtml(name)}
+        `;
         recognizedList.appendChild(label);
       });
     }
@@ -119,7 +122,7 @@
     if (toRecipeBtn) {
       toRecipeBtn.addEventListener("click", function () {
         const selectedIngredients = $all("#recognized-list input:checked")
-          .map(el => el.parentElement.textContent.trim())
+          .map(el => el.value)   // ✅ 체크박스 value 사용
           .filter(Boolean);
 
         if (selectedIngredients.length === 0) {
@@ -127,8 +130,9 @@
           return;
         }
 
-        const query = encodeURIComponent(selectedIngredients.join(","));
-        window.location.href = `/search_recipes_by_detected/?q=${query}&sort=match`;
+        // ✅ q=...&q=... 형식으로 조립
+        const query = selectedIngredients.map(q => `q=${encodeURIComponent(q)}`).join("&");
+        window.location.href = `/search_recipes_by_detected/?${query}&sort=match`;
       });
     }
 

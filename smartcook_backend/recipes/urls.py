@@ -4,7 +4,6 @@ from . import views
 urlpatterns = [
     # 음식 업로드 / 검색
     path("food_upload/", views.food_upload_view, name="food_upload"),
-    path("search_recipe/", views.search_recipe, name="search_recipe"),
     path("search_recipes_by_detected/", views.search_recipes_by_detected, name="search_recipes_by_detected"),
 
     # 레시피 상세
@@ -21,5 +20,4 @@ urlpatterns = [
 
     # GPT 재랭킹 API
     path("api/rerank/", views.rerank_view, name="rerank"),
-    path("update_selected/", views.update_selected_ingredients, name="update_selected"),
 ]
