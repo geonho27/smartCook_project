@@ -82,5 +82,74 @@
       </div>
     </div>
   </section>
+
+<!-- 세 번째 특징 영상 섹션 -->
+<section id="features-video" class="promo-section" style="background-color:#f9f9f9;">
+  <div class="promo-content">
+    <h2 style="color: #76b5c5;">SMARTCOOK 특징</h2>
+    <p style="color: #76b5c5;">비싼 스마트 냉장고 없이, 누구나 쉽게!</p>
+
+    <!-- lazy video -->
+    <div class="video_container video_container_type_none jt-lazyload-vid" style="max-width:1200px; margin:0 auto;">
+      <div class="video_wrap" style="padding-top:56.25%;"> <!-- 16:9 비율 -->
+        <div class="video_wrap_inner" data-jt-lazy="{% static 'videos/features.mp4' %}"></div>
+      </div>
+      <div class="video_poster">
+        <span class="video_poster_bg" 
+              data-jt-lazy="{% static 'images/features.png' %}"></span>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+
+   <div class="feedback-footer">
+    © SmartCook. All rights reserved.
+  </div>
 </body>
+
+<script>
+(function () {
+  function initLazyVideos() {
+    document.querySelectorAll('.video_container').forEach(container => {
+      const wrap = container.querySelector('.video_wrap_inner');
+      const src = wrap && wrap.getAttribute('data-jt-lazy');
+      if (!src) return;
+
+      // video 생성
+      const video = document.createElement('video');
+      video.setAttribute('preload', 'metadata');
+      video.setAttribute('muted', '');
+      video.setAttribute('playsinline', '');
+      video.setAttribute('autoplay', '');
+      video.setAttribute('loop', '');
+      video.muted = true;
+
+      const source = document.createElement('source');
+      source.src = src;
+      source.type = 'video/mp4';
+      video.appendChild(source);
+      wrap.appendChild(video);
+
+      // 포스터 세팅
+      const posterBg = container.querySelector('.video_poster_bg');
+      const posterSrc = posterBg && posterBg.getAttribute('data-jt-lazy');
+      if (posterSrc) posterBg.style.backgroundImage = `url('${posterSrc}')`;
+
+      // 재생 시 포스터 숨김
+      const play = () => {
+        video.play().catch(() => {});
+        container.classList.add('is-playing');
+      };
+      video.addEventListener('canplay', play, { once: true });
+      setTimeout(play, 120); // 사파리 보정
+    });
+  }
+  document.addEventListener('DOMContentLoaded', initLazyVideos);
+})();
+</script>
+
+
+
 </html>
