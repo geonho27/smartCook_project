@@ -70,7 +70,7 @@
 input::placeholder,
 textarea::placeholder {
   font-family: 'BMHANNA', sans-serif;
-  color: #c3a897;
+  color: #76b5c5;
 }
 
 input::-webkit-input-placeholder,
@@ -198,6 +198,8 @@ textarea::-moz-placeholder {
     text-shadow: 0 0 1px rgba(0, 0, 0, 0.3);
     cursor: pointer;
     }
+
+    
 /* mainpage */
 
 
@@ -271,17 +273,31 @@ textarea::-moz-placeholder {
     }
     
     .main-nav-links a {
+      position: relative;
       font-family: 'TiltWarp-Regular-VariableFont_XROT,YROT';
-      text-decoration: none;
-      color: #76b5c5;
-      font-weight: 400;
       font-size: 20px;
+      font-weight: 400;
+      color: #76b5c5;
+      text-decoration: none; /* 기본 밑줄 제거 */
       transition: color 0.2s ease;
     }
-    
-    .main-nav-links a:hover {
-      color: #76b5c5;
+
+    .main-nav-links a::after {
+      content: "";
+      position: absolute;
+      left: 0;
+      bottom: -3px; /* 텍스트 바로 밑 */
+      width: 0;
+      height: 2px;
+      background-color: #76b5c5;
+      transition: width 0.3s ease;
     }
+
+    .main-nav-links a:hover::after {
+      width: 100%; /* hover 시 밑줄이 왼→오른쪽으로 채워짐 */
+    }
+
+
     
     .main-login-button {
     font-family: 'TitanOne-Regular';
@@ -787,7 +803,7 @@ form.signup{
     width: 1055px;
     height: 771px;
     background-color: #ffffff;
-    border: 2px solid #000000;
+    border: 2px solid #76b5c5;
     border-radius: 10px;
     padding: 50px 80px;
     position: relative;
@@ -834,7 +850,7 @@ form.signup{
   .signup-form-group .signup-input[type="email"] {
     flex: 1;
     padding: 10px 14px;
-    border: 1.5px solid #000000;
+    border: 1.5px solid #76b5c5;
     border-radius: 8px;
     font-size: 15px;
     box-sizing: border-box;
@@ -847,7 +863,7 @@ form.signup{
     width: 154px;
     height: 40px;
     background-color: #ffffff;
-    border: 2px solid #000000;
+    border: 2px solid #76b5c5;
     border-radius: 8px;
     color: #000000;
     font-size: 16px;
@@ -883,7 +899,7 @@ form.signup{
      width: 900px;
     height: auto;
     background-color: #ffffff;
-    border: 2px solid #000000;
+    border: 2px solid #76b5c5;
     border-radius: 10px;
     padding: 50px 80px;
     position: relative;
@@ -921,7 +937,7 @@ form.signup{
     padding: 10px 12px;
     margin-bottom: 18px;
     background-color: #ffffff;
-    color: #76b5c5;
+    color: #76b5c5 !important;
   }
 
   .login-input-box img {
@@ -948,6 +964,8 @@ form.signup{
     font-size: 18px;
     margin-bottom: 15px;
     font-family: 'BMHANNA', sans-serif;
+    display: block;
+    margin: 10px auto 10px auto;
   }
 
   .login-options {

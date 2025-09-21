@@ -36,13 +36,19 @@
 
 <body>
   <main>
-    <!-- 상단 네비 -->
-    <div class="navbar">
-      <div class="nav-left"><a href="{% url 'mainpage' %}" class="logo">SMARTCOOK</a></div>
-      <form method="POST" action="{% url 'logout' %}" style="display:inline;">
-        {% csrf_token %}
-        <button type="submit" class="logout-button">Logout</button>
-      </form>
+    <div class="main-navbar">
+      <!-- 왼쪽 -->
+      <div class="main-nav-left">
+        <a href="{% url 'mainpage' %}" class="logo">SMARTCOOK</a>
+      </div>
+    
+      <!-- 오른쪽 -->
+      <div class="main-nav-right">
+        <form method="POST" action="{% url 'logout' %}" style="display:inline;">
+          {% csrf_token %}
+          <button type="submit" class="logout-button">Logout</button>
+        </form>
+      </div>
     </div>
 
     <!-- 탐색 방식 버튼 -->

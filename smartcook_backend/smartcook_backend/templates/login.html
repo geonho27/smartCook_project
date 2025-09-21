@@ -8,9 +8,11 @@
 </head>
 <body class="authpage">
 
-  <div class="navbar">
-    <div class="nav-left">
-      <a href="{% url 'mainpage' %}" class="logo">SMARTCOOK</a>
+  <div class="main-navbar">
+    <div class="main-nav-left">
+      <a href="{% url 'mainpage' %}" class="main-logo" style="color:#76b5c5;">
+        SMARTCOOK
+      </a>
     </div>
   </div>
 
@@ -37,7 +39,7 @@
 
         <div class="login-input-box">
           <img src="{% static 'images/login/lock.png' %}" alt="lock-icon" />
-          <input type="password" name="password" class="login-input" placeholder="Password" required>
+          <input type="password" style="color: black;" name="password" class="login-input" placeholder="Password" required>
         </div>
 
         <button type="submit" class="login-login-btn">로그인하기</button>

@@ -12,13 +12,19 @@
   <form id="csrf-form" style="display:none;">{% csrf_token %}</form>
 
   <main>
-    <!-- 상단 네비 -->
-    <div class="navbar">
-      <div class="nav-left"><a href="{% url 'mainpage' %}" class="logo">SMARTCOOK</a></div>
-      <form method="POST" action="{% url 'logout' %}" style="display:inline;">
-        {% csrf_token %}
-        <button type="submit" class="logout-button">Logout</button>
-      </form>
+    <div class="main-navbar">
+      <!-- 왼쪽 -->
+      <div class="main-nav-left">
+        <a href="{% url 'mainpage' %}" class="logo">SMARTCOOK</a>
+      </div>
+    
+      <!-- 오른쪽 -->
+      <div class="main-nav-right">
+        <form method="POST" action="{% url 'logout' %}" style="display:inline;">
+          {% csrf_token %}
+          <button type="submit" class="logout-button">Logout</button>
+        </form>
+      </div>
     </div>
 
     <!-- 탭 버튼 -->
@@ -102,17 +108,27 @@
       <div class="recipe-list" id="recipe-list">
         {% if hasRecipes %}
           {% for r in recipes %}
-            <div class="recipe-card">
-              <img src="{{ r.image }}" alt="{{ r.title }}">
-              <h5>{{ r.title }}</h5>
-              <h6 style="text-align:center;">재료</h6>
-              <ul style="list-style-type:none;padding-left:0;">
-                {% for i in r.ingredients %}
-                  <li>{{ i }}</li>
-                {% endfor %}
-              </ul>
-              <a href="{% url 'recipe_detail' r.id %}" class="btn-category-done">요리하러 가기</a>
-            </div>
+          <div class="recipe-card">
+            <img src="{{ r.image }}" alt="{{ r.title }}">
+            <h5>{{ r.title }}</h5>
+            <h6 style="text-align:center;">재료</h6>
+            <ul style="list-style-type:none;padding-left:0;">
+              {% for i in r.ingredients %}
+                <li>{{ i }}</li>
+              {% endfor %}
+            </ul>
+          
+            {# ✅ 레시피의 재료를 json_script로 넘겨줌 #}
+            {% with "ingredients-"|add:r.id as script_id %}
+              {{ r.ingredients|json_script:script_id }}
+            {% endwith %}
+          
+            <a href="javascript:void(0)"
+               class="btn-category-done show-extra-btn"
+               data-recipe-id="{{ r.id }}">
+               요리하러 가기
+            </a>
+          </div>
           {% endfor %}
         {% elif query or query_list %}
           <!-- 검색은 했지만 결과 없음 -->
