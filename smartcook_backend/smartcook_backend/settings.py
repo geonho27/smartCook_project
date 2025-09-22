@@ -35,6 +35,7 @@ INSTALLED_APPS = [
 # settings.py
 INSTALLED_APPS += [
     'channels',
+    'detector',
 ]
 
 ASGI_APPLICATION = 'smartcook_backend.asgi.application'
@@ -55,6 +56,7 @@ LOGOUT_REDIRECT_URL = "/"
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
+    "whitenoise.middleware.WhiteNoiseMiddleware",  # 정적 파일 서빙용
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
@@ -116,6 +118,10 @@ STATICFILES_DIRS = [
     BASE_DIR / 'smartcook_backend' / 'static',
     BASE_DIR / "recipes" / "data",
 ]
+
+# whitenoise 설정
+STATIC_ROOT = BASE_DIR / 'staticfiles'
+STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 
 # Media files (업로드 이미지 저장 경로)
 MEDIA_URL = "/media/"

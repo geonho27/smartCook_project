@@ -9,11 +9,21 @@
   <link rel="stylesheet" href="{% static 'css/upload.css' %}">
 </head>
 <body class="upload">
-  <div class="navbar">
-    <div class="nav-left">
+  <div class="main-navbar">
+    <!-- 왼쪽 -->
+    <div class="main-nav-left">
       <a href="{% url 'mainpage' %}" class="logo">SMARTCOOK</a>
     </div>
+  
+    <!-- 오른쪽 -->
+    <div class="main-nav-right">
+      <form method="POST" action="{% url 'logout' %}" style="display:inline;">
+        {% csrf_token %}
+        <button type="submit" class="logout-button">Logout</button>
+      </form>
+    </div>
   </div>
+  
 
   <div class="menu2-container">
     <div class="menu2-breadcrumb">← <a href="{% url 'mainpage' %}">Home</a></div>
@@ -42,7 +52,7 @@
     <div class="menu2-section-title">추가 정보</div>
 
     <!-- 영양 정보 -->
-    <div class="menu2-form-row">
+    <!--<div class="menu2-form-row">
       <label>영양 정보</label>
       <div class="menu2-radio-group">
         <label><input type="radio" class="menu2-input" name="nutri"> 당뇨</label>
@@ -50,13 +60,13 @@
         <label><input type="radio" class="menu2-input" name="nutri"> 저염식</label>
         <label><input type="radio" class="menu2-input" name="nutri"> 다이어트 식단</label>
       </div>
-    </div>
+    </div>-->
 
     <!-- ✅ 비건 여부 -->
     <div class="menu2-form-row">
       <label>비건 여부</label>
       <input type="checkbox" class="menu2-input" name="is_vegan" {% if user.is_vegan %}checked{% endif %}>
-      <span style="margin-left:8px; color:#AD8B73;">저는 비건입니다</span>
+      <span style="margin-left:8px; color:#76b5c5;">저는 비건입니다</span>
     </div>
 
     <!-- ✅ 알레르기 -->

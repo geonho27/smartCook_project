@@ -4,19 +4,24 @@
 <head>
   <meta charset="UTF-8" />
   <title>SmartCook</title>
+  
   <link rel="stylesheet" href="{% static 'css/upload.css' %}" />
 </head>
 <body>
   <main>
-    <!-- 상단 네비 -->
-    <div class="navbar">
-      <div class="nav-left">
+    <div class="main-navbar">
+      <!-- 왼쪽 -->
+      <div class="main-nav-left">
         <a href="{% url 'mainpage' %}" class="logo">SMARTCOOK</a>
       </div>
-      <form method="POST" action="{% url 'logout' %}" style="display:inline;">
-        {% csrf_token %}
-        <button type="submit" class="logout-button">Logout</button>
-      </form>
+    
+      <!-- 오른쪽 -->
+      <div class="main-nav-right">
+        <form method="POST" action="{% url 'logout' %}" style="display:inline;">
+          {% csrf_token %}
+          <button type="submit" class="logout-button">Logout</button>
+        </form>
+      </div>
     </div>
 
     <!-- 음식명 검색 -->

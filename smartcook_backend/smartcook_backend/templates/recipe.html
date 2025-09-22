@@ -7,14 +7,22 @@
   <link rel="stylesheet" href="{% static 'css/upload.css' %}">
 </head>
 <body class="upload">
-  <div class="navbar">
-    <div class="nav-left"><a href="{% url 'mainpage' %}" class="logo">SMARTCOOK</a></div>
-    <form method="POST" action="{% url 'logout' %}" style="display:inline;">
-      {% csrf_token %}
-      <button type="submit" class="logout-button">Logout</button>
-    </form>
+  <div class="main-navbar">
+    <!-- 왼쪽 -->
+    <div class="main-nav-left">
+      <a href="{% url 'mainpage' %}" class="logo">SMARTCOOK</a>
+    </div>
+  
+    <!-- 오른쪽 -->
+    <div class="main-nav-right">
+      <form method="POST" action="{% url 'logout' %}" style="display:inline;">
+        {% csrf_token %}
+        <button type="submit" class="logout-button">Logout</button>
+      </form>
+    </div>
   </div>
-
+  
+  
   <div class="recipe-container">
     <div class="recipe-content">
       <!-- 왼쪽 박스 -->
@@ -67,6 +75,5 @@
     {% endif %}
   </div>
 
-  <script src="{% static 'js/recipe.js' %}"></script>
-</body>
+  
 </html>

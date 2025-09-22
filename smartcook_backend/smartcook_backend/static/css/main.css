@@ -70,7 +70,7 @@
 input::placeholder,
 textarea::placeholder {
   font-family: 'BMHANNA', sans-serif;
-  color: #c3a897;
+  color: #76b5c5;
 }
 
 input::-webkit-input-placeholder,
@@ -198,6 +198,8 @@ textarea::-moz-placeholder {
     text-shadow: 0 0 1px rgba(0, 0, 0, 0.3);
     cursor: pointer;
     }
+
+    
 /* mainpage */
 
 
@@ -773,6 +775,7 @@ textarea::-moz-placeholder {
       font-size: 12px;
     }
 
+    
 
 /* signup */
 
@@ -786,7 +789,7 @@ form.signup{
     width: 1055px;
     height: 771px;
     background-color: #ffffff;
-    border: 2px solid #000000;
+    border: 2px solid #76b5c5;
     border-radius: 10px;
     padding: 50px 80px;
     position: relative;
@@ -833,7 +836,7 @@ form.signup{
   .signup-form-group .signup-input[type="email"] {
     flex: 1;
     padding: 10px 14px;
-    border: 1.5px solid #000000;
+    border: 1.5px solid #76b5c5;
     border-radius: 8px;
     font-size: 15px;
     box-sizing: border-box;
@@ -846,7 +849,7 @@ form.signup{
     width: 154px;
     height: 40px;
     background-color: #ffffff;
-    border: 2px solid #000000;
+    border: 2px solid #76b5c5;
     border-radius: 8px;
     color: #000000;
     font-size: 16px;
@@ -882,7 +885,7 @@ form.signup{
      width: 900px;
     height: auto;
     background-color: #ffffff;
-    border: 2px solid #000000;
+    border: 2px solid #76b5c5;
     border-radius: 10px;
     padding: 50px 80px;
     position: relative;
@@ -920,7 +923,7 @@ form.signup{
     padding: 10px 12px;
     margin-bottom: 18px;
     background-color: #ffffff;
-    color: #76b5c5;
+    color: #76b5c5 !important;
   }
 
   .login-input-box img {
@@ -947,6 +950,8 @@ form.signup{
     font-size: 18px;
     margin-bottom: 15px;
     font-family: 'BMHANNA', sans-serif;
+    display: block;
+    margin: 10px auto 10px auto;
   }
 
   .login-options {
@@ -1187,3 +1192,46 @@ body { font-family: 'BMHANNA', sans-serif; }
   border-radius: 12px;
   box-shadow: 0 4px 20px rgba(0,0,0,0.2);
 }
+
+/* ------------------- 스타일 비디오 ------------------- */
+.video_container {
+  position: relative;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+}
+.video_wrap {
+  position: relative;
+  width: 100%;
+  height: 0;
+  padding-top: 56.25%; /* 16:9 비율 */
+}
+.video_wrap_inner {
+  position: absolute;
+  inset: 0;
+}
+.video_wrap_inner video {
+  position: absolute;
+  inset: 0;
+  width: 100%; height: 100%;
+  object-fit: cover;
+  display: block;
+  pointer-events: none;
+}
+.video_poster {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  transition: opacity .4s ease;
+}
+.video_poster_bg {
+  display: block;
+  width: 100%; height: 100%;
+  background-size: cover;
+  background-position: center;
+}
+.video_container.is-playing .video_poster {
+  opacity: 0;
+  pointer-events: none;
+}
+

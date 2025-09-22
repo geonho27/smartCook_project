@@ -11,13 +11,19 @@
 
 <body>
   <main>
-    <!-- 상단 네비 -->
-    <div class="navbar">
-      <div class="nav-left"><a href="{% url 'mainpage' %}" class="logo">SMARTCOOK</a></div>
-      <form method="POST" action="{% url 'logout' %}" style="display:inline;">
-        {% csrf_token %}
-        <button type="submit" class="logout-button">Logout</button>
-      </form>
+    <div class="main-navbar">
+      <!-- 왼쪽 -->
+      <div class="main-nav-left">
+        <a href="{% url 'mainpage' %}" class="logo">SMARTCOOK</a>
+      </div>
+    
+      <!-- 오른쪽 -->
+      <div class="main-nav-right">
+        <form method="POST" action="{% url 'logout' %}" style="display:inline;">
+          {% csrf_token %}
+          <button type="submit" class="logout-button">Logout</button>
+        </form>
+      </div>
     </div>
 
     <!-- 탐색 방식 버튼 -->
@@ -42,12 +48,75 @@
 <script>
   const video = document.getElementById('video');
   const detected = document.getElementById('detected');
+  let websocket = null;
+  let isStreaming = false;
 
-  navigator.mediaDevices.getUserMedia({ video: true })
-    .then(stream => { video.srcObject = stream; })
-    .catch(err => { alert('카메라 접근 실패: ' + err); });
+  // 웹소켓 연결
+  function connectWebSocket() {
+    const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+    const wsUrl = `${protocol}//${window.location.host}/ws/detect/`;
+    
+    websocket = new WebSocket(wsUrl);
+    
+    websocket.onopen = function(event) {
+      console.log('웹소켓 연결 성공');
+      startCamera();
+    };
+    
+    websocket.onmessage = function(event) {
+      const data = JSON.parse(event.data);
+      if (data.image) {
+        detected.src = data.image;
+      }
+    };
+    
+    websocket.onclose = function(event) {
+      console.log('웹소켓 연결 종료');
+      stopCamera();
+    };
+    
+    websocket.onerror = function(error) {
+      console.error('웹소켓 오류:', error);
+      alert('실시간 연결에 실패했습니다.');
+    };
+  }
 
-  async function sendFrame() {
+  // 카메라 시작
+  async function startCamera() {
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ 
+        video: { 
+          facingMode: 'environment',  // 후면 카메라 (environment)
+          width: { ideal: 1280 },
+          height: { ideal: 720 }
+        } 
+      });
+      video.srcObject = stream;
+      isStreaming = true;
+      
+      // 프레임 전송 시작
+      sendFrames();
+    } catch (err) {
+      console.error('카메라 접근 실패:', err);
+      alert('카메라 접근에 실패했습니다: ' + err.message);
+    }
+  }
+
+  // 카메라 정지
+  function stopCamera() {
+    if (video.srcObject) {
+      video.srcObject.getTracks().forEach(track => track.stop());
+      video.srcObject = null;
+    }
+    isStreaming = false;
+  }
+
+  // 프레임 전송
+  function sendFrames() {
+    if (!isStreaming || !websocket || websocket.readyState !== WebSocket.OPEN) {
+      return;
+    }
+
     if (video.readyState === video.HAVE_ENOUGH_DATA) {
       const canvas = document.createElement('canvas');
       canvas.width = video.videoWidth;
@@ -55,20 +124,31 @@
       const ctx = canvas.getContext('2d');
       ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
 
-      canvas.toBlob(async (blob) => {
-        const formData = new FormData();
-        formData.append('frame', blob, 'frame.jpg');
-        try {
-          const res = await fetch('/detect/', { method: 'POST', body: formData });
-          if (!res.ok) return;
-          const imgBlob = await res.blob();
-          detected.src = URL.createObjectURL(imgBlob);
-        } catch {}
-      }, 'image/jpeg');
+      // 캔버스를 base64로 변환
+      const imageData = canvas.toDataURL('image/jpeg', 0.8);
+      
+      // 웹소켓으로 프레임 전송
+      websocket.send(JSON.stringify({
+        frame: imageData
+      }));
     }
+
+    // 100ms마다 프레임 전송 (10fps)
+    setTimeout(sendFrames, 100);
   }
-  
-  setInterval(sendFrame, 100);
+
+  // 페이지 로드 시 웹소켓 연결
+  document.addEventListener('DOMContentLoaded', function() {
+    connectWebSocket();
+  });
+
+  // 페이지 종료 시 연결 정리
+  window.addEventListener('beforeunload', function() {
+    if (websocket) {
+      websocket.close();
+    }
+    stopCamera();
+  });
 </script>
 
 
