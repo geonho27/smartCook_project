@@ -20,4 +20,7 @@ urlpatterns = [
 
     # GPT 재랭킹 API
     path("api/rerank/", views.rerank_view, name="rerank"),
+    
+    # 실시간 탐색용 JSON API
+    path("api/recipes/", views.get_recipes_json, name="get_recipes_json"),
 ]

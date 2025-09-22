@@ -32,7 +32,7 @@ def detect_frame(request):
         filtered_boxes = []
         for box in results.boxes:
             conf = float(box.conf[0])
-            if conf >= 0.8:
+            if conf >= 0.6:
                 filtered_boxes.append(box)
 
         results.boxes = filtered_boxes  
@@ -247,7 +247,12 @@ def search_recipes_by_detected(request):
 
     results_page, paginator, page_range, total_pages = paginate_queryset(request, valid_results, 6)
 
-    return render(request, "upload.html", {
+    # 실시간 탐색에서 호출된 경우 live.html 템플릿 사용
+    template_name = "upload.html"  # 기본값
+    if request.GET.get('from') == 'live':
+        template_name = "live.html"
+
+    return render(request, template_name, {
         "recipes": results_page,
         "query": ", ".join(selected_ingredients) if selected_ingredients else ", ".join(detected_ingredients),
         "query_list": selected_ingredients if selected_ingredients else detected_ingredients,  # 핵심 수정
@@ -441,6 +446,71 @@ def detect_ingredients(request):
 # =========================
 import openai
 openai.api_key = os.getenv("OPENAI_API_KEY")
+
+@csrf_exempt
+def get_recipes_json(request):
+    """실시간 탐색을 위한 JSON API 엔드포인트"""
+    # 체크박스로 선택된 재료 가져오기
+    selected_ingredients = request.GET.getlist("q")
+
+    # 선택 없으면 세션에서 불러오기
+    if selected_ingredients:
+        detected_ingredients = selected_ingredients
+    else:
+        detected_ingredients = request.session.get(SESSION_DETECTED_KEY, [])
+
+    sort_option = request.GET.get("sort", "match")
+
+    # "알 수 없음" 제거
+    detected_ingredients = [i for i in detected_ingredients if i != "알 수 없음"]
+
+    data = get_recipes_data()
+    results = []
+
+    if detected_ingredients:
+        for recipe in data:
+            recipe_ingredients = clean_ingredients(recipe.get("ingredients", []))
+            match_count = sum(1 for item in detected_ingredients if item in recipe_ingredients)
+
+            if match_count > 0:
+                r = dict(recipe)
+                r["ingredient_count"] = len(recipe_ingredients)
+                r["match_count"] = match_count
+                r["ingredients"] = recipe_ingredients
+                results.append(r)
+
+        # 정렬 로직
+        if sort_option == "ingredients":
+            results = sorted(
+                results,
+                key=lambda r: r.get("ingredient_count", 0)
+            )
+        else:
+            results = sorted(
+                results,
+                key=lambda r: r.get("match_count", 0),
+                reverse=True
+            )
+
+        # 세션 저장
+        _save_session_search(
+            request,
+            query=",".join(detected_ingredients),
+            mode="detected",
+            result_ids=[r.get("id") for r in results if r.get("id") is not None],
+        )
+
+    valid_results = [r for r in results if r.get("ingredients")]
+    
+    # 최대 6개만 반환 (실시간 탐색용)
+    limited_results = valid_results[:6]
+
+    return JsonResponse({
+        "recipes": limited_results,
+        "query": ", ".join(detected_ingredients),
+        "total_count": len(valid_results),
+        "has_recipes": bool(valid_results)
+    })
 
 @csrf_exempt
 def rerank_view(request):

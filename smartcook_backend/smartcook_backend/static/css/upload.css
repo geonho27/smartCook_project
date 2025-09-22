@@ -694,7 +694,22 @@ label[for="file-upload"] {
   text-align: center;
   padding: 20px;
   font-size: 12px;
+  width: 100%;
+  position: relative;
 }
+
+.cart-feedback-footer {
+  background-color: #3f3f3f;
+  color: #ccc;
+  text-align: center;
+  padding: 20px;
+  font-size: 12px;
+  width: 100%;
+  position: fixed;   /* 화면 맨 하단 고정 */
+  bottom: 0;
+  left: 0;
+}
+
 
   body.upload {
     background-color: #ffffff;
@@ -703,7 +718,7 @@ label[for="file-upload"] {
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 120px;
+    gap: 20px;
     justify-content: center;
     font-family: 'BM-HANNA', sans-serif;
     padding-top: 100px;
@@ -1009,9 +1024,13 @@ ol li {
 
 /* 버튼 */
 .recipe-bottom-button {
-  margin-top: 30px;
-  text-align: center;
-  width: 100%;
+  margin-top: auto;   /* 위쪽 공간 자동 확장 */
+  margin-bottom: auto; /* 아래쪽 공간 자동 확장 */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 100px;
+  height: 100px;      /* 버튼 영역 높이 (원하는 대로 조정 가능) */
 }
 
 .recipe-bottom-button button {
@@ -1679,5 +1698,19 @@ background-color: #76b5c5;
   color: #fff;               
   border-color: #76b5c5;
   font-weight: bold;
+}
+
+.skip-extra {
+  color: #76b5c5;
+  font-weight: bold;
+  font-size: 15px;
+  cursor: pointer;
+  display: inline-block;
+  transition: transform 0.15s ease-in-out, color 0.15s ease-in-out;
+}
+
+.skip-extra:hover {
+  transform: scale(1.08);   /* hover 시 살짝 커짐 */
+  color: #5da2af;          /* 살짝 어두운 색으로 */
 }
 

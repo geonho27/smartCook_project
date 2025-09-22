@@ -6,7 +6,32 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>SmartCook - 실시간 YOLO</title>
   <link rel="stylesheet" href="{% static 'css/upload.css' %}" />
-  <script src="{% static 'js/upload.js' %}" defer></script>
+  <style>
+    /* 웹에서 더 큰 카메라 영역 */
+    @media (min-width: 769px) {
+      .upload-form-box {
+        max-width: 1200px !important;
+      }
+      .camera-wrapper {
+        padding-top: 45% !important; /* 16:9보다 더 넓게 */
+      }
+    }
+    
+    /* 모바일에서는 기존 크기 유지 */
+    @media (max-width: 768px) {
+      .upload-form-box {
+        max-width: 480px !important;
+      }
+      .camera-wrapper {
+        padding-top: 56.25% !important; /* 16:9 비율 유지 */
+      }
+    }
+    
+    /* 카메라 컨트롤 버튼 스타일 */
+    .camera-controls button:hover {
+      background: rgba(255,255,255,0.3) !important;
+    }
+  </style>
 </head>
 
 <body>
@@ -34,22 +59,64 @@
     </div>
     
     <div class="upload-container">
-  <div class="upload-form-box" style="position: relative; width: 100%; max-width: 480px; margin: 0 auto;">
-    <h2 class="upload-title" style="text-align: center;">실시간 YOLO</h2>
-    <div style="position: relative; padding-top: 56.25%; /* 16:9 비율 유지 */ border-radius: 12px; overflow: hidden; background: #f7f4f0;">
-      <video id="video" autoplay playsinline muted 
-             style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; border-radius: 12px;"></video>
-      <img id="detected" alt="실시간 감지 이미지" 
-           style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; border-radius: 12px;" />
+      <div class="upload-form-box" style="position: relative; width: 100%; max-width: 1200px; margin: 0 auto;">
+        <h2 class="upload-title" style="text-align: center;">실시간 YOLO</h2>
+        <div class="camera-wrapper" style="position: relative; padding-top: 56.25%; /* 16:9 비율 유지 */ border-radius: 12px; overflow: hidden; background: #f7f4f0; box-shadow: 0 4px 20px rgba(0,0,0,0.1);">
+          <video id="video" autoplay playsinline muted 
+                 style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; border-radius: 12px;"></video>
+          <img id="detected" alt="실시간 감지 이미지" 
+               style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; border-radius: 12px;" />
+          
+          <!-- 카메라 컨트롤 버튼들 -->
+          <div class="camera-controls" style="position: absolute; bottom: 20px; left: 50%; transform: translateX(-50%); background: rgba(0,0,0,0.7); padding: 10px 20px; border-radius: 25px; display: flex; gap: 10px; z-index: 1000;">
+            <button id="switch-camera" style="background: rgba(255,255,255,0.2); border: none; color: white; padding: 8px 16px; border-radius: 20px; cursor: pointer; transition: background 0.3s; font-size: 14px;">
+              📷 전면/후면
+            </button>
+            <button id="stop-camera" style="background: rgba(255,255,255,0.2); border: none; color: white; padding: 8px 16px; border-radius: 20px; cursor: pointer; transition: background 0.3s; font-size: 14px;">
+              ⏹️ 종료
+            </button>
+          </div>
+        </div>
+      </div>
     </div>
-  </div>
-</div>
+
+    <!-- 인식된 재료 섹션 -->
+    <section class="recognized" id="ingredient-buttons" style="display:none;">
+      <h4 class="recognized-title">인식된 재료</h4>
+      <div class="chip-box" id="recognized-list">
+        <!-- 동적으로 인식된 재료들이 추가됨 -->
+      </div>
+      <div class="confirm-wrapper">
+        <button type="button" id="toRecipeBtn" class="confirm-btn">선택 완료</button>
+      </div>
+    </section>
+
+    <!-- 레시피 추천 결과 섹션 -->
+    <section class="recommend" id="recipe-section" style="display:none;">
+      <div class="result-header">
+        <p id="recipe-header-text">인식된 재료에 대한 추천 레시피</p>
+      </div>
+      <div class="recipe-list" id="recipe-list">
+        <!-- 동적으로 레시피들이 추가됨 -->
+      </div>
+    </section>
 
 <script>
   const video = document.getElementById('video');
   const detected = document.getElementById('detected');
+  const switchCameraBtn = document.getElementById('switch-camera');
+  const stopCameraBtn = document.getElementById('stop-camera');
+  const ingredientButtons = document.getElementById('ingredient-buttons');
+  const recognizedList = document.getElementById('recognized-list');
+  const toRecipeBtn = document.getElementById('toRecipeBtn');
+  const recipeSection = document.getElementById('recipe-section');
+  const recipeList = document.getElementById('recipe-list');
+  const recipeHeaderText = document.getElementById('recipe-header-text');
+  
   let websocket = null;
   let isStreaming = false;
+  let currentFacingMode = 'environment'; // 기본값: 후면 카메라
+  let detectedIngredients = new Set(); // 인식된 재료들을 저장
 
   // 웹소켓 연결
   function connectWebSocket() {
@@ -68,11 +135,22 @@
       if (data.image) {
         detected.src = data.image;
       }
+      
+      // 인식된 재료들 처리
+      if (data.detections && data.detections.length > 0) {
+        updateDetectedIngredients(data.detections);
+      }
+      
+      // 최종 인식 결과 처리
+      if (data.final_detections && data.final_detections.length > 0) {
+        showIngredientSection(data.final_detections);
+      }
     };
     
     websocket.onclose = function(event) {
       console.log('웹소켓 연결 종료');
       stopCamera();
+      // 웹소켓 종료 시에는 UI를 그대로 유지 (사용자가 종료 버튼을 누를 때까지)
     };
     
     websocket.onerror = function(error) {
@@ -86,7 +164,7 @@
     try {
       const stream = await navigator.mediaDevices.getUserMedia({ 
         video: { 
-          facingMode: 'environment',  // 후면 카메라 (environment)
+          facingMode: currentFacingMode,  // 현재 설정된 카메라 모드
           width: { ideal: 1280 },
           height: { ideal: 720 }
         } 
@@ -137,6 +215,230 @@
     setTimeout(sendFrames, 100);
   }
 
+  // 인식된 재료 업데이트
+  function updateDetectedIngredients(detections) {
+    detections.forEach(detection => {
+      const ingredient = detection.split(' ')[0]; // "사과 0.85" -> "사과"
+      if (ingredient && ingredient !== '알 수 없음') {
+        detectedIngredients.add(ingredient);
+      }
+    });
+  }
+
+  // 인식된 재료 섹션 표시
+  function showIngredientSection(finalDetections) {
+    // 최종 인식 결과를 Set에 추가
+    finalDetections.forEach(ingredient => {
+      if (ingredient && ingredient !== '알 수 없음') {
+        detectedIngredients.add(ingredient);
+      }
+    });
+
+    // 인식된 재료가 있으면 섹션 표시
+    if (detectedIngredients.size > 0) {
+      renderIngredientChips(Array.from(detectedIngredients));
+      ingredientButtons.style.display = 'block';
+      ingredientButtons.scrollIntoView({ behavior: 'smooth' });
+    }
+  }
+
+  // 재료 칩 렌더링
+  function renderIngredientChips(ingredients) {
+    recognizedList.innerHTML = '';
+    ingredients.forEach(ingredient => {
+      const label = document.createElement('label');
+      label.className = 'chip';
+      label.innerHTML = `
+        <input type="checkbox" class="chip-radio" name="q" value="${escapeHtml(ingredient)}" checked>
+        ${escapeHtml(ingredient)}
+      `;
+      recognizedList.appendChild(label);
+    });
+  }
+
+  // HTML 이스케이프 함수
+  function escapeHtml(text) {
+    const div = document.createElement('div');
+    div.textContent = text;
+    return div.innerHTML;
+  }
+
+  // 레시피 추천 요청 (JSON API 사용)
+  async function getRecipeRecommendations(selectedIngredients) {
+    try {
+      const query = selectedIngredients.map(q => `q=${encodeURIComponent(q)}`).join('&');
+      const response = await fetch(`/api/recipes/?${query}&sort=match`);
+      
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      
+      const data = await response.json();
+      
+      if (!data.has_recipes) {
+        return [];
+      }
+      
+      // JSON 데이터를 레시피 객체로 변환
+      const recipes = data.recipes.map(recipe => ({
+        title: recipe.title || '',
+        image: recipe.image || '',
+        ingredients: recipe.ingredients || [],
+        id: recipe.id || ''
+      }));
+      
+      return recipes;
+    } catch (error) {
+      console.error('레시피 추천 오류:', error);
+      throw error;
+    }
+  }
+
+  // 레시피 결과 렌더링
+  function renderRecipes(recipes) {
+    recipeList.innerHTML = '';
+    
+    if (recipes.length === 0) {
+      recipeList.innerHTML = '<div class="no-result"><p>인식된 재료로 만들 수 있는 레시피를 찾을 수 없습니다.</p></div>';
+      return;
+    }
+
+    recipes.forEach(recipe => {
+      const recipeCard = document.createElement('div');
+      recipeCard.className = 'recipe-card';
+      recipeCard.innerHTML = `
+        <img src="${escapeHtml(recipe.image)}" alt="${escapeHtml(recipe.title)}" onerror="this.src='/static/images/recipe/muk.png'">
+        <h5>${escapeHtml(recipe.title)}</h5>
+        <h6 style="text-align: center;">재료</h6>
+        <ul style="list-style-type: none; padding-left: 0;">
+          ${recipe.ingredients.map(ing => `<li>${escapeHtml(ing)}</li>`).join('')}
+        </ul>
+        <a href="/recipes/${recipe.id}/" class="btn-category-done">
+          요리하러 가기
+        </a>
+      `;
+      recipeList.appendChild(recipeCard);
+    });
+  }
+
+
+  // 카메라 전환 함수
+  async function switchCamera() {
+    // 현재 카메라 모드 변경
+    currentFacingMode = currentFacingMode === 'environment' ? 'user' : 'environment';
+    
+    // 버튼 텍스트 업데이트
+    switchCameraBtn.textContent = currentFacingMode === 'environment' ? '📷 전면/후면' : '📷 후면/전면';
+    
+    // 기존 스트림 정지
+    if (video.srcObject) {
+      video.srcObject.getTracks().forEach(track => track.stop());
+    }
+    
+    // 새 카메라로 시작
+    await startCamera();
+  }
+
+  // 카메라 종료 함수
+  function stopCameraStream() {
+    console.log('종료 버튼 클릭됨');
+    
+    stopCamera();
+    if (websocket) {
+      websocket.close();
+    }
+    
+    // 인식된 재료가 있으면 섹션 표시
+    if (detectedIngredients.size > 0) {
+      console.log('인식된 재료 개수:', detectedIngredients.size);
+      
+      // 인식된 재료 섹션 표시
+      const ingredientSection = document.getElementById('ingredient-buttons');
+      if (ingredientSection) {
+        ingredientSection.style.display = 'block';
+        console.log('인식된 재료 섹션 표시');
+        
+        // 재료 칩 렌더링
+        renderIngredientChips(Array.from(detectedIngredients));
+        
+        // 섹션으로 스크롤
+        ingredientSection.scrollIntoView({ behavior: 'smooth' });
+      }
+    } else {
+      console.log('인식된 재료가 없음');
+      alert('인식된 재료가 없습니다. 다시 시도해주세요.');
+    }
+  }
+
+  // 이벤트 리스너 추가
+  switchCameraBtn.addEventListener('click', switchCamera);
+  stopCameraBtn.addEventListener('click', stopCameraStream);
+  
+  // 선택 완료 버튼 이벤트
+  toRecipeBtn.addEventListener('click', async function() {
+    const selectedIngredients = Array.from(document.querySelectorAll('#recognized-list input:checked'))
+      .map(el => el.value)
+      .filter(Boolean);
+
+    if (selectedIngredients.length === 0) {
+      alert('재료를 선택해주세요!');
+      return;
+    }
+
+    try {
+      // 로딩 표시
+      toRecipeBtn.textContent = '레시피 찾는 중...';
+      toRecipeBtn.disabled = true;
+
+      // 레시피 추천 요청
+      const recipes = await getRecipeRecommendations(selectedIngredients);
+      
+      // 헤더 텍스트 업데이트
+      recipeHeaderText.textContent = `${selectedIngredients.join(', ')}에 대한 추천 레시피 (${recipes.length}개)`;
+      
+      // 레시피 결과 렌더링
+      renderRecipes(recipes);
+      
+      // 레시피 섹션 표시
+      recipeSection.style.display = 'block';
+      recipeSection.scrollIntoView({ behavior: 'smooth' });
+      
+      // 성공 메시지
+      if (recipes.length > 0) {
+        console.log(`${recipes.length}개의 레시피를 찾았습니다.`);
+      } else {
+        console.log('해당 재료로 만들 수 있는 레시피가 없습니다.');
+      }
+      
+    } catch (error) {
+      console.error('레시피 추천 오류:', error);
+      alert('레시피 추천 중 오류가 발생했습니다. 다시 시도해주세요.');
+      
+      // 에러 시에도 레시피 섹션을 표시하여 사용자에게 피드백 제공
+      recipeSection.style.display = 'block';
+      recipeList.innerHTML = '<div class="no-result"><p>레시피를 불러오는 중 오류가 발생했습니다.</p></div>';
+    } finally {
+      // 버튼 상태 복원
+      toRecipeBtn.textContent = '선택 완료';
+      toRecipeBtn.disabled = false;
+    }
+  });
+
+  // 버튼 호버 효과
+  switchCameraBtn.addEventListener('mouseenter', function() {
+    this.style.background = 'rgba(255,255,255,0.3)';
+  });
+  switchCameraBtn.addEventListener('mouseleave', function() {
+    this.style.background = 'rgba(255,255,255,0.2)';
+  });
+
+  stopCameraBtn.addEventListener('mouseenter', function() {
+    this.style.background = 'rgba(255,255,255,0.3)';
+  });
+  stopCameraBtn.addEventListener('mouseleave', function() {
+    this.style.background = 'rgba(255,255,255,0.2)';
+  });
+
   // 페이지 로드 시 웹소켓 연결
   document.addEventListener('DOMContentLoaded', function() {
     connectWebSocket();
@@ -148,75 +450,15 @@
       websocket.close();
     }
     stopCamera();
+    // 페이지 종료 시에는 자동으로 모든 것이 초기화됨
   });
 </script>
 
 
 
-    <!-- 선호도 선택 섹션 -->
-    <section class="category" id="category-section" style="display:none;">
-      <h4 class="category-title">음식 분야 선택</h4>
-      <div class="chip-box">
-        <label class="chip"><input type="checkbox" name="category" class="chip-radio" /> 한식</label>
-        <label class="chip"><input type="checkbox" name="category" class="chip-radio" /> 일식</label>
-        <label class="chip"><input type="checkbox" name="category" class="chip-radio" /> 양식</label>
-        <label class="chip"><input type="checkbox" name="category" class="chip-radio" /> 중식</label>
-        <label class="chip"><input type="checkbox" name="category" class="chip-radio" /> 기타</label>
-      </div>
-      <div class="range-wrap">
-        <label>음식 간 선택</label>
-        <input type="range" min="0" max="100" value="50" id="spicyRange" />
-        <div class="range-labels">
-          <span class="left-label">약하게</span>
-          <span class="right-label">강하게</span>
-        </div>
-      </div>
-      <div class="confirm-wrapper">
-        <button class="confirm-btn" id="toRecipeBtn">선택 완료</button>
-      </div>
-    </section>
+    <!-- 실시간 탐색에서는 선호도 선택 기능을 사용하지 않음 -->
 
-    <!-- 검색 결과 UI -->
-    {% if query %}
-    <section class="recommend" id="recipe-section" style="display:block;">
-      {% if recipes %}
-        <p>{{ query }}에 대한 추천 레시피 ({{ recipes|length }}개)</p>
-        <div class="recipe-list" id="recipe-list">
-          {% for recipe in recipes %}
-          <div class="recipe-card" style="{% if forloop.counter > 3 %}display:none;{% endif %}">
-            <img src="{{ recipe.image }}" alt="{{ recipe.title }}">
-            <h5>{{ recipe.title }}</h5>
-
-            <h6 style="text-align: center;">재료</h6>
-            <ul style="list-style-type: none; padding-left: 0;">
-              {% for ing in recipe.ingredients %}
-              <li>{{ ing.split.0 }}</li>
-              {% endfor %}
-            </ul>
-
-            {% with "ingredients-"|add:recipe.id as script_id %}
-              {{ recipe.ingredients|json_script:script_id }}
-            {% endwith %}
-
-            <a href="javascript:void(0)"
-               class="btn-category-done show-extra-btn"
-               data-recipe-id="{{ recipe.id }}">
-               요리하러 가기
-            </a>
-          </div>
-          {% endfor %}
-        </div>
-
-        {% if recipes|length > 3 %}
-        <div style="text-align:center; margin-top:20px;">
-          <button id="loadMoreBtn" class="confirm-btn">더보기</button>
-        </div>
-        {% endif %}
-      {% else %}
-        <p>‘{{ query }}’에 해당하는 레시피를 찾을 수 없습니다.</p>
-      {% endif %}
-    </section>
-    {% endif %}
+    <!-- 실시간 탐색용 레시피 섹션은 JavaScript로 동적 생성됨 -->
 
     <!-- 추가재료 선택 섹션 -->
     <section class="extra" id="extra-section" style="display:none;">
@@ -240,7 +482,6 @@
     © SmartCook. All rights reserved.
   </div>
 
-  <!-- JS -->
-  <script src="{% static 'js/upload.js' %}"></script>
+  <!-- 실시간 탐색용 JavaScript는 인라인으로 구현됨 -->
 </body>
 </html>
