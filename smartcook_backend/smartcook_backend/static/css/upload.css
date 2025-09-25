@@ -250,7 +250,7 @@ label[for="file-upload"] {
   display: flex;
   align-items: center;
   justify-content: center;
-  overflow: hidden;
+  overflow: visible;
 }
 /* 버튼 스타일 */
 .dropdown-btn {
@@ -694,8 +694,6 @@ label[for="file-upload"] {
   text-align: center;
   padding: 20px;
   font-size: 12px;
-  width: 100%;
-  position: relative;
 }
 
 .cart-feedback-footer {
@@ -704,10 +702,6 @@ label[for="file-upload"] {
   text-align: center;
   padding: 20px;
   font-size: 12px;
-  width: 100%;
-  position: fixed;   /* 화면 맨 하단 고정 */
-  bottom: 0;
-  left: 0;
 }
 
 

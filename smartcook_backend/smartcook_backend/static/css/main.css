@@ -123,7 +123,7 @@ gap: 40px; /* ← 로고와 메뉴 사이 간격 */
 
 .login-button {
 font-family: 'TitanOne-Regular';
-margin-right: 100px;
+margin-right: 20px;
 background-color: #76b5c5;
 color: #ffffff;
 border: none;
@@ -162,7 +162,7 @@ border-bottom: 1px solid #9e9a93;
 
 .main-navbar-logout-btn {
   font-family: 'TitanOne-Regular';
-  margin-right: 120px;
+  margin-right: 40px;
   background-color: #76b5c5;
   color: #ffffff;
   border: none;
@@ -301,7 +301,7 @@ border-bottom: 1px solid #9e9a93;
   
   .main-login-button {
   font-family: 'TitanOne-Regular';
-  margin-right: 120px;
+  margin-right: 40px;
   background-color: #76b5c5;
   color: #ffffff;
   border: none;
@@ -1251,7 +1251,7 @@ box-shadow: 0 4px 20px rgba(0,0,0,0.2);
 position: relative;
 border-radius: 12px;
 overflow: hidden;
-box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+background-color: #FEFFFE;
 }
 .video_wrap {
 position: relative;
@@ -1270,6 +1270,8 @@ width: 100%; height: 100%;
 object-fit: cover;
 display: block;
 pointer-events: none;
+object-fit: cover;   
+background-color: #FEFFFE;
 }
 .video_poster {
 position: absolute;
