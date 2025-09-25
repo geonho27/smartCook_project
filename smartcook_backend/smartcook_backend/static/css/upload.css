@@ -1643,7 +1643,7 @@ background-color: #76b5c5;
   justify-content: space-between;
   align-items: center;
   padding: 20px 60px;
-  background: rgba(0,0,0,0.3); /* 투명한 블랙 배경 */
+  background: #bebebe/*rgba(0,0,0,0.3); /투명한 블랙 배경 */
 }
 
 .main-logo {
