@@ -2,16 +2,29 @@ import json
 import base64
 import asyncio
 import logging
+import sys
 import numpy as np
 import cv2
 from concurrent.futures import ThreadPoolExecutor
 from channels.generic.websocket import AsyncWebsocketConsumer
 from PIL import Image, ImageDraw, ImageFont
 from ultralytics import YOLO
+import platform
+import os
 
+# ---------------- UTF-8 로깅 설정 ----------------
+logger = logging.getLogger()
+logger.setLevel(logging.INFO)
+
+handler = logging.StreamHandler(sys.stdout)
+handler.setFormatter(logging.Formatter('%(asctime)s [%(levelname)s] %(message)s'))
+handler.stream = open(sys.stdout.fileno(), mode='w', encoding='utf-8', buffering=1)
+logger.addHandler(handler)
 logger = logging.getLogger(__name__)
+
 executor = ThreadPoolExecutor(max_workers=1)  # GPU inference 전용
 
+# ---------------- 클래스 이름/색상 ----------------
 HANGUL_NAMES = {
     0: '오이', 1: '소고기', 2: '브로콜리', 3: '양배추', 4: '당근',
     5: '계란', 6: '상추', 7: '양파', 8: '돼지고기', 9: '파',
@@ -24,40 +37,57 @@ FIXED_COLORS = {
     8: (128, 128, 0), 9: (0, 0, 128), 10: (0, 128, 0), 11: (128, 0, 0)
 }
 
-def put_hangul_text(img, text, pos, font_size=20, color=(0, 255, 0)):
+# ---------------- 한글 텍스트 그리기 (WSL 친화) ----------------
+def put_hangul_text(img, text, pos, font_size=20, color=(0,255,0)):
     pil_img = Image.fromarray(cv2.cvtColor(img, cv2.COLOR_BGR2RGB))
     draw = ImageDraw.Draw(pil_img)
-    try:
-        font_path = "C:/Windows/Fonts/malgun.ttf"
-        font = ImageFont.truetype(font_path, font_size)
-    except:
+    
+    # 가능한 폰트 경로
+    possible_fonts = [
+        "fonts/NanumGothic.ttf",  # 프로젝트 내
+    ]
+    
+    font = None
+    for f in possible_fonts:
+        if os.path.exists(f):
+            try:
+                font = ImageFont.truetype(f, font_size)
+                break
+            except:
+                continue
+    
+    if font is None:
         font = ImageFont.load_default()
+    
     draw.text(pos, text, font=font, fill=color)
     return cv2.cvtColor(np.array(pil_img), cv2.COLOR_RGB2BGR)
 
-def annotate_and_encode(img, results, min_conf=0.6):
-    """
-    이미지에 박스와 라벨을 표시하고 base64 인코딩.
-    min_conf 이상인 검출만 표시.
-    """
+# ---------------- 박스 그리기 + Base64 인코딩 ----------------
+def annotate_and_encode(img, results, conf_thresh=0.6):
     annotated_img = img.copy()
     frame_detections = []
+
     for detection in results:
         boxes = detection['boxes']
         confs = boxes[:, 4]
-        keep_idx = confs >= min_conf
+        keep_idx = confs >= conf_thresh
         if keep_idx.sum() == 0:
             continue
+
         boxes_xyxy = boxes[keep_idx, :4].astype(int)
         boxes_cls = boxes[keep_idx, 5].astype(int)
         boxes_conf = confs[keep_idx]
+
         for xy, cls_idx, conf in zip(boxes_xyxy, boxes_cls, boxes_conf):
             x1, y1, x2, y2 = xy
             cls_name = HANGUL_NAMES.get(int(cls_idx), str(cls_idx))
             frame_detections.append(f"{cls_name} {conf:.2f}")
             color = FIXED_COLORS.get(int(cls_idx), (0, 255, 0))
             cv2.rectangle(annotated_img, (x1, y1), (x2, y2), color, 2)
-            annotated_img = put_hangul_text(annotated_img, f"{cls_name} {conf:.2f}", (x1, y1 - 25), 20, color)
+            annotated_img = put_hangul_text(
+                annotated_img, f"{cls_name} {conf:.2f}", (x1, max(y1 - 25, 0)), 20, color
+            )
+
     ret, encoded_img = cv2.imencode('.jpg', annotated_img, [int(cv2.IMWRITE_JPEG_QUALITY), 40])
     if not ret:
         return None, []
@@ -65,22 +95,36 @@ def annotate_and_encode(img, results, min_conf=0.6):
     img_data_url = 'data:image/jpeg;base64,' + b64_img
     return img_data_url, frame_detections
 
-# ---------------- Ultralytics YOLO wrapper ----------------
+# ---------------- Optimized YOLO Wrapper ----------------
 class YOLO_PT:
-    def __init__(self, model_path="best.pt", device="cuda"):
+    def __init__(self, model_path="best.pt", device="cuda", imgsz=640, conf_thresh=0.6):
         self.model = YOLO(model_path)
         self.model.to(device)
+        self.imgsz = imgsz
+        self.conf_thresh = conf_thresh
 
     def infer(self, img):
-        results = self.model.predict(source=img, conf=0.25, imgsz=640)
+        h0, w0 = img.shape[:2]
+        scale = self.imgsz / max(h0, w0)
+        img_resized = img.copy() if scale >= 1.0 else cv2.resize(img, (int(w0*scale), int(h0*scale)))
+
+        results = self.model.predict(source=img_resized, conf=self.conf_thresh, imgsz=self.imgsz, device="cuda")
         output = []
+
         for r in results:
             if hasattr(r, 'boxes') and r.boxes is not None and len(r.boxes) > 0:
                 boxes = r.boxes.xyxy.cpu().numpy()
                 confs = r.boxes.conf.cpu().numpy().reshape(-1,1)
                 cls = r.boxes.cls.cpu().numpy().reshape(-1,1)
+
+                # 좌표 스케일링
+                h1, w1 = img_resized.shape[:2]
+                boxes[:, [0,2]] *= (w0 / w1)
+                boxes[:, [1,3]] *= (h0 / h1)
+
                 out_arr = np.hstack([boxes, confs, cls])
                 output.append({'boxes': out_arr})
+
         return output
 
 # ---------------- WebSocket Consumer ----------------
@@ -88,8 +132,8 @@ class DetectConsumer(AsyncWebsocketConsumer):
     async def connect(self):
         await self.accept()
         try:
-            self.model = YOLO_PT("best.pt")  # Ultralytics YOLO .pt 모델 사용
-            logger.info("YOLO .pt 모델 로드 완료")
+            self.model = YOLO_PT(imgsz=640, conf_thresh=0.6)
+            logger.info("YOLO 모델 로드 완료")
         except Exception as e:
             logger.error(f"YOLO 모델 로드 실패: {e}")
             await self.close()
@@ -108,7 +152,7 @@ class DetectConsumer(AsyncWebsocketConsumer):
             except:
                 pass
             if final_list:
-                print(f"[최종 검출 재료] {', '.join(final_list)}")
+                logger.info(f"[최종 검출 재료] {', '.join(final_list)}")
         logger.info("웹소켓 종료됨")
 
     async def receive(self, text_data=None, bytes_data=None):
@@ -134,14 +178,13 @@ class DetectConsumer(AsyncWebsocketConsumer):
             self.processing = True
             loop = asyncio.get_running_loop()
             try:
-                # GPU에서 빠른 추론
                 results = await loop.run_in_executor(executor, self.model.infer, img)
-                # min_conf=0.6 적용
-                img_data_url, frame_detections = await asyncio.to_thread(annotate_and_encode, img, results, 0.6)
+                img_data_url, frame_detections = await asyncio.to_thread(
+                    annotate_and_encode, img, results, self.model.conf_thresh
+                )
                 if img_data_url:
                     try:
                         await self.send(text_data=json.dumps({'image': img_data_url, 'detections': frame_detections}))
-                        # 최종 리스트에도 정확도 60% 이상만 추가
                         self.all_detections.update([d.split()[0] for d in frame_detections])
                     except:
                         pass
