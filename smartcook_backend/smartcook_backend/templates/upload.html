@@ -5,17 +5,6 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>SMARTCOOK - 재료 탐색</title>
-  <!-- ✅ Dropbox SDK (upload.js 실행 전에 로드) -->
-  <script src="https://www.dropbox.com/static/api/2/dropins.js"
-          id="dropboxjs"
-          data-app-key="vyfcqal9ogn9cvo"></script>
-
-  <!-- ✅ OneDrive SDK (upload.js 실행 전에 로드) -->
-  <script type="text/javascript" src="https://js.live.net/v7.2/OneDrive.js"></script>
-
-  <!-- ✅ Google API (Drive Picker용) -->
-  <script src="https://apis.google.com/js/api.js?onload=onApiLoad"></script>
-  <script src="https://apis.google.com/js/picker.js"></script>
 
   <!-- 기본 웹 스타일 -->
   <link rel="stylesheet" href="{% static 'css/upload.css' %}" />
@@ -79,9 +68,6 @@
             <div class="dropdown-menu" id="dropdownMenu">
               <div data-value="device" >📂 기기에서</div>
               <div data-value="gallery">🖼 갤러리에서</div>
-              <div data-value="dropbox">☁ dropbox에서</div>
-              <div data-value="onedrive" >💠 OneDrive에서</div>
-              <div data-value="gdrive">📎 구글 드라이브에서</div>
             </div>
           </div>
           <input type="file" id="file-upload" accept="image/*" style="display:none;" />

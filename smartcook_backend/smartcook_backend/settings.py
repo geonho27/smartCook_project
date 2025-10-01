@@ -142,3 +142,5 @@ CSRF_TRUSTED_ORIGINS = [
     'https://*.ngrok-free.app',
     'https://*.loca.lt',
 ]
+
+os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = os.path.join(BASE_DIR, "smartcook_backend", "tts.json")

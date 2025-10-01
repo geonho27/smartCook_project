@@ -1019,7 +1019,7 @@ ol li {
 /* 버튼 */
 .recipe-bottom-button {
   margin-top: auto;   /* 위쪽 공간 자동 확장 */
-  margin-bottom: auto; /* 아래쪽 공간 자동 확장 */
+  margin-bottom: 40px; /* 아래쪽 공간 자동 확장 */
   display: flex;
   justify-content: center;
   align-items: center;

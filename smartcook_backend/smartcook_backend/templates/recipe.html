@@ -62,20 +62,49 @@
     </div>
   </div>
 
+
   <!-- 버튼 -->
   <div class="recipe-bottom-button">
     {% if mode == "detected" %}
+      <button onclick="readRecipe()" class="tts-button" style="margin-right: 10px;" >🔊 레시피 읽어주기</button>
       <button onclick="location.href='{% url 'search_recipes_by_detected' %}?sort=match'">
         다른 레시피 보러가기
       </button>
     {% else %}
+      <button onclick="readRecipe()" class="tts-button" style="margin-right: 10px;">🔊 레시피 읽어주기</button>
       <button onclick="location.href='{% url 'food_upload' %}?q={{ query }}'">
         다른 레시피 보러가기
       </button>
     {% endif %}
+    
   </div>
   <div class="feedback-footer">
     © SmartCook. All rights reserved.
   </div>
   
 </html>
+
+<script>
+  function readRecipe() {
+    const title = "{{ recipe.title|escapejs }}";
+    const ingredients = [{% for ing in recipe.ingredients %}"{{ ing|escapejs }}",{% endfor %}];
+    const steps = [{% for step in recipe.steps %}"{{ step|escapejs }}",{% endfor %}];
+
+    let text = `${title} 레시피입니다. `;
+
+    text += "조리 방법은 ";
+    steps.forEach((step, i) => {
+      text += `${i + 1}단계, ${step}. `;
+    });
+
+    // ✅ 서버에서 받은 사용자 목소리 (없으면 기본)
+    const voice = "{{ user.voice_name|default:'ko-KR-Standard-A' }}";
+
+    const ttsUrl = `/tts/?text=${encodeURIComponent(text)}&voice=${encodeURIComponent(voice)}`;
+
+    const audio = new Audio(ttsUrl);
+    audio.play();
+  }
+</script>
+
+

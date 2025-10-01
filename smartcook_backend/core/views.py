@@ -94,3 +94,25 @@ def logout_view(request):
         logout(request)
         return redirect("mainpage")  # 로그아웃 후 메인페이지로 이동
     return redirect("mainpage")
+
+
+from django.http import JsonResponse
+from django.views.decorators.http import require_POST
+from django.contrib.auth.decorators import login_required
+import json
+
+@require_POST
+@login_required
+def save_voice_name(request):
+    try:
+        data = json.loads(request.body)
+        voice_name = data.get('voice_name')
+
+        if voice_name:
+            request.user.voice_name = voice_name
+            request.user.save()
+            return JsonResponse({'success': True})
+        else:
+            return JsonResponse({'success': False, 'error': 'No voice name provided'}, status=400)
+    except Exception as e:
+        return JsonResponse({'success': False, 'error': str(e)}, status=500)

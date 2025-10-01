@@ -579,3 +579,51 @@ def onedrive_callback(request):
     resp = requests.post(token_url, data=data)
     tokens = resp.json()
     return JsonResponse(tokens)
+
+from django.http import HttpResponse
+from google.cloud import texttospeech
+
+def tts_view(request):
+    text = request.GET.get("text")
+    voice_name = request.GET.get("voice", "ko-KR-Standard-A")  # <- 이거 중요!
+
+    client = texttospeech.TextToSpeechClient()
+
+    synthesis_input = texttospeech.SynthesisInput(text=text)
+
+    # ✅ 선택한 voice name 적용
+    voice = texttospeech.VoiceSelectionParams(
+        language_code="ko-KR",
+        name=voice_name  # <- 여기 반영 안 되어 있으면 소용없음!
+    )
+
+    audio_config = texttospeech.AudioConfig(
+        audio_encoding=texttospeech.AudioEncoding.MP3
+    )
+
+    response = client.synthesize_speech(
+        input=synthesis_input,
+        voice=voice,
+        audio_config=audio_config
+    )
+
+    return HttpResponse(response.audio_content, content_type="audio/mpeg")
+
+# ✅ views.py 가장 아래에 추가 (임시 확인용)
+
+from django.http import JsonResponse
+from google.cloud import texttospeech
+
+def list_voices_view(request):
+    client = texttospeech.TextToSpeechClient()
+    response = client.list_voices(language_code="ko-KR")
+
+    voices = []
+    for voice in response.voices:
+        voices.append({
+            "name": voice.name,
+            "gender": texttospeech.SsmlVoiceGender(voice.ssml_gender).name,
+            "sample_rate_hertz": voice.natural_sample_rate_hertz,
+        })
+
+    return JsonResponse({"voices": voices})
