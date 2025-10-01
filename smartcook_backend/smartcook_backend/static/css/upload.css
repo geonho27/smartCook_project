@@ -1577,11 +1577,12 @@ background-color: #76b5c5;
 /* 정렬 */
 /* 검색 결과 헤더 */
 .result-header {
-  display: flex;
-  justify-content: space-between;  /* 왼쪽은 p, 오른쪽은 sort-options */
-  align-items: center;
+   display: flex;
+  justify-content: space-between;  
+  align-items: center;   /* 수직 가운데 정렬 */
   margin-bottom: 20px;
 }
+
 
 /* 왼쪽 문구 */
 .result-header p {
@@ -1593,9 +1594,18 @@ background-color: #76b5c5;
 
 /* 오른쪽 정렬 옵션 */
 .sort-options {
-  margin-left: auto;     /* 오른쪽 끝으로 밀기 */
   display: flex;
-  gap: 20px;             /* 링크 간격 */
+  align-items: center;
+  gap: 10px;
+  margin-top: 4px;  /* ← 살짝 아래로 내려서 텍스트 높이 맞춤 */
+}
+
+.sort-options {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  position: relative;
+  top: 3px;   /* ← 숫자 조절해서 글자랑 정확히 수평 맞추기 */
 }
 
 .sort-options a {

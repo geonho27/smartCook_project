@@ -192,12 +192,20 @@
 
     <!-- 레시피 추천 결과 섹션 -->
     <section class="recommend" id="recipe-section" style="display:none;">
-      <div class="result-header">
-        <p id="recipe-header-text">인식된 재료에 대한 추천 레시피</p>
+     <div class="result-header">
+      <p id="recipe-header-text">인식된 재료에 대한 추천 레시피</p>
+      <div class="sort-options">
+        <a href="#" id="sort-match" class="active">관련도 순</a>
+        <a href="#" id="sort-ingredients">재료 적은 순</a>
+        </div>
       </div>
+
       <div class="recipe-list" id="recipe-list">
-        <!-- 동적으로 레시피들이 추가됨 -->
+    <!-- 동적으로 레시피들이 추가됨 -->
       </div>
+
+    <!-- ✅ 페이지네이션 추가 -->
+    <div class="pagination" id="pagination" style="display:none;"></div>
     </section>
 
 <script>

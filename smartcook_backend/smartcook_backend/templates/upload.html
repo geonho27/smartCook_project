@@ -6,9 +6,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>SMARTCOOK - 재료 탐색</title>
 
-  <!-- 기본 웹 스타일 -->
+  <!-- 스타일 -->
   <link rel="stylesheet" href="{% static 'css/upload.css' %}" />
-  <!-- 태블릿/모바일 반응형 스타일 -->
   <link rel="stylesheet" href="{% static 'css/resposive_ta_mo.css' %}" />
   <script src="{% static 'js/upload.js' %}"></script>
 </head>
@@ -16,35 +15,20 @@
   <form id="csrf-form" style="display:none;">{% csrf_token %}</form>
 
   <main>
-    <!-- 반응형 네비게이션 바 -->
+    <!-- 네비게이션 -->
     <div class="main-navbar">
-      <!-- 왼쪽 -->
       <div class="main-nav-left">
         <a href="{% url 'mainpage' %}" class="logo">SMARTCOOK</a>
       </div>
-      
-      <!-- 모바일용 햄버거 메뉴 버튼 -->
       <button class="mobile-menu-btn" id="mobileMenuBtn">
-        <span></span>
-        <span></span>
-        <span></span>
+        <span></span><span></span><span></span>
       </button>
-    
-      <!-- 오른쪽 -->
       <div class="main-nav-right">
         <form method="POST" action="{% url 'logout' %}" style="display:inline;">
           {% csrf_token %}
           <button type="submit" class="logout-button">Logout</button>
         </form>
       </div>
-    </div>
-
-    <!-- 모바일용 드롭다운 메뉴 -->
-    <div class="mobile-nav-menu" id="mobileNavMenu">
-      <a href="{% url 'food_upload' %}">Recipe</a>
-      <a href="{% url 'upload' %}">Picture</a>
-      <a href="{% url 'live_page' %}">Realtime</a>
-      <a href="{% url 'mainpage' %}">Home</a>
     </div>
 
     <!-- 탭 버튼 -->
@@ -54,7 +38,7 @@
       <a href="{% url 'live_page' %}" class="btn">실시간으로 탐색하기</a>
     </div>
 
-    <!-- 재료 업로드 -->
+    <!-- 업로드 -->
     <div class="container2" id="ingredient-section">
       <a href="{% url 'mainpage' %}" class="home-link">← Home</a>
       <div class="form-box">
@@ -66,7 +50,7 @@
               <span style="font-size:20px;margin-left:10px;"> 파일 선택</span>
             </button>
             <div class="dropdown-menu" id="dropdownMenu">
-              <div data-value="device" >📂 기기에서</div>
+              <div data-value="device">📂 기기에서</div>
               <div data-value="gallery">🖼 갤러리에서</div>
             </div>
           </div>
@@ -81,8 +65,6 @@
     <!-- 인식된 재료 -->
     <section class="recognized" id="ingredient-buttons" style="display:none;">
       <h4 class="recognized-title">인식된 재료</h4>
-
-      <!-- 복수 선택 form -->
       <form method="get" action="{% url 'search_recipes_by_detected' %}">
         <div class="chip-box" id="recognized-list">
           {% if query_list %}
@@ -102,7 +84,7 @@
       </form>
     </section>
 
-    <!-- 결과 들어갈 자리 -->
+    <!-- 검색 결과 -->
     {% if query or query_list %}
     <section class="recommend" id="recipe-section">
       <div class="result-header">
@@ -116,10 +98,13 @@
 
         {% if hasRecipes %}
         <div class="sort-options">
-          <a href="?{% for q in selected_ingredients %}q={{ q }}&{% endfor %}sort=match" class="{% if sort == 'match' %}active{% endif %}">관련도 순</a> |
-          <a href="?{% for q in selected_ingredients %}q={{ q }}&{% endfor %}sort=ingredients" class="{% if sort == 'ingredients' %}active{% endif %}">재료 적은 순</a>
+          <a href="?{% for q in selected_ingredients %}q={{ q }}&{% endfor %}sort=match"
+             class="{% if sort == 'match' %}active{% endif %}">관련도 순</a>
+          <span class="divider">|</span>
+          <a href="?{% for q in selected_ingredients %}q={{ q }}&{% endfor %}sort=ingredients"
+             class="{% if sort == 'ingredients' %}active{% endif %}">재료 적은 순</a>
         </div>
-        {% endif %}
+        {% endif %}  <!-- ✅ 여기 닫는 endif 추가 -->
       </div>
 
       <div class="recipe-list" id="recipe-list">
@@ -134,28 +119,19 @@
                 <li>{{ i }}</li>
               {% endfor %}
             </ul>
-          
-            {# ✅ 레시피의 재료를 json_script로 넘겨줌 #}
             {% with "ingredients-"|add:r.id as script_id %}
               {{ r.ingredients|json_script:script_id }}
             {% endwith %}
-          
-            <a href="javascript:void(0)"
-               class="btn-category-done show-extra-btn"
-               data-recipe-id="{{ r.id }}">
-               요리하러 가기
+            <a href="javascript:void(0)" class="btn-category-done show-extra-btn" data-recipe-id="{{ r.id }}">
+              요리하러 가기
             </a>
           </div>
           {% endfor %}
         {% elif query or query_list %}
-          <!-- 검색은 했지만 결과 없음 -->
-          <div class="no-result">
-            조건에 맞는 레시피가 없습니다.
-          </div>
+          <div class="no-result">조건에 맞는 레시피가 없습니다.</div>
         {% endif %}
       </div>
 
-      <!-- 페이지네이션 -->
       {% if hasRecipes and recipes.has_other_pages %}
         <div class="pagination">
           {% if recipes.has_previous %}
@@ -180,45 +156,22 @@
         </div>
       {% endif %}
     </section>
-    {% endif %}
-
-    <!-- 추가재료 -->
-    <section class="extra" id="extra-section" style="display:none;">
-      <div class="extra-header">
-        <h4 class="extra-title">추가 재료 선택</h4>
-        <span class="small-text skip-extra" id="skip-extra-btn">
-          추가 재료 없음 →
-        </span>
-      </div>
-
-      <div class="chip-box" id="extra-ingredients"></div>
-
-      <div class="cart-wrapper">
-        <button class="cart-btns" id="go-cart-btn" style="margin-right: 10px;">장바구니로 이동</button>
-        <button class="cart-btns" id="go-detail-btn">레시피 상세보기</button>
-      </div>
-    </section>
+    {% endif %} <!-- ✅ 바깥 query or query_list 닫기 -->
   </main>
 
   <div class="feedback-footer">© SmartCook. All rights reserved.</div>
-  
-  <!-- 모바일 햄버거 메뉴 JavaScript -->
+
+  <!-- JS -->
   <script>
   (function () {
-    // 모바일 햄버거 메뉴 토글 기능
     function initMobileMenu() {
       const mobileMenuBtn = document.getElementById('mobileMenuBtn');
       const mobileNavMenu = document.getElementById('mobileNavMenu');
-      
       if (mobileMenuBtn && mobileNavMenu) {
         mobileMenuBtn.addEventListener('click', function() {
-          // 햄버거 버튼 애니메이션 토글
           mobileMenuBtn.classList.toggle('active');
-          // 모바일 메뉴 표시/숨김 토글
           mobileNavMenu.classList.toggle('active');
         });
-
-        // 메뉴 외부 클릭 시 메뉴 닫기
         document.addEventListener('click', function(e) {
           if (!mobileMenuBtn.contains(e.target) && !mobileNavMenu.contains(e.target)) {
             mobileMenuBtn.classList.remove('active');
@@ -227,8 +180,6 @@
         });
       }
     }
-
-    // DOM 로드 완료 시 초기화 함수 실행
     document.addEventListener('DOMContentLoaded', initMobileMenu);
   })();
   </script>
