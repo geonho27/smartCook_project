@@ -39,8 +39,21 @@
     </div>
     <div class="menu2-info-row">
       <div class="menu2-info-label">비밀번호</div>
-      <div class="menu2-info-value">변경하기</div>
+      <div class="menu2-info-value">
+        <span id="pwToggle" class="pw-change-link">변경하기</span>
+        <div id="pwForm" class="pw-form">
+          <input type="password" id="currentPassword" placeholder="현재 비밀번호">
+          <input type="password" id="newPassword" placeholder="새 비밀번호">
+          <input type="password" id="confirmPassword" placeholder="새 비밀번호 확인">
+          <div class="pw-buttons">
+            <button type="button" class="btn-save" onclick="changePassword()">저장</button>
+            <button type="button" class="btn-cancel" onclick="document.getElementById('pwForm').style.display='none'">취소</button>
+          </div>
+        </div>
+      </div>
     </div>
+    
+    
     <div class="menu2-info-row">
       <div class="menu2-info-label">이메일</div>
       <div class="menu2-info-value">{{ user.email }}</div>
@@ -82,11 +95,11 @@
       <span style="margin-left:8px; color:#76b5c5;">저는 비건입니다</span>
     </div>
 
-    <!-- ✅ 알레르기 -->
+    <!-- ✅ 알레르기 
     <div class="menu2-form-row">
       <label>알레르기</label>
       <input type="text" class="menu2-input" name="allergies" placeholder="예: 땅콩, 갑각류" value="{{ user.allergies }}">
-    </div>
+    </div> -->
 
     <!-- 선호 재료 -->
     <div class="menu2-form-row">
@@ -95,10 +108,13 @@
     </div>
     <div class="menu2-tag-buttons" id="prefer-tags">
       {% for item in preferred|default:''|split:"," %}
-        {% if item %}
-          <span class="tag">{{ item }}<button class="del-btn">X</button></span>
-        {% endif %}
-      {% endfor %}
+  {% if item %}
+    <div class="menu2-tag-button">
+      {{ item }}<button class="del-btn">x</button>
+    </div>
+  {% endif %}
+{% endfor %}
+
     </div>
 
     <!-- 비선호 재료 -->
@@ -109,7 +125,9 @@
     <div class="menu2-tag-buttons" id="nonprefer-tags">
       {% for item in disliked|default:''|split:"," %}
         {% if item %}
-          <span class="tag">{{ item }}<button class="del-btn">X</button></span>
+        <div class="menu2-tag-button">
+          {{ item }}<button class="del-btn">x</button>
+        </div>
         {% endif %}
       {% endfor %}
     </div>
@@ -117,7 +135,9 @@
 </body>
 </html>
 
+
 <script>
+  const csrfToken = "{{ csrf_token }}";
   // ✅ 목소리 목록 동적으로 불러오기
   async function populateVoiceList() {
     try {
@@ -169,8 +189,172 @@
     }
   }
 
-  // ✅ 페이지 로드시 자동 실행
-  window.addEventListener("DOMContentLoaded", populateVoiceList);
+  // 서버 저장 함수
+  function saveUserData(data) {
+    return fetch("{% url 'save_preferences' %}", {
+      method: "POST",
+      headers: { "Content-Type": "application/json", "X-CSRFToken": csrfToken },
+      body: JSON.stringify(data)
+    }).then(res => res.json()).then(console.log);
+  }
+
+  // 비건 체크 저장
+  document.addEventListener("DOMContentLoaded", () => {
+    const veganCheckbox = document.querySelector("input[name='is_vegan']");
+    if (veganCheckbox) {
+      veganCheckbox.addEventListener("change", () => {
+        saveUserData({ is_vegan: veganCheckbox.checked });
+      });
+    }
+  });
+
+  // 알레르기 저장
+  document.addEventListener("DOMContentLoaded", () => {
+    const allergyInput = document.querySelector("input[name='allergies']");
+    if (allergyInput) {
+      allergyInput.addEventListener("blur", () => {
+        saveUserData({ allergies: allergyInput.value });
+      });
+    }
+  });
+
+  // 재료 추가 함수 
+function addIngredient(inputEl, containerEl, type) {
+  const value = inputEl.value.trim();
+  if (!value) return;
+
+  // 이미 존재하는지 확인
+  const exists = Array.from(containerEl.children).some(child =>
+    child.textContent.includes(value)
+  );
+  if (exists) {
+    alert(`이미 "${value}"은(는) 있어요!`);
+    inputEl.value = '';
+    return;
+  }
+
+  // div.menu2-tag-button 생성
+  const tag = document.createElement("div");
+  tag.className = "menu2-tag-button";
+
+  // 텍스트 부분 (textContent 대신 span)
+  const textEl = document.createElement("span");
+  textEl.className = "tag-text";
+  textEl.textContent = value;
+
+  // 삭제 버튼 추가
+  const delBtn = document.createElement("button");
+  delBtn.className = "del-btn";
+  delBtn.textContent = "✖";
+
+  delBtn.addEventListener("click", () => {
+    tag.remove();
+    saveUserData({ [`remove_${type}`]: value });
+  });
+
+  // div 안에 span(텍스트) + 버튼 넣기
+  tag.appendChild(textEl);
+  tag.appendChild(delBtn);
+  containerEl.appendChild(tag);
+
+  inputEl.value = "";
+  saveUserData({ [type]: value });
+}
+
+// DOMContentLoaded에서 이벤트 등록
+document.addEventListener("DOMContentLoaded", () => {
+  const preferInput = document.getElementById("prefer-input");
+  const nonpreferInput = document.getElementById("nonprefer-input");
+  const preferTags = document.getElementById("prefer-tags");
+  const nonpreferTags = document.getElementById("nonprefer-tags");
+
+  // 이미 존재하는 태그들에도 삭제 이벤트 붙이기
+  function attachDeleteEvents(containerEl, type) {
+    containerEl.querySelectorAll(".menu2-tag-button").forEach(tag => {
+      const textEl = tag.querySelector(".tag-text");
+      const value = textEl ? textEl.textContent.trim() : "";
+      const btn = tag.querySelector(".del-btn");
+      if (btn) {
+        btn.addEventListener("click", () => {
+          tag.remove();
+          saveUserData({ [`remove_${type}`]: value });
+        });
+      }
+    });
+  }
+
+  attachDeleteEvents(preferTags, "preferred");
+  attachDeleteEvents(nonpreferTags, "disliked");
+
+  // 엔터 입력 시 태그 추가
+  if (preferInput) {
+    preferInput.addEventListener("keydown", e => {
+      if (e.key === "Enter") {
+        e.preventDefault();
+        addIngredient(preferInput, preferTags, "preferred");
+      }
+    });
+  }
+
+  if (nonpreferInput) {
+    nonpreferInput.addEventListener("keydown", e => {
+      if (e.key === "Enter") {
+        e.preventDefault();
+        addIngredient(nonpreferInput, nonpreferTags, "disliked");
+      }
+    });
+  }
+});
+
+
+  document.addEventListener("DOMContentLoaded", () => {
+    populateVoiceList();  // 페이지 로드되자마자 TTS 목록 불러오기
+  });
+
+
+  function togglePasswordForm() {
+    const modal = document.getElementById("pwForm");
+    if (modal.style.display === "block") {
+      modal.style.display = "none";
+    } else {
+      modal.style.display = "block";
+    }
+  }
+  
+  document.addEventListener("DOMContentLoaded", () => {
+    document.getElementById("pwToggle").addEventListener("click", togglePasswordForm);
+  });
+  
+  function changePassword() {
+    const current = document.getElementById("currentPassword").value;
+    const newPw = document.getElementById("newPassword").value;
+    const confirm = document.getElementById("confirmPassword").value;
+  
+    if (newPw !== confirm) {
+      alert("새 비밀번호가 일치하지 않습니다.");
+      return;
+    }
+  
+    fetch("{% url 'change_password' %}", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "X-CSRFToken": "{{ csrf_token }}"
+      },
+      body: JSON.stringify({ current_password: current, new_password: newPw })
+    })
+    .then(res => res.json())
+    .then(data => {
+      if (data.success) {
+        alert("비밀번호가 변경되었습니다.");
+        togglePasswordForm(); // 저장 성공 시 닫기
+      } else {
+        alert(data.error || "변경 실패");
+      }
+    });
+  }
+  
+  
 </script>
 
 

@@ -130,6 +130,7 @@ def food_upload_view(request):
     recipes = []
     query = request.GET.get("q", "").strip()
     sort_option = request.GET.get("sort", "match")
+    user = request.user if request.user.is_authenticated else None
 
     data = get_recipes_data()
 
@@ -139,6 +140,21 @@ def food_upload_view(request):
 
         for recipe in data:
             short_ingredients = clean_ingredients(recipe.get("ingredients", []))
+
+            # 비건 사용자라면 제외할 재료가 들어간 레시피는 skip
+            if user and getattr(user, "is_vegan", False):
+                VEGAN_EXCLUDE = [
+                    # 육류
+                    "고기", "소고기", "돼지고기", "닭고기", "양고기", "오리고기", "베이컨", "햄", "스테이크",
+                    # 해산물
+                    "생선", "참치", "연어", "새우", "게", "조개", "굴", "홍합", "오징어", "문어", "낙지",
+                    # 유제품/달걀
+                    "계란", "달걀", "치즈", "버터", "우유", "크림", "요거트", "마요네즈"
+                ]
+                # 포함만 되어도 제외
+                if any(any(ex in ing for ex in VEGAN_EXCLUDE) for ing in short_ingredients):
+                    continue
+
             match_count = 0
 
             if query in recipe.get("title", ""):
@@ -205,12 +221,28 @@ def search_recipes_by_detected(request):
     # "알 수 없음" 제거
     detected_ingredients = [i for i in detected_ingredients if i != "알 수 없음"]
 
+    user = request.user if request.user.is_authenticated else None # 로그인 사용자 확인
     data = get_recipes_data()
     results = []
 
     if detected_ingredients:
         for recipe in data:
             recipe_ingredients = clean_ingredients(recipe.get("ingredients", []))
+
+            # 비건 사용자라면 제외할 재료가 들어간 레시피는 skip
+            if user and getattr(user, "is_vegan", False):
+                VEGAN_EXCLUDE = [
+                    # 육류
+                    "고기", "소고기", "돼지고기", "닭고기", "양고기", "오리고기", "베이컨", "햄", "스테이크",
+                    # 해산물
+                    "생선", "참치", "연어", "새우", "게", "조개", "굴", "홍합", "오징어", "문어", "낙지",
+                    # 유제품/달걀
+                    "계란", "달걀", "치즈", "버터", "우유", "크림", "요거트", "마요네즈"
+                ]
+                # 포함만 되어도 제외
+                if any(any(ex in ing for ex in VEGAN_EXCLUDE) for ing in recipe_ingredients):
+                    continue
+
             match_count = sum(1 for item in detected_ingredients if item in recipe_ingredients)
 
             if match_count > 0:
