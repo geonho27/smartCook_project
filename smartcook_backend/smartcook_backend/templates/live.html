@@ -187,7 +187,8 @@
       </div>
 
     <!-- ✅ 페이지네이션 추가 -->
-    <div class="pagination" id="pagination" style="display:none;"></div>
+    <div class="pagination" id="pagination" style="display:flex;"></div>
+
     </section>
 
 <script>
@@ -505,11 +506,11 @@
   const pagination = document.getElementById("pagination");
   pagination.innerHTML = "";
 
-  if (!totalPages || totalPages <= 1) {
+  if (!totalPages) {
     pagination.style.display = "none";
     return;
   }
-  pagination.style.display = "flex";
+  pagination.style.display = "flex";   // ✅ 항상 보이게
 
   // 이전 페이지 버튼
   const prevBtn = document.createElement("button");
@@ -639,6 +640,13 @@
 
       currentPage = 1;
       const data = await getRecipeRecommendations(selectedIngredients, currentPage);
+
+
+
+      console.log("DEBUG data:", data);
+
+
+
 
       recipeHeaderText.textContent =
         `${selectedIngredients.join(', ')}에 대한 추천 레시피 (${data.total_count}개)`;

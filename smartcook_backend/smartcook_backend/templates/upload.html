@@ -104,7 +104,7 @@
           <a href="?{% for q in selected_ingredients %}q={{ q }}&{% endfor %}sort=ingredients"
              class="{% if sort == 'ingredients' %}active{% endif %}">재료 적은 순</a>
         </div>
-        {% endif %}  <!-- ✅ 여기 닫는 endif 추가 -->
+        {% endif %}
       </div>
 
       <div class="recipe-list" id="recipe-list">
@@ -122,9 +122,9 @@
             {% with "ingredients-"|add:r.id as script_id %}
               {{ r.ingredients|json_script:script_id }}
             {% endwith %}
-            <a href="javascript:void(0)" class="btn-category-done show-extra-btn" data-recipe-id="{{ r.id }}">
-              요리하러 가기
-            </a>
+          <a href="javascript:void(0)" class="btn-category-done show-extra-btn" data-recipe-id="{{ r.id }}">
+            요리하러 가기
+          </a>
           </div>
           {% endfor %}
         {% elif query or query_list %}
@@ -156,7 +156,23 @@
         </div>
       {% endif %}
     </section>
-    {% endif %} <!-- ✅ 바깥 query or query_list 닫기 -->
+    {% endif %}
+
+    <!-- ✅ 추가재료 선택 섹션 -->
+    <section class="extra" id="extra-section" style="display:none;">
+      <div class="extra-header">
+        <h4 class="extra-title">추가 재료 선택</h4>
+        <span class="small-text skip-extra" id="skip-extra-btn">추가 재료 없음 →</span>
+      </div>
+
+      <div class="chip-box" id="extra-ingredients"></div>
+
+      <div class="cart-wrapper">
+        <button class="cart-btns" id="go-cart-btn" style="margin-right: 10px;">장바구니로 이동</button>
+        <button class="cart-btns" id="go-detail-btn">레시피 상세보기</button>
+      </div>
+    </section>
+
   </main>
 
   <div class="feedback-footer">© SmartCook. All rights reserved.</div>
