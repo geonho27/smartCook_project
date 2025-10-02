@@ -35,9 +35,14 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
     preferred_ingredients = models.TextField(blank=True)
     disliked_ingredients = models.TextField(blank=True)
 
-    # ✅ 새로 추가된 필드
+    # 추가 필드
     is_vegan = models.BooleanField(default=False, help_text="비건 여부")
     allergies = models.TextField(blank=True, help_text="쉼표(,)로 구분된 알레르기 재료")
+
+    # ✅ 새로 추가할 필드 (사용자별 목소리 설정)
+    voice_name = models.CharField(
+        max_length=150, blank=True, null=True, help_text="TTS 목소리 이름"
+    )
 
     USERNAME_FIELD = "userid"
     REQUIRED_FIELDS = ["username", "email"]

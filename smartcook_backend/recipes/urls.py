@@ -1,5 +1,7 @@
 from django.urls import path
+from recipes.views import tts_view
 from . import views
+from .views import list_voices_view
 
 urlpatterns = [
     # 음식 업로드 / 검색
@@ -23,4 +25,9 @@ urlpatterns = [
     
     # 실시간 탐색용 JSON API
     path("api/recipes/", views.get_recipes_json, name="get_recipes_json"),
+
+    # TTS
+    path("tts/", tts_view, name="tts"),
+
+    path("tts/list-voices/", list_voices_view, name="list_voices"),
 ]
