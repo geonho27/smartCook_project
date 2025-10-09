@@ -955,8 +955,73 @@ html {
   }
 }
 
-/* 4. 태블릿 가로 (821px ~ 1280px) */
+/* 4. 태블릿 가로 (821px ~ 1280px) - 갤럭시탭 S10+ 포함 */
 @media (min-width: 821px) and (max-width: 1280px) {
+  /* 모든 컨테이너 크기 통일 - 갤럭시탭 S10+ 최적화 */
+  .container,
+  .container2,
+  .recognized,
+  .category,
+  .recommend,
+  .extra {
+    width: 90% !important;
+    max-width: 1200px !important;
+    padding: 40px 35px !important;
+    margin: 0 auto !important;
+    margin-bottom: 60px !important;
+  }
+  
+  /* 실시간 탐색 컨테이너도 동일한 크기로 맞춤 */
+  .upload-container,
+  .upload-form-box {
+    width: 90% !important;
+    max-width: 1200px !important;
+    margin: 0 auto !important;
+  }
+  
+  /* 레시피 카드 그리드 최적화 */
+  .recipe-list {
+    grid-template-columns: repeat(3, 1fr) !important;
+    gap: 20px !important;
+    padding: 0 20px !important;
+    margin-top: 60px !important;
+  }
+  
+  /* 레시피 카드 크기 조정 */
+  .recipe-card {
+    padding: 20px 15px 60px !important;
+    min-height: 450px !important;
+    border-radius: 12px !important;
+  }
+  
+  .recipe-card img {
+    height: 120px !important;
+    width: 80% !important;
+  }
+  
+  .recipe-card h5 {
+    font-size: 16px !important;
+    margin: 10px 0 8px 0 !important;
+    line-height: 1.3 !important;
+  }
+  
+  .recipe-card h6 {
+    font-size: 14px !important;
+    margin: 8px 0 6px 0 !important;
+  }
+  
+  .recipe-card ul {
+    max-height: 150px !important;
+    overflow-y: auto !important;
+    padding-left: 0 !important;
+  }
+  
+  .recipe-card ul li {
+    font-size: 13px !important;
+    padding: 2px 0 !important;
+    line-height: 1.3 !important;
+  }
+  
   .recipe-container {
     width: 80% !important;
     max-width: 1200px !important;
@@ -998,7 +1063,7 @@ html {
    FOOD_UPLOAD 페이지 태블릿 가로 모드 계속
 ========================================== */
 
-/* 4. 태블릿 가로 (821px ~ 1280px) */
+/* 4. 태블릿 가로 (821px ~ 1280px) - 갤럭시탭 S10+ FOOD_UPLOAD 최적화 */
 @media (min-width: 821px) and (max-width: 1280px) {
   .btn-group {
     gap: 25px !important;
@@ -1012,14 +1077,8 @@ html {
     font-size: 17px !important;
   }
   
-  .container {
-    width: 80% !important;
-    max-width: 1200px !important;
-    height: auto !important;
-    padding: 50px 40px !important;
-    margin: 0 auto !important;
-    min-height: 520px !important;
-  }
+  /* 컨테이너 크기는 위에서 이미 통일했으므로 제거 */
+  /* .container는 이미 위의 통일 규칙에 포함됨 */
   
   .form-box label {
     font-size: 28px !important;
@@ -1031,12 +1090,8 @@ html {
     height: 52px !important;
   }
   
-  /* 레시피 카드 그리드 - 3열 배치 */
-  .recipe-list {
-    grid-template-columns: repeat(3, 1fr) !important;
-    gap: 25px !important;
-    padding: 0 40px !important;
-  }
+  /* 레시피 카드 그리드는 위에서 이미 최적화했으므로 제거 */
+  /* .recipe-list는 이미 위의 통일 규칙에 포함됨 */
 }
 
 /* ==========================================
@@ -1257,18 +1312,9 @@ html {
   }
 }
 
-/* 4. 태블릿 가로 (821px ~ 1280px) */
+/* 4. 태블릿 가로 (821px ~ 1280px) - 갤럭시탭 S10+ UPLOAD 최적화 */
 @media (min-width: 821px) and (max-width: 1280px) {
-  .container2 {
-    width: 80% !important;
-    max-width: 1200px !important;
-    height: auto !important;
-    padding: 50px 40px !important;
-    margin: 0 auto !important;
-    margin-bottom: 60px !important;
-    min-height: 520px !important;
-    box-sizing: border-box !important;
-  }
+  /* .container2는 이미 위의 통일 규칙에 포함됨 */
   
   .form-box label {
     font-size: 28px !important;
