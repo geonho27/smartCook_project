@@ -628,7 +628,7 @@ from google.cloud import texttospeech
 
 def tts_view(request):
     text = request.GET.get("text")
-    voice_name = request.GET.get("voice", "ko-KR-Standard-A")  # <- 이거 중요!
+    voice_name = request.GET.get("voice", "ko-KR-Chirp3-HD-Charon")  # <- 이거 중요!
 
     client = texttospeech.TextToSpeechClient()
 
@@ -670,3 +670,66 @@ def list_voices_view(request):
         })
 
     return JsonResponse({"voices": voices})
+
+from google.cloud import speech 
+from django.views.decorators.csrf import csrf_exempt 
+from django.http import JsonResponse 
+# views.py
+from django.views.decorators.csrf import csrf_exempt
+from django.http import JsonResponse
+from google.cloud import speech
+
+COMMAND_MAP = {
+    "요리 시작": [
+        "요리시작", "요리시작해", "유리숍", "요리쇼", "요리시작해줘", "처음부터", "첫단계", "첫번째단계", "처음단계", "요리해줘",
+        "조리시작", "요리진행", "레시피알려줘", "레시피읽어", "레시피읽어줘", "레시피시작", "레시피설명", "레시피설명해줘",
+        "설명시작", "설명해줘", "조리법알려줘", "조리법읽어줘", "조리법설명"
+    ],
+    "다음": [
+        "다음", "다음단계", "그다음", "다음으로", "다음으로넘어가",
+        "다음꺼", "계속", "진행해", "넘어가", "이어가", "이제뭐해", "이제뭐해야해"
+    ],
+    "이전": [
+        "이전", "앞단계", "이전단계", "앞단계알려줘", "앞단계설명",
+        "뒤로", "전단계", "이전꺼", "돌아가", "뒤로가"
+    ],
+    "다시": [
+        "다시", "다시말해줘", "반복", "한번더", "다시해줘",
+        "다시설명", "다시알려줘", "방금거", "지금뭐야", "현재단계"
+    ],
+    "종료": [
+        "종료", "끝", "그만", "여기까지", "중지"
+    ]
+}
+
+@csrf_exempt
+def speech_to_text(request):
+    if request.method == "POST" and request.FILES.get("audio"):
+        audio_file = request.FILES["audio"].read()
+        client = speech.SpeechClient()
+
+        audio = speech.RecognitionAudio(content=audio_file)
+        config = speech.RecognitionConfig(
+            encoding=speech.RecognitionConfig.AudioEncoding.WEBM_OPUS,
+            sample_rate_hertz=48000,
+            language_code="ko-KR",
+        )
+
+        response = client.recognize(config=config, audio=audio)
+
+        transcript = ""
+        for result in response.results:
+            transcript += result.alternatives[0].transcript
+
+        normalized = transcript.strip().replace(" ", "")
+
+        # ✅ COMMAND_MAP으로 명령 매핑
+        matched_command = None
+        for command, keywords in COMMAND_MAP.items():
+            if any(kw in normalized for kw in keywords):
+                matched_command = command
+                break
+
+        return JsonResponse({"text": matched_command if matched_command else transcript.strip()})
+
+    return JsonResponse({"error": "No audio file received"}, status=400)

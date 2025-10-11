@@ -81,6 +81,7 @@
     <select id="voiceSelect" class="menu2-input">
       <option value="">로딩 중...</option>
     </select>
+    <button onclick="previewVoice()" style="margin-left:8px;">미리듣기</button>
     <button onclick="saveVoice()" class="tts-button" style="margin-left:8px;">저장하기</button>
     <span style="color: #999; margin-left:8px;">선택한 목소리는 저장되어 레시피를 읽을 때 사용됩니다.</span>
   </div>
@@ -354,7 +355,13 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
   
-  
+  function previewVoice() {
+    const voice = document.getElementById("voiceSelect").value; // ✅ 수정
+    const sampleText = "안녕하세요, 저는 스마트쿡입니다. 오늘도 맛있는 요리를 시작해 볼까요?";
+    const url = `/tts/?text=${encodeURIComponent(sampleText)}&voice=${encodeURIComponent(voice)}`;
+    new Audio(url).play();
+  }
+
 </script>
 
 

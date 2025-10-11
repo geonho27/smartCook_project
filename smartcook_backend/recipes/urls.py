@@ -28,6 +28,6 @@ urlpatterns = [
 
     # TTS
     path("tts/", tts_view, name="tts"),
-
+    path("stt/", views.speech_to_text, name="speech_to_text"),
     path("tts/list-voices/", list_voices_view, name="list_voices"),
 ]

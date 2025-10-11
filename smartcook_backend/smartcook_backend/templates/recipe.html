@@ -5,15 +5,55 @@
   <meta charset="UTF-8">
   <title>{{ recipe.title }} 레시피</title>
   <link rel="stylesheet" href="{% static 'css/upload.css' %}">
+  <style>
+  .listening-popup {
+    display: none;
+    position: fixed; /* ✅ 항상 화면 중앙 */
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: rgba(197, 197, 197, 0.9);
+    color: #fff;
+    padding: 30px;
+    border-radius: 12px;
+    text-align: center;
+    z-index: 9999;
+    animation: fadeIn 0.3s ease;
+    width: 250px;
+  }
+  .listening-icon {
+    font-size: 48px;
+    animation: pulse 1s infinite;
+  }
+  .close-btn {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    background: none;
+    border: none;
+    font-size: 18px;
+    color: #fff;
+    cursor: pointer;
+  }
+  .close-btn:hover {
+    color: #ff5c5c;
+  }
+  @keyframes pulse {
+    0% { transform: scale(1); opacity: 1; }
+    50% { transform: scale(1.2); opacity: 0.6; }
+    100% { transform: scale(1); opacity: 1; }
+  }
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translate(-50%, -40%); }
+    to   { opacity: 1; transform: translate(-50%, -50%); }
+  }
+  </style>
 </head>
 <body class="upload">
   <div class="main-navbar">
-    <!-- 왼쪽 -->
     <div class="main-nav-left">
       <a href="{% url 'mainpage' %}" class="logo">SMARTCOOK</a>
     </div>
-  
-    <!-- 오른쪽 -->
     <div class="main-nav-right">
       <form method="POST" action="{% url 'logout' %}" style="display:inline;">
         {% csrf_token %}
@@ -22,21 +62,17 @@
     </div>
   </div>
   
-  
   <div class="recipe-container">
     <div class="recipe-content">
-      <!-- 왼쪽 박스 -->
       <div class="recipe-left-box">
         <h2>상세 레시피</h2>
         <div class="recipe-subheading"><strong>🥢 {{ recipe.title }} 레시피</strong></div>
-
         <p><strong>재료</strong></p>
         <ul>
           {% for ing in recipe.ingredients %}
             <li>{{ ing }}</li>
           {% endfor %}
         </ul>
-
         <p><strong>만드는 법</strong></p>
         <ol>
           {% for step in recipe.steps %}
@@ -44,8 +80,6 @@
           {% endfor %}
         </ol>
       </div>
-
-      <!-- 오른쪽 박스 -->
       <div class="recipe-right-box">
         <h2>유튜브 영상 보러가기</h2>
         <div class="youtube-videos">
@@ -62,49 +96,170 @@
     </div>
   </div>
 
-
   <!-- 버튼 -->
   <div class="recipe-bottom-button">
     {% if mode == "detected" %}
-      <button onclick="readRecipe()" class="tts-button" style="margin-right: 10px;" >🔊 레시피 읽어주기</button>
+      <button onclick="readRecipe()" class="tts-button" style="margin-right: 10px;">🔊 레시피 읽어주기</button>
+      <button onclick="openSTTPopup()" class="tts-button" style="margin-right: 10px;">🎤 음성으로 명령하기</button>
       <button onclick="location.href='{% url 'search_recipes_by_detected' %}?sort=match'">
         다른 레시피 보러가기
       </button>
     {% else %}
       <button onclick="readRecipe()" class="tts-button" style="margin-right: 10px;">🔊 레시피 읽어주기</button>
+      <button onclick="openSTTPopup()" class="tts-button" style="margin-right: 10px;">🎤 음성으로 명령하기</button>
       <button onclick="location.href='{% url 'food_upload' %}?q={{ query }}'">
         다른 레시피 보러가기
       </button>
     {% endif %}
-    
   </div>
+
   <div class="feedback-footer">
     © SmartCook. All rights reserved.
   </div>
-  
+</body>
 </html>
 
+<!-- 팝업 -->
+<div id="listening-popup" class="listening-popup" onclick="handlePopupClick(event)">
+  <button class="close-btn" onclick="stopListening(true)">✕</button>
+  <div class="listening-icon">🎤</div>
+  <p id="listening-text">눌러서 음성 인식 시작</p>
+</div>
+
 <script>
-  function readRecipe() {
+   function readRecipe() {
     const title = "{{ recipe.title|escapejs }}";
-    const ingredients = [{% for ing in recipe.ingredients %}"{{ ing|escapejs }}",{% endfor %}];
     const steps = [{% for step in recipe.steps %}"{{ step|escapejs }}",{% endfor %}];
-
     let text = `${title} 레시피입니다. `;
-
     text += "조리 방법은 ";
-    steps.forEach((step, i) => {
-      text += `${i + 1}단계, ${step}. `;
-    });
+    steps.forEach((step, i) => { text += `${i + 1}단계, ${step}. `; });
 
-    // ✅ 서버에서 받은 사용자 목소리 (없으면 기본)
-    const voice = "{{ user.voice_name|default:'ko-KR-Standard-A' }}";
-
+    const voice = "{{ user.voice_name|default:'ko-KR-Chirp3-HD-Charon' }}";
     const ttsUrl = `/tts/?text=${encodeURIComponent(text)}&voice=${encodeURIComponent(voice)}`;
+    new Audio(ttsUrl).play();
+  }
 
-    const audio = new Audio(ttsUrl);
-    audio.play();
+  const recipeTitle = "{{ recipe.title|escapejs }}";
+  const steps = [{% for step in recipe.steps %}"{{ step|escapejs }}",{% endfor %}];
+  let currentStep = 0;
+  let mediaRecorder;
+  let isListening = false;
+
+  function speak(text) {
+    const voice = "{{ user.voice_name|default:'ko-KR-Chirp3-HD-Charon' }}";
+    const ttsUrl = `/tts/?text=${encodeURIComponent(text)}&voice=${encodeURIComponent(voice)}`;
+    new Audio(ttsUrl).play();
+  }
+
+  function showListeningPopup() {
+    document.getElementById("listening-popup").style.display = "block";
+    document.getElementById("listening-text").textContent = "🎤 눌러서 음성 인식 시작";
+  }
+  function hideListeningPopup() {
+    document.getElementById("listening-popup").style.display = "none";
+  }
+
+  function openSTTPopup() {
+    showListeningPopup();
+    console.log("🎤 [STT] 팝업 열림 - 대기 상태");
+  }
+
+  function handlePopupClick(event) {
+    if (event.target.classList.contains("close-btn")) return;
+    startSTTOnce();
+  }
+
+  async function startSTTOnce() {
+    if (isListening) return;
+    isListening = true;
+    document.getElementById("listening-text").textContent = "🎙️ 인식 중...";
+
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      mediaRecorder = new MediaRecorder(stream, { mimeType: "audio/webm;codecs=opus" });
+
+      mediaRecorder.ondataavailable = async (event) => {
+        if (event.data && event.data.size > 0) {
+          const formData = new FormData();
+          formData.append("audio", event.data, "input.webm");
+
+          try {
+            const response = await fetch("/stt/", { method: "POST", body: formData });
+            const data = await response.json();
+            console.log("✅ [STT 결과]:", data.text);
+            handleCommand(data.text);
+          } catch (err) {
+            console.error("❌ [STT 요청 실패]:", err);
+          } finally {
+            resetToIdle(); // 팝업 닫지 않고 다시 대기
+          }
+        }
+      };
+
+      mediaRecorder.start();
+      console.log("🎙️ [STT] MediaRecorder 시작됨");
+
+      setTimeout(() => { if (isListening) mediaRecorder.stop(); }, 3000);
+
+    } catch (err) {
+      console.error("❌ [STT 오류]:", err);
+      resetToIdle();
+    }
+  }
+
+  function resetToIdle() {
+    isListening = false;
+    document.getElementById("listening-text").textContent = "🎤 눌러서 음성 인식 시작";
+    console.log("🔄 [STT] 대기 상태로 복귀");
+  }
+
+  function stopListening(closePopup = false) {
+    isListening = false;
+    if (mediaRecorder && mediaRecorder.state !== "inactive") mediaRecorder.stop();
+    if (closePopup) hideListeningPopup();
+    else resetToIdle();
+    console.log("🛑 [STT] 종료됨");
+  }
+
+  function handleCommand(command) {
+    command = command.replace(/\s+/g, "").trim();
+    console.log("handleCommand 입력값:", command);
+
+    switch(command) {
+      case "요리시작":
+        currentStep = 0;
+        speak(`${recipeTitle} 레시피를 시작합니다. 첫 단계입니다. ${steps[currentStep]}`);
+        break;
+      case "다음":
+        if (currentStep < steps.length - 1) {
+          currentStep++;
+          speak("다음 단계입니다. " + steps[currentStep]);
+        } else speak("이미 마지막 단계입니다.");
+        break;
+      case "이전":
+        if (currentStep > 0) {
+          currentStep--;
+          speak("이전 단계입니다. " + steps[currentStep]);
+        } else speak("현재가 첫 번째 단계입니다.");
+        break;
+      case "다시":
+        speak("현재 단계입니다. " + steps[currentStep]);
+        break;
+      case "종료":
+      case "끝":
+      case "그만":
+        speak("레시피 안내를 종료합니다. 요리를 맛있게 완성해보세요!");
+        stopListening(true); // 팝업 닫기
+        currentStep = 0;
+        break;
+      case "마지막":
+      case "스킵":
+        currentStep = steps.length - 1;
+        speak("마지막 단계입니다. " + steps[currentStep]);
+        break;
+      default:
+        console.log("알 수 없는 명령:", command);
+        break;
+    }
   }
 </script>
-
-

@@ -140,6 +140,7 @@ model_path = BASE_DIR / "best.pt"
 # 외부 터널(ngrok/localtunnel) 사용 시 CSRF 문제 방지
 CSRF_TRUSTED_ORIGINS = [
     'https://*.ngrok-free.app',
+    "https://*.ngrok-free.dev",
     'https://*.loca.lt',
 ]
 
