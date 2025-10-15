@@ -2656,3 +2656,423 @@ html.landscape-mode #floating-ingredients {
     box-sizing: border-box !important;
   }
 }
+
+
+/* ==========================================
+   MENU2 페이지 반응형 스타일 (마이페이지)
+   - 사용자 정보 수정, 목소리 선택, 선호/비선호 재료 설정
+========================================== */
+
+/* 1. 스마트폰 (320px ~ 480px) */
+@media (max-width: 480px) {
+  /* 메인 컨테이너 */
+  .menu2-container {
+    width: 95% !important;
+    max-width: 100% !important;
+    padding: 20px 15px !important;
+    margin: 80px auto 40px auto !important;
+    box-sizing: border-box !important;
+    overflow: visible !important;
+  }
+  
+  /* 브레드크럼 */
+  .menu2-breadcrumb {
+    font-size: 14px !important;
+    margin-bottom: 20px !important;
+    padding: 0 !important;
+  }
+  
+  .menu2-breadcrumb a {
+    color: #76b5c5 !important;
+    text-decoration: none !important;
+  }
+  
+  /* 정보 행들 */
+  .menu2-info-row {
+    display: flex !important;
+    flex-direction: column !important;
+    margin-bottom: 20px !important;
+    padding: 15px !important;
+    background-color: #f8f9fa !important;
+    border-radius: 8px !important;
+    border: 1px solid #e9ecef !important;
+    box-sizing: border-box !important;
+  }
+  
+  .menu2-info-label {
+    font-size: 16px !important;
+    font-weight: bold !important;
+    color: #495057 !important;
+    margin-bottom: 8px !important;
+    width: 100% !important;
+  }
+  
+  .menu2-info-value {
+    font-size: 15px !important;
+    color: #212529 !important;
+    width: 100% !important;
+    word-wrap: break-word !important;
+  }
+  
+  /* 비밀번호 변경 폼 */
+  .pw-change-link {
+    color: #76b5c5 !important;
+    text-decoration: underline !important;
+    cursor: pointer !important;
+    font-size: 14px !important;
+  }
+  
+  .pw-form {
+    display: none !important;
+    margin-top: 15px !important;
+    padding: 15px !important;
+    background-color: #ffffff !important;
+    border: 1px solid #76b5c5 !important;
+    border-radius: 8px !important;
+    box-sizing: border-box !important;
+  }
+  
+  .pw-form input {
+    width: 100% !important;
+    padding: 12px !important;
+    margin-bottom: 10px !important;
+    border: 1px solid #ddd !important;
+    border-radius: 5px !important;
+    font-size: 14px !important;
+    box-sizing: border-box !important;
+  }
+  
+  .pw-buttons {
+    display: flex !important;
+    gap: 10px !important;
+    justify-content: center !important;
+  }
+  
+  .btn-save, .btn-cancel {
+    padding: 10px 20px !important;
+    font-size: 14px !important;
+    border: none !important;
+    border-radius: 5px !important;
+    cursor: pointer !important;
+    flex: 1 !important;
+    max-width: 120px !important;
+  }
+  
+  .btn-save {
+    background-color: #76b5c5 !important;
+    color: white !important;
+  }
+  
+  .btn-cancel {
+    background-color: #6c757d !important;
+    color: white !important;
+  }
+  
+  /* 구분선 */
+  .menu2-divider {
+    margin: 25px 0 !important;
+    border: none !important;
+    border-top: 2px solid #76b5c5 !important;
+  }
+  
+  /* 섹션 제목 */
+  .menu2-section-title {
+    font-size: 20px !important;
+    font-weight: bold !important;
+    color: #495057 !important;
+    margin-bottom: 25px !important;
+    text-align: center !important;
+  }
+  
+  /* 폼 행들 */
+  .menu2-form-row {
+    margin-bottom: 25px !important;
+    padding: 15px !important;
+    background-color: #ffffff !important;
+    border: 1px solid #e9ecef !important;
+    border-radius: 8px !important;
+    box-sizing: border-box !important;
+  }
+  
+  .menu2-form-row label {
+    display: block !important;
+    font-size: 16px !important;
+    font-weight: bold !important;
+    color: #495057 !important;
+    margin-bottom: 12px !important;
+    width: 100% !important;
+  }
+  
+  /* 목소리 선택 섹션 */
+  .menu2-input {
+    width: 100% !important;
+    padding: 12px !important;
+    border: 1px solid #ddd !important;
+    border-radius: 5px !important;
+    font-size: 14px !important;
+    margin-bottom: 10px !important;
+    box-sizing: border-box !important;
+  }
+  
+  .menu2-form-row button {
+    padding: 10px 15px !important;
+    font-size: 14px !important;
+    border: none !important;
+    border-radius: 5px !important;
+    cursor: pointer !important;
+    margin: 5px !important;
+    background-color: #76b5c5 !important;
+    color: white !important;
+  }
+  
+  .tts-button {
+    background-color: #28a745 !important;
+  }
+  
+  /* 비건 체크박스 */
+  .menu2-form-row input[type="checkbox"] {
+    width: 18px !important;
+    height: 18px !important;
+    margin-right: 8px !important;
+  }
+  
+  .menu2-form-row span {
+    font-size: 14px !important;
+    color: #76b5c5 !important;
+  }
+  
+  /* 태그 버튼들 */
+  .menu2-tag-buttons {
+    display: flex !important;
+    flex-wrap: wrap !important;
+    gap: 8px !important;
+    margin-top: 15px !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+  }
+  
+  .menu2-tag-button {
+    display: inline-flex !important;
+    align-items: center !important;
+    background-color: #e9ecef !important;
+    color: #495057 !important;
+    padding: 8px 12px !important;
+    border-radius: 20px !important;
+    font-size: 13px !important;
+    margin: 2px !important;
+    box-sizing: border-box !important;
+  }
+  
+  .del-btn {
+    background: none !important;
+    border: none !important;
+    color: #dc3545 !important;
+    font-size: 16px !important;
+    font-weight: bold !important;
+    margin-left: 8px !important;
+    cursor: pointer !important;
+    padding: 0 !important;
+    width: 20px !important;
+    height: 20px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+  }
+  
+  /* 설명 텍스트 */
+  .menu2-form-row span[style*="color: #999"] {
+    display: block !important;
+    font-size: 12px !important;
+    color: #6c757d !important;
+    margin-top: 8px !important;
+    line-height: 1.4 !important;
+  }
+}
+
+/* 2. 아이패드 미니 세로 (481px ~ 744px) */
+@media (min-width: 481px) and (max-width: 744px) {
+  .menu2-container {
+    width: 90% !important;
+    max-width: 100% !important;
+    padding: 25px 20px !important;
+    margin: 90px auto 50px auto !important;
+    box-sizing: border-box !important;
+  }
+  
+  .menu2-breadcrumb {
+    font-size: 15px !important;
+    margin-bottom: 25px !important;
+  }
+  
+  .menu2-info-row {
+    flex-direction: row !important;
+    align-items: center !important;
+    padding: 18px !important;
+    margin-bottom: 18px !important;
+  }
+  
+  .menu2-info-label {
+    font-size: 17px !important;
+    width: 30% !important;
+    margin-bottom: 0 !important;
+    margin-right: 15px !important;
+  }
+  
+  .menu2-info-value {
+    font-size: 16px !important;
+    width: 70% !important;
+  }
+  
+  .menu2-section-title {
+    font-size: 22px !important;
+    margin-bottom: 30px !important;
+  }
+  
+  .menu2-form-row {
+    padding: 18px !important;
+    margin-bottom: 20px !important;
+  }
+  
+  .menu2-form-row label {
+    font-size: 17px !important;
+    margin-bottom: 15px !important;
+  }
+  
+  .menu2-input {
+    font-size: 15px !important;
+    padding: 14px !important;
+  }
+  
+  .menu2-form-row button {
+    padding: 12px 18px !important;
+    font-size: 15px !important;
+  }
+  
+  .menu2-tag-button {
+    padding: 10px 15px !important;
+    font-size: 14px !important;
+  }
+}
+
+/* 3. 아이패드 에어 세로 (745px ~ 820px) */
+@media (min-width: 745px) and (max-width: 820px) {
+  .menu2-container {
+    width: 85% !important;
+    max-width: 100% !important;
+    padding: 30px 25px !important;
+    margin: 100px auto 60px auto !important;
+    box-sizing: border-box !important;
+  }
+  
+  .menu2-breadcrumb {
+    font-size: 16px !important;
+    margin-bottom: 30px !important;
+  }
+  
+  .menu2-info-row {
+    padding: 20px !important;
+    margin-bottom: 20px !important;
+  }
+  
+  .menu2-info-label {
+    font-size: 18px !important;
+    width: 25% !important;
+  }
+  
+  .menu2-info-value {
+    font-size: 17px !important;
+    width: 75% !important;
+  }
+  
+  .menu2-section-title {
+    font-size: 24px !important;
+    margin-bottom: 35px !important;
+  }
+  
+  .menu2-form-row {
+    padding: 20px !important;
+    margin-bottom: 25px !important;
+  }
+  
+  .menu2-form-row label {
+    font-size: 18px !important;
+    margin-bottom: 18px !important;
+  }
+  
+  .menu2-input {
+    font-size: 16px !important;
+    padding: 15px !important;
+  }
+  
+  .menu2-form-row button {
+    padding: 14px 20px !important;
+    font-size: 16px !important;
+  }
+  
+  .menu2-tag-button {
+    padding: 12px 18px !important;
+    font-size: 15px !important;
+  }
+}
+
+/* 4. 태블릿 가로 (821px ~ 1280px) - 갤럭시탭 S10+ 포함 */
+/* 갤럭시탭 가로모드는 웹과 동일하지만 사이즈만 조정 */
+@media (min-width: 821px) and (max-width: 1280px) {
+  .menu2-container {
+    width: 90% !important;
+    max-width: 1200px !important;
+    padding: 40px 35px !important;
+    margin: 100px auto 60px auto !important;
+    box-sizing: border-box !important;
+  }
+  
+  .menu2-breadcrumb {
+    font-size: 17px !important;
+    margin-bottom: 35px !important;
+  }
+  
+  .menu2-info-row {
+    padding: 25px !important;
+    margin-bottom: 25px !important;
+  }
+  
+  .menu2-info-label {
+    font-size: 19px !important;
+    width: 20% !important;
+  }
+  
+  .menu2-info-value {
+    font-size: 18px !important;
+    width: 80% !important;
+  }
+  
+  .menu2-section-title {
+    font-size: 26px !important;
+    margin-bottom: 40px !important;
+  }
+  
+  .menu2-form-row {
+    padding: 25px !important;
+    margin-bottom: 30px !important;
+  }
+  
+  .menu2-form-row label {
+    font-size: 19px !important;
+    margin-bottom: 20px !important;
+  }
+  
+  .menu2-input {
+    font-size: 17px !important;
+    padding: 16px !important;
+  }
+  
+  .menu2-form-row button {
+    padding: 16px 25px !important;
+    font-size: 17px !important;
+  }
+  
+  .menu2-tag-button {
+    padding: 14px 20px !important;
+    font-size: 16px !important;
+  }
+}
