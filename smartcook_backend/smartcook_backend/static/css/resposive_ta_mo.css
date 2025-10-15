@@ -171,11 +171,11 @@
     }
   }
   
-  /* 2. 아이패드 미니 세로 (481px ~ 744px) */
-  @media (min-width: 481px) and (max-width: 744px) {
-    .main-navbar {
-      padding: 15px 30px !important;
-    }
+/* 2. 아이패드 미니 세로 (481px ~ 744px) - 744px × 1133px */
+@media (min-width: 481px) and (max-width: 744px) {
+  .main-navbar {
+    padding: 15px 30px !important;
+  }
     
     .main-logo {
       font-size: 22px !important;
@@ -1303,18 +1303,22 @@ html {
     max-width: 1200px !important;
     padding: 35px 30px !important;
     margin: 100px auto 60px auto !important;
+    box-sizing: border-box !important;
   }
   
-  /* 좌우 박스 세로 배치로 변경 */
+  /* 좌우 박스 세로 배치로 변경 (갤럭시탭 가로모드도 세로 스택) */
   .recipe-content {
     flex-direction: column !important;
     gap: 30px !important;
+    width: 100% !important;
   }
   
   .recipe-left-box,
   .recipe-right-box {
     width: 100% !important;
     padding: 28px !important;
+    box-sizing: border-box !important;
+    overflow: visible !important;
   }
   
   .recipe-left-box h2,
@@ -1339,10 +1343,12 @@ html {
     display: grid !important;
     grid-template-columns: repeat(2, 1fr) !important;
     gap: 20px !important;
+    width: 100% !important;
   }
   
   .video-card {
     width: 100% !important;
+    box-sizing: border-box !important;
   }
   
   .video-card img {
@@ -1353,6 +1359,7 @@ html {
   .video-card p {
     font-size: 15px !important;
     padding: 12px !important;
+    word-wrap: break-word !important;
   }
   
   .recipe-bottom-button {
@@ -1361,6 +1368,8 @@ html {
     justify-content: center !important;
     margin: 60px auto 60px auto !important;
     height: auto !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
   }
   
   .recipe-bottom-button button {
@@ -1369,6 +1378,7 @@ html {
     padding: 17px 35px !important;
     font-size: 17px !important;
     margin: 0 !important;
+    box-sizing: border-box !important;
   }
 }
 
@@ -1897,7 +1907,7 @@ html {
   }
 }
 
-/* 4. 태블릿 가로 (821px ~ 1280px) */
+/* 4. 태블릿 가로 (821px ~ 1280px) - 갤럭시탭 S10+ 가로모드 포함 */
 @media (min-width: 821px) and (max-width: 1280px) {
   .upload-form-box {
     width: 80% !important;

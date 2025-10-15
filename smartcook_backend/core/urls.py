@@ -13,6 +13,7 @@ urlpatterns = [
 
     path("logout/", LogoutView.as_view(), name="logout"),
     path("upload/", views.upload_page, name="upload"),
+    path("live/", views.live_page, name="live_page"),
     path("mypage/", views.menu2_view, name="mypage"),
     path("save-voice/", save_voice_name, name="save_voice"),
     path("menu2/", views.menu2_view, name="menu2"),

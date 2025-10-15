@@ -11,6 +11,7 @@ from django.http import JsonResponse, Http404, HttpResponse
 from django.shortcuts import render, redirect, get_object_or_404
 from django.views.decorators.http import require_POST
 from django.views.decorators.csrf import csrf_exempt
+from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator   # 페이지네이션 추가
 from .models import Recipe
 
@@ -131,6 +132,7 @@ def paginate_queryset(request, queryset, per_page=6):
 # =========================
 # 음식명 검색
 # =========================
+@login_required
 def food_upload_view(request):
     recipes = []
     query = request.GET.get("q", "").strip()
@@ -211,6 +213,7 @@ def food_upload_view(request):
 
 
 # 업로드 이미지 인식
+@login_required
 def search_recipes_by_detected(request):
     # 체크박스로 선택된 재료 가져오기
     selected_ingredients = request.GET.getlist("q")
@@ -305,6 +308,7 @@ def search_recipes_by_detected(request):
 # =========================
 # 레시피 상세 + 유튜브
 # =========================
+@login_required
 def recipe_detail_view(request, pk):
     data = get_recipes_data()
     recipe = next((r for r in data if str(r.get("id")) == str(pk)), None)

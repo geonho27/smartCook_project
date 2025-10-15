@@ -2,17 +2,33 @@
 <html lang="ko">
 <head>
   <meta charset="UTF-8">
+  <!-- 반응형 웹을 위한 viewport 설정 -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>로그인 페이지</title>
   {% load static %}
+  <!-- 기본 웹 스타일 -->
   <link rel="stylesheet" href="{% static 'css/main.css' %}">
+  <!-- 태블릿/모바일 반응형 스타일 -->
+  <link rel="stylesheet" href="{% static 'css/resposive_ta_mo.css' %}">
 </head>
 <body class="authpage">
 
-  <div class="main2-navbar">
-    <div class="main2-nav-left">
-      <a href="{% url 'mainpage' %}" class="main2-logo" style="color:#76b5c5;">
-        SMARTCOOK
-      </a>
+  <!-- 반응형 네비게이션 바 -->
+  <div class="main-navbar">
+    <div class="main-nav-left">
+      <!-- 로고만 표시 -->
+      <a href="{% url 'mainpage' %}" class="main-logo" style="color: #76b5c5;">SMARTCOOK</a>
+    </div>
+    
+    <!-- 모바일용 햄버거 메뉴 버튼 (숨김 처리) -->
+    <button class="mobile-menu-btn" id="mobileMenuBtn" style="display: none;">
+      <span></span>
+      <span></span>
+      <span></span>
+    </button>
+    
+    <div class="main-nav-right">
+      <!-- 로그인 페이지에서는 로그인 버튼 숨김 -->
     </div>
   </div>
 

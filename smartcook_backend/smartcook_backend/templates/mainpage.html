@@ -55,7 +55,7 @@
     <a href="{% url 'upload' %}">Picture</a>
     <a href="{% url 'live_page' %}">Realtime</a>
     {% if user.is_authenticated %}
-    <a href="{% url 'mypage' %}">Mypage</a>
+    <a href="{% url 'menu2' %}">Mypage</a>
     {% endif %}
   </div>
 
@@ -201,10 +201,30 @@
     }
   }
 
+  // 로그인 체크 함수
+  function checkLoginAndRedirect(url) {
+    {% if user.is_authenticated %}
+      window.location.href = url;
+    {% else %}
+      window.location.href = '/login/';
+    {% endif %}
+  }
+
   // DOM 로드 완료 시 초기화 함수들 실행
   document.addEventListener('DOMContentLoaded', function() {
     initLazyVideos();
     initMobileMenu();
+    
+    // 네비게이션 링크에 로그인 체크 추가
+    const navLinks = document.querySelectorAll('.main-nav-links a, .mobile-nav-menu a');
+    navLinks.forEach(link => {
+      if (link.href.includes('food_upload') || link.href.includes('upload') || link.href.includes('live')) {
+        link.addEventListener('click', function(e) {
+          e.preventDefault();
+          checkLoginAndRedirect(this.href);
+        });
+      }
+    });
   });
 })();
 </script>

@@ -131,6 +131,11 @@ MEDIA_ROOT = BASE_DIR / "media"   # ✅ Path 객체라서 views.py에서 / 연�
 # Default primary key field type
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
+# 로그인 설정
+LOGIN_URL = '/login/'
+LOGIN_REDIRECT_URL = '/'
+LOGOUT_REDIRECT_URL = '/'
+
 
 # 외부 API Key
 YOUTUBE_API_KEY = os.getenv("YOUTUBE_API_KEY", "AIzaSyDlgcQEu21PW9JBjyGUi3ThkIZW4WM5XyA")
