@@ -14,7 +14,7 @@ urlpatterns = [
     # path("recipe/", TemplateView.as_view(template_name="recipe.html")),
     # path("upload/", TemplateView.as_view(template_name="upload.html")),
     # path("food_upload/", TemplateView.as_view(template_name="food_upload.html")),
-    path("live/", TemplateView.as_view(template_name="live.html"), name="live_page"),
+    # path("live/", TemplateView.as_view(template_name="live.html"), name="live_page"),
 
     path("auth/onedrive/callback/", views.onedrive_callback, name="onedrive_callback"),
 

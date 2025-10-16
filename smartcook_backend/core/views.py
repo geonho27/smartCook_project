@@ -210,9 +210,13 @@ def main_page(request):
     return render(request, "mainpage.html")
 
 
+@login_required
 def upload_page(request):
     return render(request, "upload.html")
 
+@login_required
+def live_page(request):
+    return render(request, "live.html")
 
 def mypage_view(request):
     return render(request, "menu2.html")
