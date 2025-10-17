@@ -1,0 +1,13 @@
+train: ../train/images
+val: ../valid/images
+test: ../test/images
+
+nc: 48
+names: ['amaranth', 'apple', 'banana', 'bell pepper', 'bluebarry', 'bottle gourd', 'broccoli', 'cabbage', 'cantaloupe', 'capsicum', 'carrot', 'cauliflower', 'chilli pepper', 'coconut', 'corn', 'cucumber', 'dragon fruit', 'eggplant', 'fig', 'garlic', 'ginger', 'grapes', 'jalepeno', 'kiwi', 'lemon', 'mango', 'okra', 'onion', 'orange', 'paprika', 'pear', 'peas', 'pineapple', 'pomegranate', 'potato', 'pumpkin', 'raspberry', 'ridge gourd', 'soy beans', 'spinach', 'spiny groud', 'sponge gourd', 'strawberry', 'sweetcorn', 'sweetpotato', 'tomato', 'turnip', 'watermelon']
+
+roboflow:
+  workspace: gyumin38
+  project: food_ingredients_pj-nzo5v
+  version: 2
+  license: CC BY 4.0
+  url: https://universe.roboflow.com/gyumin38/food_ingredients_pj-nzo5v/dataset/2
