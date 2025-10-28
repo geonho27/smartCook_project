@@ -114,7 +114,7 @@
       </div>
     </div>
 
-    <div id="permission-modal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 10000; display: flex; justify-content: center; align-items: center;">
+    <div id="permission-modal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 10000; justify-content: center; align-items: center;">
       <div class="permission-box" style="background: white; padding: 40px 30px; border-radius: 20px; text-align: center; max-width: 400px; margin: 0 20px;">
         <h3 style="color: #76b5c5; margin-bottom: 20px; font-size: 24px;">📷 카메라 권한 필요</h3>
         <p style="color: #666; margin-bottom: 30px; line-height: 1.6;">
@@ -207,7 +207,34 @@
 
     </section>
 
+    
+    <!-- ✅ 추가재료 선택 섹션 -->
+    <section class="extra" id="extra-section" style="display:none;">
+      <div class="extra-header">
+        <h4 class="extra-title">추가 재료 선택</h4>
+        <span class="small-text skip-extra" id="skip-extra-btn">추가 재료 없음 →</span>
+      </div>
+
+      <div class="chip-box" id="extra-ingredients"></div>
+
+      <div class="cart-wrapper">
+        <button class="cart-btns" id="go-cart-btn" style="margin-right: 10px;">장바구니로 이동</button>
+        <button class="cart-btns" id="go-detail-btn">레시피 상세보기</button>
+      </div>
+    </section>
+
+  </main>
+
+  <div class="feedback-footer">
+    © SmartCook. All rights reserved.
+  </div>
+</body>
 <script>
+  function $(sel) { return document.querySelector(sel); }
+  function $all(sel) { return Array.prototype.slice.call(document.querySelectorAll(sel)); }
+  const extraSection = document.getElementById("extra-section");
+  const extraIngredientsBox = document.getElementById("extra-ingredients");
+
   // ==========================================
   // 캔버스 및 비디오 요소 가져오기
   // ==========================================
@@ -680,53 +707,94 @@
       const recipeCard = document.createElement('div');
       recipeCard.className = 'recipe-card';
       recipeCard.innerHTML = `
-        <img src="${escapeHtml(recipe.image)}" alt="${escapeHtml(recipe.title)}" onerror="this.src='/static/images/recipe/muk.png'">
+        <img src="${escapeHtml(recipe.image)}" alt="${escapeHtml(recipe.title)}">
         <h5>${escapeHtml(recipe.title)}</h5>
         <h6 style="text-align: center;">재료</h6>
         <ul style="list-style-type: none; padding-left: 0;">
           ${recipe.ingredients.map(ing => `<li>${escapeHtml(ing)}</li>`).join('')}
         </ul>
-        <a href="javascript:void(0)" class="btn-category-done show-extra-btn" data-recipe-id="{{ r.id }}">
-            요리하러 가기
+        <a href="javascript:void(0)" 
+          class="btn-category-done show-extra-btn" 
+          data-recipe-id="${recipe.id}"
+          data-ingredients='${JSON.stringify(recipe.ingredients)}'>
+          요리하러 가기
         </a>
       `;
+
+
       recipeList.appendChild(recipeCard);
     });
   }
 
-  document.addEventListener("DOMContentLoaded", function() {
-  // extra-section 동적 생성
-  const extraSection = document.createElement("section");
-  extraSection.className = "extra";
-  extraSection.id = "extra-section";
-  extraSection.style.display = "none";
+  // ====== ✅ 추가재료 선택 섹션 기능 ======
+document.addEventListener("click", (e) => {
+  if (e.target.classList.contains("show-extra-btn")) {
+    const btn = e.target;
+    currentRecipeId = btn.dataset.recipeId;
 
-  extraSection.innerHTML = `
-    <div class="extra-header">
-      <h4 class="extra-title">추가 재료 선택</h4>
-      <span class="small-text skip-extra" id="skip-extra-btn">추가 재료 없음 →</span>
-    </div>
+    // 버튼 dataset에서 재료 받아오기
+    let ingredients = [];
+    try {
+      ingredients = JSON.parse(btn.dataset.ingredients || "[]");
+    } catch (err) {
+      console.error("재료 JSON 파싱 실패:", err, btn.dataset.ingredients);
+    }
 
-    <div class="chip-box" id="extra-ingredients"></div>
+    // ✅ recipe-section 그대로 두고, extra-section만 표시
+    const extraSection = document.getElementById("extra-section");
+    const extraIngredientsBox = document.getElementById("extra-ingredients");
+    extraSection.style.display = "block";
+    extraSection.scrollIntoView({ behavior: "smooth" });
 
-    <div class="cart-wrapper">
-      <button class="cart-btns" id="go-cart-btn" style="margin-right: 10px;">장바구니로 이동</button>
-      <button class="cart-btns" id="go-detail-btn">레시피 상세보기</button>
-    </div>
-  `;
-
-  // 원하는 위치에 붙이기 (예: recipe-section 뒤에)
-  const recipeSection = document.getElementById("recipe-section");
-  recipeSection.insertAdjacentElement("afterend", extraSection);
-
-  // 버튼 이벤트 연결 (예시)
-  document.getElementById("go-cart-btn").addEventListener("click", function() {
-    alert("장바구니로 이동");
-  });
-  document.getElementById("go-detail-btn").addEventListener("click", function() {
-    alert("레시피 상세보기로 이동");
-  });
+    // 칩 생성
+    extraIngredientsBox.innerHTML = "";
+    if (!ingredients || ingredients.length === 0) {
+      extraIngredientsBox.innerHTML = "<p>재료가 없습니다.</p>";
+    } else {
+      ingredients.forEach(ing => {
+        const name = ing.split(" ")[0];
+        extraIngredientsBox.innerHTML += `
+          <label class="chip">
+            <input type="checkbox" class="chip-radio" name="ingredient" value="${name}">
+            <span>${name}</span>
+          </label>
+        `;
+      });
+    }
+  }
 });
+
+
+
+    // 추가재료 없음 → 상세보기
+    const skipBtn = document.getElementById("skip-extra-btn");
+    if (skipBtn) {
+      skipBtn.addEventListener("click", () => {
+        if (currentRecipeId) {
+          window.location.href = `/recipes/${currentRecipeId}/`;
+        } else {
+          alert("먼저 요리할 레시피를 선택해주세요!");
+        }
+      });
+    }
+
+    // 상세보기로 이동
+    $("#go-detail-btn")?.addEventListener("click", () => {
+      if (currentRecipeId) window.location.href = `/recipes/${currentRecipeId}/`;
+      else alert("먼저 요리할 레시피를 선택해주세요!");
+    });
+
+    // 장바구니로 이동
+    $("#go-cart-btn")?.addEventListener("click", () => {
+      if (currentRecipeId) {
+        const selected = [...document.querySelectorAll("input[name=ingredient]:checked")].map(chk => chk.value);
+        const query = selected.length > 0 ? `?extra=${selected.join(",")}` : "";
+        window.location.href = `/cart/${currentRecipeId}/${query}`;
+      } else {
+        alert("먼저 요리할 레시피를 선택해주세요!");
+      }
+    });
+
   // 카메라 전환 함수
   async function switchCamera() {
     currentFacingMode = currentFacingMode === 'environment' ? 'user' : 'environment';
@@ -1120,28 +1188,7 @@
   document.addEventListener('fullscreenchange', updateMobileActionBarVisibility);
   document.addEventListener('DOMContentLoaded', updateMobileActionBarVisibility);
   window.addEventListener('scroll', updateMobileActionBarVisibility, { passive: true });
-</script>
 
-    <section class="extra" id="extra-section" style="display:none;">
-        <div class="extra-header">
-            <h4 class="extra-title">추가 재료 선택</h4>
-            <span class="small-text skip-extra" id="skip-extra-btn">
-                추가 재료 없음 →
-            </span>
-        </div>
-        <div class="chip-box" id="extra-ingredients"></div>
-        <div class="cart-wrapper">
-            <button class="cart-btns" id="go-cart-btn" style="margin-right: 10px;">장바구니로 이동</button>
-            <button class="cart-btns" id="go-detail-btn">레시피 상세보기</button>
-        </div>
-    </section>
-  </main>
-
-  <div class="feedback-footer">
-    © SmartCook. All rights reserved.
-  </div>
-
-  <script>
   (function () {
     function initMobileMenu() {
       const mobileMenuBtn = document.getElementById('mobileMenuBtn');
@@ -1163,6 +1210,6 @@
     }
     document.addEventListener('DOMContentLoaded', initMobileMenu);
   })();
-  </script>
-</body>
+</script>
+
 </html>
